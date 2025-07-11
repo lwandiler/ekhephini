@@ -175,16 +175,16 @@ const ShowSchedule = () => {
   });
 
   return (
-    <div className="bg-card rounded-lg shadow-md p-6 border">
-      <h2 className="text-2xl font-bold text-foreground mb-6">Show Schedule</h2>
+    <div className={`bg-card rounded-lg shadow-md p-6 border ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+      <h2 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-foreground'}`}>Show Schedule</h2>
       
       <Tabs defaultValue={currentDay} className="w-full">
-        <TabsList className="grid grid-cols-7 bg-muted mb-6 overflow-x-auto">
+        <TabsList className={`grid grid-cols-7 mb-6 overflow-x-auto ${isDarkMode ? 'bg-gray-700' : 'bg-muted'}`}>
           {mockSchedule.map((day) => (
             <TabsTrigger 
               key={day.day} 
               value={day.day}
-              className="data-[state=active]:bg-sky-200 data-[state=active]:text-sky-800 dark:data-[state=active]:bg-sky-900 dark:data-[state=active]:text-sky-100"
+              className={`data-[state=active]:bg-sky-200 data-[state=active]:text-sky-800 dark:data-[state=active]:bg-sky-900 dark:data-[state=active]:text-sky-100 ${isDarkMode ? 'text-gray-300 hover:text-white' : ''}`}
             >
               {day.day.substring(0, 3)}
             </TabsTrigger>
@@ -196,11 +196,11 @@ const ShowSchedule = () => {
             {day.shows.map((show) => (
               <div 
                 key={show.id} 
-                className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-primary bg-muted/20 rounded-r-md hover:bg-muted/40 transition-colors"
+                className={`flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-primary rounded-r-md transition-colors ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-muted/20 hover:bg-muted/40'}`}
               >
                 <div className="mb-3 md:mb-0">
-                  <h3 className="font-bold text-lg text-foreground">{show.title}</h3>
-                  <p className="text-muted-foreground">with {show.host}</p>
+                  <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-foreground'}`}>{show.title}</h3>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-muted-foreground'}`}>with {show.host}</p>
                 </div>
                 
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
