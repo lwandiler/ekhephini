@@ -15,6 +15,7 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 
 const Shows = () => {
   const { isDarkMode } = useContext(ThemeContext);
+  console.log("IsDarkMode", isDarkMode);
   const showsList = [
     {
       id: 1,
