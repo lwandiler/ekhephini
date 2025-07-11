@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 import StationInfo from '@/components/audio/StationInfo';
 import StationDisplay from '@/components/audio/StationDisplay';
@@ -25,6 +25,7 @@ const RadioPlayer = ({
   const { modalOpen, setModalOpen } = useRadioModal();
   const [fallbackMode, setFallbackMode] = useState(false);
   const { settings } = useContext(StationContext);
+  const radioPlayerRef = useRef<HTMLDivElement>(null);
   
   const {
     stations,
@@ -48,6 +49,23 @@ const RadioPlayer = ({
   
   // Set up keyboard controls for volume and playback
   useRadioKeyboardControls(volume, togglePlayPause, (newVolume) => setVolume(newVolume[0]));
+
+  // Listen for trigger play events from listen live button
+  useEffect(() => {
+    const handleTriggerPlay = () => {
+      if (!isPlaying) {
+        togglePlayPause();
+      }
+    };
+
+    const radioPlayerElement = radioPlayerRef.current;
+    if (radioPlayerElement) {
+      radioPlayerElement.addEventListener('triggerPlay', handleTriggerPlay);
+      return () => {
+        radioPlayerElement.removeEventListener('triggerPlay', handleTriggerPlay);
+      };
+    }
+  }, [isPlaying, togglePlayPause]);
 
   // Function to handle changing stations in either direction
   const handleChangeStation = (direction: 'next' | 'prev') => {
@@ -79,7 +97,11 @@ const RadioPlayer = ({
 
   return (
     <TooltipProvider>
-      <div className="fixed bottom-0 left-0 right-0 bg-radio-blue text-white py-3 px-4 z-50 shadow-lg dark:bg-gray-900">
+      <div 
+        ref={radioPlayerRef}
+        data-radio-player
+        className="fixed bottom-0 left-0 right-0 bg-radio-blue text-white py-3 px-4 z-50 shadow-lg dark:bg-gray-900"
+      >
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <StationInfo 

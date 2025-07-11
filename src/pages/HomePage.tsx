@@ -38,6 +38,12 @@ const HomePage = () => {
 
   const handleListenLiveClick = () => {
     setModalOpen(true);
+    // Also trigger play if not already playing
+    const radioPlayer = document.querySelector('[data-radio-player]');
+    if (radioPlayer) {
+      const event = new CustomEvent('triggerPlay');
+      radioPlayer.dispatchEvent(event);
+    }
   };
 
   return (
