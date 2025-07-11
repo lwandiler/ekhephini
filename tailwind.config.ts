@@ -64,11 +64,11 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				radio: {
-					'blue': '#0f172a',
-					'light-blue': '#1e293b',
-					'accent': '#0ea5e9',
-					'light': '#f8fafc',
-					'muted': '#94a3b8'
+					'blue': 'hsl(222 84% 5%)',        // #0f172a converted to HSL
+					'light-blue': 'hsl(220 39% 11%)', // #1e293b converted to HSL  
+					'accent': 'hsl(199 89% 48%)',     // #0ea5e9 converted to HSL
+					'light': 'hsl(210 40% 98%)',      // #f8fafc converted to HSL
+					'muted': 'hsl(214 32% 65%)'       // #94a3b8 converted to HSL
 				},
 				clickradio: {
 					'primary': '#6D28D9', // purple-700

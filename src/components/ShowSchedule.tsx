@@ -173,8 +173,8 @@ const ShowSchedule = () => {
   });
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-radio-blue mb-6">Show Schedule</h2>
+    <div className="bg-card rounded-lg shadow-md p-6 border">
+      <h2 className="text-2xl font-bold text-foreground mb-6">Show Schedule</h2>
       
       <Tabs defaultValue={currentDay} className="w-full">
         <TabsList className="grid grid-cols-7 bg-muted mb-6 overflow-x-auto">
@@ -182,7 +182,7 @@ const ShowSchedule = () => {
             <TabsTrigger 
               key={day.day} 
               value={day.day}
-              className="data-[state=active]:bg-radio-accent data-[state=active]:text-white"
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               {day.day.substring(0, 3)}
             </TabsTrigger>
@@ -194,19 +194,19 @@ const ShowSchedule = () => {
             {day.shows.map((show) => (
               <div 
                 key={show.id} 
-                className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-radio-accent bg-gray-50 rounded-r-md hover:bg-gray-100 transition-colors"
+                className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-primary bg-muted/20 rounded-r-md hover:bg-muted/40 transition-colors"
               >
                 <div className="mb-3 md:mb-0">
-                  <h3 className="font-bold text-lg">{show.title}</h3>
-                  <p className="text-radio-muted">with {show.host}</p>
+                  <h3 className="font-bold text-lg text-foreground">{show.title}</h3>
+                  <p className="text-muted-foreground">with {show.host}</p>
                 </div>
                 
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
-                  <span className="bg-radio-blue text-white px-3 py-1 rounded-md text-sm">
+                  <span className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm font-medium">
                     {show.time}
                   </span>
                   
-                  <Button variant="outline" size="sm" className="border-radio-accent text-radio-accent hover:bg-radio-accent hover:text-white">
+                  <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                     More Info
                   </Button>
                 </div>
