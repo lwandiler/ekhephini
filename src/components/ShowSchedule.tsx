@@ -1,7 +1,8 @@
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ThemeContext } from '@/contexts/ThemeContext';
 
 interface Show {
   id: number;
@@ -167,6 +168,7 @@ const mockSchedule: DaySchedule[] = [
 ];
 
 const ShowSchedule = () => {
+  const { themeOptions, isDarkMode } = useContext(ThemeContext);
   const [currentDay, setCurrentDay] = useState(() => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return days[new Date().getDay()];
