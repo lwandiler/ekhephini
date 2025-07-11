@@ -182,7 +182,7 @@ const ShowSchedule = () => {
             <TabsTrigger 
               key={day.day} 
               value={day.day}
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground"
             >
               {day.day.substring(0, 3)}
             </TabsTrigger>
