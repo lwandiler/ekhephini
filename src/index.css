@@ -1,0 +1,43 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-marquee {
+    @apply overflow-hidden whitespace-nowrap;
+    animation: marquee 15s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    10% {
+      transform: translateX(0);
+    }
+    90% {
+      transform: translateX(calc(-100% + 200px));
+    }
+    100% {
+      transform: translateX(calc(-100% + 200px));
+    }
+  }
+  
+  /* Add text shadow utility classes for better visibility */
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  
+  .text-shadow-md {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 6px rgba(0,0,0,0.4);
+  }
+  
+  .text-shadow-white-sm {
+    text-shadow: 0 1px 2px rgba(255,255,255,0.2);
+  }
+}

@@ -1,0 +1,147 @@
+
+import { useState, useEffect, useContext } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from '@/components/ui/use-toast';
+import { StationContext } from '@/contexts/StationContext';
+import { StationSettings } from '@/types/theme';
+import { supabase } from '@/integrations/supabase/client';
+import { defaultStationSettings, extractSocialLinks, extractContactInfo } from '@/utils/stationSettingsManager';
+
+// Import tab components
+import ShowsTab from './admin/ShowsTab';
+import BlogPostsTab from './admin/BlogPostsTab';
+import AnalyticsTab from './admin/AnalyticsTab';
+import AnnouncementsTab from './admin/AnnouncementsTab';
+import BannersTab from './admin/banners/BannersTab';
+import SettingsTab from './admin/SettingsTab';
+import UsersTab from './admin/UsersTab';
+import ChatMessagesTab from './admin/ChatMessagesTab';
+
+const AdminDashboard = () => {
+  // Get settings context
+  const { settings, setSettings, refreshSettings } = useContext(StationContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const [dashboardSettings, setDashboardSettings] = useState<StationSettings>(settings);
+  
+  // Load settings from context when it changes
+  useEffect(() => {
+    console.log('AdminDashboard: Settings from context:', settings);
+    setDashboardSettings(settings);
+    setIsLoading(false);
+  }, [settings]);
+  
+  // Handle saving settings updates
+  const handleSaveSettings = async (updatedSettings: StationSettings) => {
+    try {
+      console.log('AdminDashboard: Saving updated settings:', updatedSettings);
+      
+      // Update global context if available
+      if (setSettings) {
+        setSettings(updatedSettings);
+      }
+      
+      // Apply settings to the site
+      applySettingsToSite(updatedSettings);
+      
+      // Update our local state
+      setDashboardSettings(updatedSettings);
+    } catch (error) {
+      console.error("AdminDashboard: Error saving settings:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save settings. Please try again.",
+      });
+    }
+  };
+
+  // Function to apply settings to the site
+  const applySettingsToSite = (updatedSettings: StationSettings) => {
+    // Update page title
+    document.title = updatedSettings.stationName;
+    
+    // Apply global document updates
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', updatedSettings.stationDescription);
+    } else {
+      const newMeta = document.createElement('meta');
+      newMeta.name = 'description';
+      newMeta.content = updatedSettings.stationDescription;
+      document.head.appendChild(newMeta);
+    }
+    
+    console.log('AdminDashboard: Applied settings to site:', updatedSettings);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md">
+      <Tabs defaultValue="analytics">
+        <div className="border-b">
+          <div className="container mx-auto px-6 overflow-x-auto">
+            <TabsList className="h-14">
+              <TabsTrigger value="analytics" className="data-[state=active]:text-radio-accent">Analytics</TabsTrigger>
+              <TabsTrigger value="shows" className="data-[state=active]:text-radio-accent">Shows</TabsTrigger>
+              <TabsTrigger value="users" className="data-[state=active]:text-radio-accent">Users</TabsTrigger>
+              <TabsTrigger value="blog" className="data-[state=active]:text-radio-accent">Blog</TabsTrigger>
+              <TabsTrigger value="announcements" className="data-[state=active]:text-radio-accent">Announcements</TabsTrigger>
+              <TabsTrigger value="banners" className="data-[state=active]:text-radio-accent">Banners</TabsTrigger>
+              <TabsTrigger value="chat" className="data-[state=active]:text-radio-accent">Chat</TabsTrigger>
+              <TabsTrigger value="settings" className="data-[state=active]:text-radio-accent">Settings</TabsTrigger>
+            </TabsList>
+          </div>
+        </div>
+        
+        <div className="container mx-auto px-6 py-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-radio-accent mb-4 mx-auto"></div>
+                <p className="text-muted-foreground">Loading settings...</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <TabsContent value="analytics">
+                <AnalyticsTab />
+              </TabsContent>
+              
+              <TabsContent value="shows">
+                <ShowsTab />
+              </TabsContent>
+              
+              <TabsContent value="users">
+                <UsersTab />
+              </TabsContent>
+              
+              <TabsContent value="blog">
+                <BlogPostsTab />
+              </TabsContent>
+              
+              <TabsContent value="announcements">
+                <AnnouncementsTab />
+              </TabsContent>
+              
+              <TabsContent value="banners">
+                <BannersTab />
+              </TabsContent>
+              
+              <TabsContent value="chat">
+                <ChatMessagesTab />
+              </TabsContent>
+              
+              <TabsContent value="settings">
+                <SettingsTab 
+                  settings={dashboardSettings}
+                  onSaveSettings={handleSaveSettings}
+                />
+              </TabsContent>
+            </>
+          )}
+        </div>
+      </Tabs>
+    </div>
+  );
+};
+
+export default AdminDashboard;

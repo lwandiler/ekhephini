@@ -1,0 +1,303 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Theme-related styles */
+.text-size-small {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-size-medium {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-size-large {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+/* Color scheme specific styles */
+.theme-purple .gradient-bg {
+  background: linear-gradient(to right, #4A1A82, #3A1372);
+}
+
+.theme-blue .gradient-bg {
+  background: linear-gradient(to right, #0A2463, #051C59);
+}
+
+.theme-green .gradient-bg {
+  background: linear-gradient(to right, #054A29, #033A1F);
+}
+
+.theme-red .gradient-bg {
+  background: linear-gradient(to right, #8B0000, #6B0000);
+}
+
+.theme-orange .gradient-bg {
+  background: linear-gradient(to right, #A04000, #7E3000);
+}
+
+.theme-pink .gradient-bg {
+  background: linear-gradient(to right, #A01B7C, #801566);
+}
+
+/* Primary buttons color for different themes with high contrast text */
+.theme-purple .primary-theme-button {
+  background: linear-gradient(to right, #6D28D9, #4338CA);
+  color: white !important;
+}
+
+.theme-blue .primary-theme-button {
+  background: linear-gradient(to right, #1E40AF, #0891B2);
+  color: white !important;
+}
+
+.theme-green .primary-theme-button {
+  background: linear-gradient(to right, #047857, #059669);
+  color: white !important;
+}
+
+.theme-red .primary-theme-button {
+  background: linear-gradient(to right, #DC2626, #9F1239);
+  color: white !important;
+}
+
+.theme-orange .primary-theme-button {
+  background: linear-gradient(to right, #F97316, #D97706);
+  color: white !important;
+}
+
+.theme-pink .primary-theme-button {
+  background: linear-gradient(to right, #EC4899, #8B5CF6);
+  color: white !important;
+}
+
+/* Ensure contrast for button text in all themes */
+.theme-purple button.primary-theme-button,
+.theme-blue button.primary-theme-button,
+.theme-green button.primary-theme-button,
+.theme-red button.primary-theme-button,
+.theme-orange button.primary-theme-button,
+.theme-pink button.primary-theme-button {
+  color: white !important;
+}
+
+/* Button hover effects for different color schemes */
+.theme-purple button.gradient-hover:hover {
+  background: linear-gradient(to right, #5B21B6, #3730A3);
+}
+
+.theme-blue button.gradient-hover:hover {
+  background: linear-gradient(to right, #1E3A8A, #0E7490);
+}
+
+.theme-green button.gradient-hover:hover {
+  background: linear-gradient(to right, #065F46, #047857);
+}
+
+.theme-red button.gradient-hover:hover {
+  background: linear-gradient(to right, #B91C1C, #881337);
+}
+
+.theme-orange button.gradient-hover:hover {
+  background: linear-gradient(to right, #EA580C, #B45309);
+}
+
+.theme-pink button.gradient-hover:hover {
+  background: linear-gradient(to right, #DB2777, #7C3AED);
+}
+
+/* Theme-specific header colors */
+.theme-purple .theme-header {
+  color: #6D28D9;
+}
+
+.theme-blue .theme-header {
+  color: #1E40AF;
+}
+
+.theme-green .theme-header {
+  color: #047857;
+}
+
+.theme-red .theme-header {
+  color: #DC2626;
+}
+
+.theme-orange .theme-header {
+  color: #F97316;
+}
+
+.theme-pink .theme-header {
+  color: #EC4899;
+}
+
+/* Theme-specific accent elements */
+.theme-purple .theme-accent {
+  border-color: #6D28D9;
+}
+
+.theme-blue .theme-accent {
+  border-color: #1E40AF;
+}
+
+.theme-green .theme-accent {
+  border-color: #047857;
+}
+
+.theme-red .theme-accent {
+  border-color: #DC2626;
+}
+
+.theme-orange .theme-accent {
+  border-color: #F97316;
+}
+
+.theme-pink .theme-accent {
+  border-color: #EC4899;
+}
+
+/* Text colors for themes */
+.theme-purple .theme-text {
+  color: #6D28D9;
+}
+
+.theme-blue .theme-text {
+  color: #1E40AF;
+}
+
+.theme-green .theme-text {
+  color: #047857;
+}
+
+.theme-red .theme-text {
+  color: #DC2626;
+}
+
+.theme-orange .theme-text {
+  color: #F97316;
+}
+
+.theme-pink .theme-text {
+  color: #EC4899;
+}
+
+/* Logo text in header - follows theme colors with white outline for visibility */
+.theme-purple .theme-logo-text {
+  color: #6D28D9;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-blue .theme-logo-text {
+  color: #1E40AF;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-green .theme-logo-text {
+  color: #047857;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-red .theme-logo-text {
+  color: #DC2626;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-orange .theme-logo-text {
+  color: #F97316;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-pink .theme-logo-text {
+  color: #EC4899;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+/* Button text colors - theme specific for Browse Shows button */
+.theme-purple .theme-button-text {
+  color: #6D28D9 !important;
+  font-weight: bold;
+}
+
+.theme-blue .theme-button-text {
+  color: #1E40AF !important;
+  font-weight: bold;
+}
+
+.theme-green .theme-button-text {
+  color: #047857 !important;
+  font-weight: bold;
+}
+
+.theme-red .theme-button-text {
+  color: #DC2626 !important;
+  font-weight: bold;
+}
+
+.theme-orange .theme-button-text {
+  color: #F97316 !important;
+  font-weight: bold;
+}
+
+.theme-pink .theme-button-text {
+  color: #EC4899 !important;
+  font-weight: bold;
+}
+
+/* Ensure button text is always visible */
+.gradient-bg a, 
+.gradient-bg button {
+  color: white;
+}
+
+/* Content area buttons with theme colors should have white text */
+button.primary-theme-button * {
+  color: white;
+}
+
+/* Special override for Browse Shows button to use theme colors */
+button.white-button .theme-button-text {
+  /* This will be overridden by the theme-specific rules above */
+  font-weight: bold;
+}
