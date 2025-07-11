@@ -6,6 +6,7 @@ import AdBanner from '@/components/AdBanner';
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import { Button } from '@/components/ui/button';
 import { Play, Radio, Music, Headphones, Calendar, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface ModernTemplateProps {
   featuredShows: any[];
@@ -42,8 +43,10 @@ const ModernTemplate = ({
                   <Play size={24} className="mr-2" fill="currentColor" />
                   Listen Live
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-white hover:bg-white hover:text-purple-900 rounded-full px-8 py-6 text-white">
-                  Explore Shows
+                <Button size="lg" variant="outline" className="border-2 border-white hover:bg-white hover:text-purple-900 rounded-full px-8 py-6 text-white" asChild>
+                  <Link to="/shows">
+                    Explore Shows
+                  </Link>
                 </Button>
               </div>
             </div>
