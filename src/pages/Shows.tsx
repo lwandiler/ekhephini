@@ -108,7 +108,7 @@ const Shows = () => {
         {/* Weekly Schedule */}
         <section className={`py-12 ${isDarkMode ? 'bg-gray-900 text-white' : ''}`}>
           <div className="container mx-auto px-4">
-            <h2 className={`text-3xl font-bold mb-8 ${'text-radio-blue'}`}>Weekly Schedule</h2>
+            <h2 className={`text-3xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-radio-blue'}`}>Weekly Schedule</h2>
             <ShowSchedule />
           </div>
         </section>
