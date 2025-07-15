@@ -25,24 +25,24 @@ const ModernTemplate = ({
   return (
     <>
       <main className="flex-1">
-        {/* Hero Section - Modern Style with darker gradients */}
-        <section className="bg-gradient-to-b from-purple-950 via-violet-950 to-indigo-950 text-white">
+        {/* Hero Section - Modern Style with green gradients */}
+        <section className="bg-gradient-to-b from-green-900 via-green-800 to-green-700 text-white">
           <div className="container mx-auto px-4 py-20 md:py-32">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">Experience Click Radio<br/>Like Never Before</h1>
-              <p className="text-xl text-purple-200 mb-10 max-w-2xl mx-auto">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-white">Experience Click Radio<br/>Like Never Before</h1>
+              <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
                 Immerse yourself in captivating shows, podcasts, and music curated just for you.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button 
                   size="lg" 
-                  className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white rounded-full px-8 py-6 flex items-center"
+                  className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-full px-8 py-6 flex items-center"
                   onClick={onListenLiveClick}
                 >
                   <Play size={24} className="mr-2" fill="currentColor" />
                   Listen Live
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-white hover:bg-white hover:text-purple-900 rounded-full px-8 py-6 text-white" asChild>
+                <Button size="lg" variant="outline" className="border-2 border-white hover:bg-white hover:text-green-900 rounded-full px-8 py-6 text-white" asChild>
                   <Link to="/shows">
                     Explore Shows
                   </Link>
@@ -50,7 +50,7 @@ const ModernTemplate = ({
               </div>
             </div>
           </div>
-          <div className="h-16 bg-gradient-to-b from-indigo-950 to-transparent"></div>
+          <div className="h-16 bg-gradient-to-b from-green-700 to-transparent"></div>
         </section>
         
         {/* Featured Podcasts - Modern Style */}
