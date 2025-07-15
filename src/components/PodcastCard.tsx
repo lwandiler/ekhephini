@@ -53,7 +53,7 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="text-purple-400 hover:text-white hover:bg-purple-600 rounded-full"
+            className="text-green-400 hover:text-white hover:bg-green-600 rounded-full"
             asChild
           >
             <Link to={podcast.listenUrl}>
@@ -67,7 +67,7 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
 
   if (variant === 'featured') {
     return (
-      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-900 to-gray-900 text-white border-purple-800">
+      <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-900 to-gray-900 text-white border-green-800">
         <div className="flex flex-col md:flex-row">
           <div className="md:w-2/5 relative group">
             <img 
@@ -75,11 +75,11 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
               alt={podcast.title} 
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-900/80 to-transparent md:bg-gradient-to-t md:from-black/80 md:via-black/40 md:to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 to-transparent md:bg-gradient-to-t md:from-black/80 md:via-black/40 md:to-transparent"></div>
             <Button 
               variant="default" 
               size="icon"
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-purple-600 hover:bg-purple-700 text-white h-16 w-16 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white h-16 w-16 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
               asChild
             >
               <Link to={podcast.listenUrl}>
@@ -89,12 +89,12 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
           </div>
           <div className="md:w-3/5 p-6">
             <div className="flex items-center mb-4">
-              <span className="text-xs font-medium bg-purple-600 px-3 py-1 rounded-full text-white">
+              <span className="text-xs font-medium bg-green-600 px-3 py-1 rounded-full text-white">
                 FEATURED EPISODE
               </span>
             </div>
             <CardTitle className="text-2xl mb-2 text-white">{podcast.title}</CardTitle>
-            <CardDescription className="text-purple-300 mb-2">
+            <CardDescription className="text-green-300 mb-2">
               Hosted by {podcast.host} • Episode {podcast.episodeNumber}
             </CardDescription>
             <p className="mb-4 text-gray-300">{podcast.description}</p>
@@ -104,7 +104,7 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="border-purple-400 text-purple-300 hover:bg-purple-700 hover:text-white"
+                  className="border-green-400 text-green-300 hover:bg-green-700 hover:text-white"
                   asChild
                 >
                   <Link to={podcast.listenUrl}>
@@ -115,7 +115,7 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  className="border-purple-400 text-purple-300 hover:bg-purple-700 hover:text-white"
+                  className="border-green-400 text-green-300 hover:bg-green-700 hover:text-white"
                 >
                   <Download size={16} className="mr-1" />
                   Download
@@ -141,7 +141,7 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
         <Button 
           variant="default" 
           size="icon" 
-          className="absolute top-4 right-4 bg-purple-600 hover:bg-purple-700 text-white h-8 w-8 rounded-full"
+          className="absolute top-4 right-4 bg-green-600 hover:bg-green-700 text-white h-8 w-8 rounded-full"
           onClick={() => setIsSaved(!isSaved)}
         >
           <Bookmark size={16} fill={isSaved ? "currentColor" : "none"} />
@@ -150,7 +150,7 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
       
       <CardHeader>
         <div className="flex justify-between items-start mb-2">
-          <span className="text-xs font-medium bg-purple-600 text-white px-2 py-1 rounded-full">
+          <span className="text-xs font-medium bg-green-600 text-white px-2 py-1 rounded-full">
             Episode {podcast.episodeNumber}
           </span>
         </div>
@@ -172,14 +172,14 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
           <Button 
             variant="ghost" 
             size="icon"
-            className="text-purple-400 hover:text-white hover:bg-purple-700 h-8 w-8 rounded-full"
+            className="text-green-400 hover:text-white hover:bg-green-700 h-8 w-8 rounded-full"
           >
             <Share2 size={16} />
           </Button>
           <Button 
             variant="default" 
             size="sm"
-            className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
+            className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white"
             asChild
           >
             <Link to={podcast.listenUrl}>
