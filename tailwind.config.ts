@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -26,24 +25,24 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: 'hsl(142 71% 45%)', // Green-600
+					foreground: 'hsl(0 0% 100%)' // White
 				},
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: 'hsl(142 71% 45%)', // Green-600
+					foreground: 'hsl(0 0% 100%)' // White
 				},
 				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
+					DEFAULT: 'hsl(142 71% 45%)', // Green-600
+					foreground: 'hsl(0 0% 100%)' // White
 				},
 				muted: {
 					DEFAULT: 'hsl(var(--muted))',
 					foreground: 'hsl(var(--muted-foreground))'
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					DEFAULT: 'hsl(142 71% 45%)', // Green-600
+					foreground: 'hsl(0 0% 100%)' // White
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -56,38 +55,38 @@ export default {
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+					primary: 'hsl(142 71% 45%)', // Green-600
+					'primary-foreground': 'hsl(0 0% 100%)', // White
+					accent: 'hsl(142 71% 45%)', // Green-600
+					'accent-foreground': 'hsl(0 0% 100%)', // White
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				radio: {
 					'blue': 'hsl(222 84% 5%)',        // #0f172a converted to HSL
 					'light-blue': 'hsl(220 39% 11%)', // #1e293b converted to HSL  
-					'accent': 'hsl(199 89% 48%)',     // #0ea5e9 converted to HSL
+					'accent': 'hsl(142 71% 45%)',     // Green-600 converted to HSL
 					'light': 'hsl(210 40% 98%)',      // #f8fafc converted to HSL
 					'muted': 'hsl(214 32% 65%)'       // #94a3b8 converted to HSL
 				},
 				clickradio: {
-					'primary': '#6D28D9', // purple-700
-					'secondary': '#4338CA', // indigo-700
-					'accent': '#D8B4FE', // purple-300
+					'primary': 'hsl(142 71% 45%)', // Green-600
+					'secondary': 'hsl(142 69% 58%)', // Green-500
+					'accent': 'hsl(142 76% 73%)', // Green-300
 					'light': '#F3F4F6', // gray-100
 					'dark': '#1E1B4B', // indigo-900
 					'text': '#4B5563', // gray-600
-					// Color scheme colors
-					'blue-primary': '#1E40AF', // blue-700
-					'blue-secondary': '#0891B2', // cyan-700
-					'green-primary': '#047857', // green-700
-					'green-secondary': '#059669', // emerald-700
-					'red-primary': '#DC2626', // red-600
-					'red-secondary': '#9F1239', // rose-700
-					'orange-primary': '#F97316', // orange-500
-					'orange-secondary': '#D97706', // amber-600
-					'pink-primary': '#EC4899', // pink-500
-					'pink-secondary': '#8B5CF6', // purple-500
+					// Color scheme colors - all green variants
+					'blue-primary': 'hsl(142 71% 45%)', // Green-600
+					'blue-secondary': 'hsl(142 69% 58%)', // Green-500
+					'green-primary': 'hsl(142 71% 45%)', // Green-600
+					'green-secondary': 'hsl(142 69% 58%)', // Green-500
+					'red-primary': 'hsl(142 71% 45%)', // Green-600
+					'red-secondary': 'hsl(142 69% 58%)', // Green-500
+					'orange-primary': 'hsl(142 71% 45%)', // Green-600
+					'orange-secondary': 'hsl(142 69% 58%)', // Green-500
+					'pink-primary': 'hsl(142 71% 45%)', // Green-600
+					'pink-secondary': 'hsl(142 69% 58%)', // Green-500
 				}
 			},
 			borderRadius: {
