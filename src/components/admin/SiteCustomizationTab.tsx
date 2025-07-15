@@ -1,4 +1,3 @@
-
 import React, { useState, useContext } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,6 +26,12 @@ const SiteCustomizationTab = () => {
     aboutText: settings.stationDescription,
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [savingStates, setSavingStates] = useState({
+    logo: false,
+    theme: false,
+    text: false,
+    analytics: false
+  });
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,6 +73,29 @@ const SiteCustomizationTab = () => {
     }
   };
 
+  const handleSaveLogo = async () => {
+    setSavingStates(prev => ({ ...prev, logo: true }));
+    try {
+      const settingsToSave = {
+        logo_url: settings.logoUrl,
+      };
+      await stationService.updateStationSettings(settingsToSave);
+      toast({
+        title: "Logo Saved",
+        description: "Logo has been saved to the database successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving logo:', error);
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: "Failed to save logo to the database. Please try again.",
+      });
+    } finally {
+      setSavingStates(prev => ({ ...prev, logo: false }));
+    }
+  };
+
   const handleThemeChange = (updates: Partial<typeof themeOptions>) => {
     const newThemeOptions = { ...themeOptions, ...updates };
     setThemeOptions(newThemeOptions);
@@ -76,6 +104,27 @@ const SiteCustomizationTab = () => {
       title: "Theme Updated",
       description: "Your site theme has been updated. Click Save to persist changes.",
     });
+  };
+
+  const handleSaveTheme = async () => {
+    setSavingStates(prev => ({ ...prev, theme: true }));
+    try {
+      // Theme options are saved to localStorage since they're not part of station settings
+      localStorage.setItem('clickRadioTheme', JSON.stringify(themeOptions));
+      toast({
+        title: "Theme Saved",
+        description: "Theme settings have been saved successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving theme:', error);
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: "Failed to save theme settings. Please try again.",
+      });
+    } finally {
+      setSavingStates(prev => ({ ...prev, theme: false }));
+    }
   };
 
   const handleTextUpdate = () => {
@@ -93,6 +142,45 @@ const SiteCustomizationTab = () => {
         title: "Page Text Updated",
         description: "Your page text has been updated. Click Save to persist changes.",
       });
+    }
+  };
+
+  const handleSavePageText = async () => {
+    setSavingStates(prev => ({ ...prev, text: true }));
+    try {
+      const settingsToSave = {
+        station_name: pageTexts.heroTitle,
+        station_tagline: pageTexts.heroSubtitle,
+        station_description: pageTexts.aboutText,
+      };
+      await stationService.updateStationSettings(settingsToSave);
+      
+      // Update local state
+      if (setSettings) {
+        const newSettings = {
+          ...settings,
+          stationName: pageTexts.heroTitle,
+          stationTagline: pageTexts.heroSubtitle,
+          stationDescription: pageTexts.aboutText,
+        };
+        setSettings(newSettings);
+        localStorage.setItem('radioSettings', JSON.stringify(newSettings));
+        document.title = pageTexts.heroTitle;
+      }
+      
+      toast({
+        title: "Page Text Saved",
+        description: "Page text has been saved to the database successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving page text:', error);
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: "Failed to save page text to the database. Please try again.",
+      });
+    } finally {
+      setSavingStates(prev => ({ ...prev, text: false }));
     }
   };
 
@@ -129,6 +217,45 @@ const SiteCustomizationTab = () => {
         title: "Analytics Removed",
         description: "Google Analytics script has been removed. Click Save to persist changes.",
       });
+    }
+  };
+
+  const handleSaveAnalytics = async () => {
+    setSavingStates(prev => ({ ...prev, analytics: true }));
+    try {
+      // Analytics script is saved to localStorage since it's not part of station settings
+      localStorage.setItem('googleAnalyticsScript', analyticsScript);
+      
+      // Apply the script immediately
+      if (analyticsScript.trim()) {
+        const existingScript = document.querySelector('#custom-google-analytics');
+        if (existingScript) {
+          existingScript.remove();
+        }
+        const scriptElement = document.createElement('script');
+        scriptElement.id = 'custom-google-analytics';
+        scriptElement.innerHTML = analyticsScript;
+        document.head.appendChild(scriptElement);
+      } else {
+        const existingScript = document.querySelector('#custom-google-analytics');
+        if (existingScript) {
+          existingScript.remove();
+        }
+      }
+      
+      toast({
+        title: "Analytics Saved",
+        description: "Google Analytics script has been saved successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving analytics:', error);
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: "Failed to save analytics script. Please try again.",
+      });
+    } finally {
+      setSavingStates(prev => ({ ...prev, analytics: false }));
     }
   };
 
@@ -182,7 +309,7 @@ const SiteCustomizationTab = () => {
           className="bg-green-600 hover:bg-green-700"
         >
           <Save className="w-4 h-4 mr-2" />
-          {isSaving ? 'Saving...' : 'Save Changes'}
+          {isSaving ? 'Saving...' : 'Save All Changes'}
         </Button>
       </div>
       
@@ -196,11 +323,22 @@ const SiteCustomizationTab = () => {
         
         <TabsContent value="logo" className="mt-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Station Logo</CardTitle>
-              <CardDescription>
-                Upload your station logo (recommended size: 400x400px, max 2MB)
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Station Logo</CardTitle>
+                <CardDescription>
+                  Upload your station logo (recommended size: 400x400px, max 2MB)
+                </CardDescription>
+              </div>
+              <Button 
+                onClick={handleSaveLogo} 
+                disabled={savingStates.logo}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {savingStates.logo ? 'Saving...' : 'Save Logo'}
+              </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col items-center space-y-4">
@@ -236,11 +374,22 @@ const SiteCustomizationTab = () => {
         
         <TabsContent value="theme" className="mt-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Site Theme</CardTitle>
-              <CardDescription>
-                Customize your website's color scheme and typography
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Site Theme</CardTitle>
+                <CardDescription>
+                  Customize your website's color scheme and typography
+                </CardDescription>
+              </div>
+              <Button 
+                onClick={handleSaveTheme} 
+                disabled={savingStates.theme}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {savingStates.theme ? 'Saving...' : 'Save Theme'}
+              </Button>
             </CardHeader>
             <CardContent className="space-y-6">
               <ThemeTypeSelector 
@@ -268,11 +417,22 @@ const SiteCustomizationTab = () => {
         
         <TabsContent value="text" className="mt-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Page Text Content</CardTitle>
-              <CardDescription>
-                Edit the main text content displayed on your website
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Page Text Content</CardTitle>
+                <CardDescription>
+                  Edit the main text content displayed on your website
+                </CardDescription>
+              </div>
+              <Button 
+                onClick={handleSavePageText} 
+                disabled={savingStates.text}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {savingStates.text ? 'Saving...' : 'Save Text'}
+              </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -315,11 +475,22 @@ const SiteCustomizationTab = () => {
         
         <TabsContent value="analytics" className="mt-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Google Analytics</CardTitle>
-              <CardDescription>
-                Add your complete Google Analytics script to track website visitors
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Google Analytics</CardTitle>
+                <CardDescription>
+                  Add your complete Google Analytics script to track website visitors
+                </CardDescription>
+              </div>
+              <Button 
+                onClick={handleSaveAnalytics} 
+                disabled={savingStates.analytics}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {savingStates.analytics ? 'Saving...' : 'Save Analytics'}
+              </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
