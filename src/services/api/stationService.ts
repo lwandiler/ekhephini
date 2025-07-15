@@ -10,6 +10,7 @@ export interface StationSettingsResponse {
   logo_url?: string;
   social_links?: Record<string, string>;
   contact_info?: Record<string, string>;
+  page_content?: Record<string, string>;
   updated_at?: string;
 }
 

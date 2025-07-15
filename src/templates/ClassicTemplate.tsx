@@ -4,6 +4,8 @@ import ShowCard from '@/components/ShowCard';
 import NewsList from '@/components/NewsList';
 import AdBanner from '@/components/AdBanner';
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
+import EditableText from '@/components/EditableText';
+import EditableImage from '@/components/EditableImage';
 import { Button } from '@/components/ui/button';
 import { Radio } from 'lucide-react';
 
@@ -28,10 +30,17 @@ const ClassicTemplate = ({
           <div className="container mx-auto px-4 py-16 md:py-24">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">Welcome to Click Radio</h1>
-                <p className="text-xl text-purple-200 mb-6">
-                  Listen to the best music, engaging talk shows, and stay updated with the latest news.
-                </p>
+                <EditableText 
+                  contentKey="hero_title"
+                  defaultValue="Welcome to Click Radio"
+                  as="h1"
+                  className="text-4xl md:text-5xl font-bold mb-4"
+                />
+                <EditableText 
+                  contentKey="hero_description"
+                  defaultValue="Listen to the best music, engaging talk shows, and stay updated with the latest news."
+                  className="text-xl text-purple-200 mb-6"
+                />
                 <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                   <Button 
                     className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white px-6 py-3 rounded-md font-medium"
@@ -39,7 +48,6 @@ const ClassicTemplate = ({
                   >
                     Listen Live
                   </Button>
-                  {/* View Schedule button has been removed */}
                 </div>
               </div>
               <div className="hidden md:flex justify-center">
@@ -62,7 +70,12 @@ const ClassicTemplate = ({
         {/* Featured Shows */}
         <section className="py-12 bg-gray-800">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-purple-300 mb-8">Featured Shows</h2>
+            <EditableText 
+              contentKey="featured_shows_title"
+              defaultValue="Featured Shows"
+              as="h2"
+              className="text-3xl font-bold text-purple-300 mb-8"
+            />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredShows.map(show => (
                 <ShowCard
@@ -83,7 +96,12 @@ const ClassicTemplate = ({
         {/* Featured Podcasts */}
         <section className="py-12 bg-gray-900">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-purple-300 mb-8">Featured Podcasts</h2>
+            <EditableText 
+              contentKey="featured_podcasts_title"
+              defaultValue="Featured Podcasts"
+              as="h2"
+              className="text-3xl font-bold text-purple-300 mb-8"
+            />
             <div className="mb-8">
               <PodcastCard podcast={featuredPodcasts[0]} variant="featured" />
             </div>
@@ -103,7 +121,12 @@ const ClassicTemplate = ({
         {/* Schedule */}
         <section className="py-12 bg-gray-800">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-purple-300 mb-8">Our Schedule</h2>
+            <EditableText 
+              contentKey="schedule_title"
+              defaultValue="Our Schedule"
+              as="h2"
+              className="text-3xl font-bold text-purple-300 mb-8"
+            />
             <ShowSchedule />
           </div>
         </section>
@@ -113,11 +136,21 @@ const ClassicTemplate = ({
           <div className="container mx-auto px-4">
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex-1">
-                <h2 className="text-3xl font-bold text-purple-300 mb-8">Latest News</h2>
+                <EditableText 
+                  contentKey="latest_news_title"
+                  defaultValue="Latest News"
+                  as="h2"
+                  className="text-3xl font-bold text-purple-300 mb-8"
+                />
                 <NewsList news={featuredNews} compact />
               </div>
               <div className="lg:w-1/3">
-                <h2 className="text-3xl font-bold text-purple-300 mb-8">Sponsors</h2>
+                <EditableText 
+                  contentKey="sponsors_title"
+                  defaultValue="Sponsors"
+                  as="h2"
+                  className="text-3xl font-bold text-purple-300 mb-8"
+                />
                 <AdBanner position="sidebar" />
                 <AdBanner position="sidebar" />
               </div>
@@ -128,10 +161,17 @@ const ClassicTemplate = ({
         {/* Call to Action */}
         <section className="bg-gradient-to-r from-purple-900 to-indigo-900 text-white py-12">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
-            <p className="text-xl text-purple-200 mb-6 max-w-2xl mx-auto">
-              Stay updated with our latest shows, events, and exclusive content by subscribing to our newsletter.
-            </p>
+            <EditableText 
+              contentKey="cta_title"
+              defaultValue="Join Our Community"
+              as="h2"
+              className="text-3xl font-bold mb-4"
+            />
+            <EditableText 
+              contentKey="cta_description"
+              defaultValue="Stay updated with our latest shows, events, and exclusive content by subscribing to our newsletter."
+              className="text-xl text-purple-200 mb-6 max-w-2xl mx-auto"
+            />
             <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-2 max-w-md mx-auto">
               <input 
                 type="email" 
