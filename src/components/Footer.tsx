@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Youtube, Music, Headphones, Mail, Phone } from 'lucide-react';
 
@@ -18,7 +17,7 @@ const Footer = () => {
                   className="w-10 h-10 object-contain"
                 />
               </div>
-              <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-green-300 to-green-400">Click Radio</h3>
+              <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-green-300 to-green-400">Moutse</h3>
             </div>
             <p className="text-gray-300 leading-relaxed">
               Your favorite radio station bringing you the best music, shows, and entertainment 24/7. Tune in and experience the sound of tomorrow, today.
@@ -72,7 +71,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500">© {currentYear} Click Radio. All Rights Reserved.</p>
+          <p className="text-gray-500">© {currentYear} Moutse. All Rights Reserved.</p>
           <div className="mt-4 md:mt-0 space-x-6">
             <Link to="/privacy" className="text-gray-400 hover:text-purple-300 transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="text-gray-400 hover:text-purple-300 transition-colors">Terms of Service</Link>
