@@ -14,6 +14,8 @@ import { ThemeTypeSelector } from '@/components/theme/ThemeTypeSelector';
 import { FontFamilySelector } from '@/components/theme/FontFamilySelector';
 import { FontSizeSelector } from '@/components/theme/FontSizeSelector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { stationService } from '@/services/api/stationService';
+import { Save } from 'lucide-react';
 
 const SiteCustomizationTab = () => {
   const { themeOptions, setThemeOptions } = useContext(ThemeContext);
@@ -24,6 +26,7 @@ const SiteCustomizationTab = () => {
     heroSubtitle: settings.stationTagline,
     aboutText: settings.stationDescription,
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,7 +60,7 @@ const SiteCustomizationTab = () => {
           localStorage.setItem('radioSettings', JSON.stringify(newSettings));
           toast({
             title: "Logo Updated",
-            description: "Your station logo has been updated successfully.",
+            description: "Your station logo has been updated. Click Save to persist changes.",
           });
         }
       };
@@ -71,7 +74,7 @@ const SiteCustomizationTab = () => {
     localStorage.setItem('clickRadioTheme', JSON.stringify(newThemeOptions));
     toast({
       title: "Theme Updated",
-      description: "Your site theme has been updated successfully.",
+      description: "Your site theme has been updated. Click Save to persist changes.",
     });
   };
 
@@ -88,7 +91,7 @@ const SiteCustomizationTab = () => {
       document.title = pageTexts.heroTitle;
       toast({
         title: "Page Text Updated",
-        description: "Your page text has been updated successfully.",
+        description: "Your page text has been updated. Click Save to persist changes.",
       });
     }
   };
@@ -112,7 +115,7 @@ const SiteCustomizationTab = () => {
 
       toast({
         title: "Analytics Updated",
-        description: "Google Analytics script has been added successfully.",
+        description: "Google Analytics script has been added. Click Save to persist changes.",
       });
     } else {
       // Remove script if empty
@@ -124,15 +127,64 @@ const SiteCustomizationTab = () => {
       
       toast({
         title: "Analytics Removed",
-        description: "Google Analytics script has been removed.",
+        description: "Google Analytics script has been removed. Click Save to persist changes.",
       });
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    setIsSaving(true);
+    try {
+      // Prepare the settings data for the database
+      const settingsToSave = {
+        station_name: pageTexts.heroTitle,
+        station_tagline: pageTexts.heroSubtitle,
+        station_description: pageTexts.aboutText,
+        stream_url: settings.streamUrl,
+        logo_url: settings.logoUrl,
+        social_links: settings.socialLinks,
+        contact_info: settings.contactInfo,
+      };
+
+      // Save to database using the station service
+      await stationService.updateStationSettings(settingsToSave);
+
+      // Also save theme options and analytics script to localStorage
+      localStorage.setItem('clickRadioTheme', JSON.stringify(themeOptions));
+      localStorage.setItem('googleAnalyticsScript', analyticsScript);
+
+      toast({
+        title: "Changes Saved",
+        description: "All your customization changes have been saved to the database successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: "Failed to save changes to the database. Please try again.",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Site Customization</h2>
-      <p className="text-muted-foreground">Customize your website's appearance and content.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold">Site Customization</h2>
+          <p className="text-muted-foreground">Customize your website's appearance and content.</p>
+        </div>
+        <Button 
+          onClick={handleSaveChanges} 
+          disabled={isSaving}
+          className="bg-green-600 hover:bg-green-700"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {isSaving ? 'Saving...' : 'Save Changes'}
+        </Button>
+      </div>
       
       <Tabs defaultValue="logo" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
