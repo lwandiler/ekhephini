@@ -68,14 +68,14 @@ const ShowCard = ({
       <CardFooter className="flex justify-between pt-2">
         <Button 
           variant="outline" 
-          className="border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white transition-all duration-300"
+          className="border-green-500 text-green-400 hover:bg-green-500 hover:text-white transition-all duration-300"
         >
           <Radio className="mr-2 h-4 w-4" />
           Details
         </Button>
         <Button 
           variant="default" 
-          className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
+          className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white"
         >
           <Play className="mr-2 h-4 w-4" fill="currentColor" />
           Listen
