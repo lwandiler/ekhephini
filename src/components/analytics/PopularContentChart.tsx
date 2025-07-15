@@ -29,8 +29,8 @@ const config = {
   listeners: {
     label: 'Total Listeners',
     theme: {
-      light: '#8b5cf6',
-      dark: '#a78bfa',
+      light: '#047857',
+      dark: '#059669',
     },
   },
   hours: {

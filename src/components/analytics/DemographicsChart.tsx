@@ -1,4 +1,3 @@
-
 import {
   BarChart,
   Bar,
@@ -39,8 +38,8 @@ const config = {
   other: {
     label: 'Other',
     theme: {
-      light: '#10b981',
-      dark: '#34d399',
+      light: '#047857',
+      dark: '#059669',
     },
   },
 };
