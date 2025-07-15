@@ -3,30 +3,20 @@ import { useEffect } from 'react';
 
 const GoogleAnalytics = () => {
   useEffect(() => {
-    const analyticsId = localStorage.getItem('googleAnalyticsId');
+    const analyticsScript = localStorage.getItem('googleAnalyticsScript');
     
-    if (analyticsId && analyticsId.trim()) {
-      // Check if Google Analytics is already loaded
-      const existingScript = document.querySelector('script[src*="googletagmanager.com/gtag/js"]');
+    if (analyticsScript && analyticsScript.trim()) {
+      // Check if a custom analytics script is already loaded
+      const existingCustomScript = document.querySelector('#custom-google-analytics');
       
-      if (!existingScript) {
-        // Load Google Analytics script
-        const script1 = document.createElement('script');
-        script1.async = true;
-        script1.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsId}`;
-        document.head.appendChild(script1);
-
-        // Initialize Google Analytics
-        const script2 = document.createElement('script');
-        script2.innerHTML = `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${analyticsId}');
-        `;
-        document.head.appendChild(script2);
+      if (!existingCustomScript) {
+        // Create a script element and add the custom analytics code
+        const scriptElement = document.createElement('script');
+        scriptElement.id = 'custom-google-analytics';
+        scriptElement.innerHTML = analyticsScript;
+        document.head.appendChild(scriptElement);
         
-        console.log('Google Analytics loaded with ID:', analyticsId);
+        console.log('Custom Google Analytics script loaded');
       }
     }
   }, []);

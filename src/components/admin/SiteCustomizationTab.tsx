@@ -18,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const SiteCustomizationTab = () => {
   const { themeOptions, setThemeOptions } = useContext(ThemeContext);
   const { settings, setSettings } = useContext(StationContext);
-  const [analyticsId, setAnalyticsId] = useState(localStorage.getItem('googleAnalyticsId') || '');
+  const [analyticsScript, setAnalyticsScript] = useState(localStorage.getItem('googleAnalyticsScript') || '');
   const [pageTexts, setPageTexts] = useState({
     heroTitle: settings.stationName,
     heroSubtitle: settings.stationTagline,
@@ -94,36 +94,37 @@ const SiteCustomizationTab = () => {
   };
 
   const handleAnalyticsUpdate = () => {
-    if (analyticsId.trim()) {
-      localStorage.setItem('googleAnalyticsId', analyticsId);
-      
-      // Add Google Analytics script to head
-      const existingScript = document.querySelector('script[src*="googletagmanager.com/gtag/js"]');
-      if (!existingScript) {
-        const script1 = document.createElement('script');
-        script1.async = true;
-        script1.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsId}`;
-        document.head.appendChild(script1);
-
-        const script2 = document.createElement('script');
-        script2.innerHTML = `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${analyticsId}');
-        `;
-        document.head.appendChild(script2);
+    if (analyticsScript.trim()) {
+      // Remove any existing custom analytics script
+      const existingScript = document.querySelector('#custom-google-analytics');
+      if (existingScript) {
+        existingScript.remove();
       }
+
+      // Save the script to localStorage
+      localStorage.setItem('googleAnalyticsScript', analyticsScript);
+      
+      // Add the new script to head
+      const scriptElement = document.createElement('script');
+      scriptElement.id = 'custom-google-analytics';
+      scriptElement.innerHTML = analyticsScript;
+      document.head.appendChild(scriptElement);
 
       toast({
         title: "Analytics Updated",
-        description: "Google Analytics has been configured successfully.",
+        description: "Google Analytics script has been added successfully.",
       });
     } else {
+      // Remove script if empty
+      const existingScript = document.querySelector('#custom-google-analytics');
+      if (existingScript) {
+        existingScript.remove();
+      }
+      localStorage.removeItem('googleAnalyticsScript');
+      
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter a valid Google Analytics ID.",
+        title: "Analytics Removed",
+        description: "Google Analytics script has been removed.",
       });
     }
   };
@@ -265,35 +266,42 @@ const SiteCustomizationTab = () => {
             <CardHeader>
               <CardTitle>Google Analytics</CardTitle>
               <CardDescription>
-                Add Google Analytics tracking to your website
+                Add your complete Google Analytics script to track website visitors
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="analytics-id">Google Analytics ID</Label>
-                <Input 
-                  id="analytics-id"
-                  value={analyticsId}
-                  onChange={(e) => setAnalyticsId(e.target.value)}
-                  placeholder="G-XXXXXXXXXX or UA-XXXXXXXXX"
+                <Label htmlFor="analytics-script">Google Analytics Script</Label>
+                <Textarea 
+                  id="analytics-script"
+                  value={analyticsScript}
+                  onChange={(e) => setAnalyticsScript(e.target.value)}
+                  placeholder="Paste your complete Google Analytics script here..."
+                  rows={10}
+                  className="font-mono text-sm"
                 />
                 <p className="text-xs text-gray-500">
-                  Find your Analytics ID in your Google Analytics dashboard
+                  Copy the entire script provided by Google Analytics and paste it here
                 </p>
               </div>
               
               <Button onClick={handleAnalyticsUpdate} className="w-full">
-                Update Analytics
+                {analyticsScript.trim() ? 'Update Analytics Script' : 'Remove Analytics Script'}
               </Button>
               
               <div className="mt-4 p-4 bg-muted rounded-lg">
                 <h4 className="font-medium mb-2">Setup Instructions:</h4>
                 <ol className="text-sm space-y-1 list-decimal list-inside">
-                  <li>Create a Google Analytics account</li>
-                  <li>Set up a new property for your website</li>
-                  <li>Copy the Measurement ID (starts with G-)</li>
-                  <li>Paste it above and click "Update Analytics"</li>
+                  <li>Go to your Google Analytics dashboard</li>
+                  <li>Navigate to Admin → Data Streams</li>
+                  <li>Select your website stream</li>
+                  <li>Click on "Tagging Instructions" → "Global Site Tag"</li>
+                  <li>Copy the entire script and paste it above</li>
+                  <li>Click "Update Analytics Script"</li>
                 </ol>
+                <p className="text-xs text-gray-600 mt-2">
+                  The script will be automatically added to your website's head section for proper tracking.
+                </p>
               </div>
             </CardContent>
           </Card>
