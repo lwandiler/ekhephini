@@ -16,6 +16,7 @@ import BannersTab from './admin/banners/BannersTab';
 import SettingsTab from './admin/SettingsTab';
 import UsersTab from './admin/UsersTab';
 import ChatMessagesTab from './admin/ChatMessagesTab';
+import SiteCustomizationTab from './admin/SiteCustomizationTab';
 
 const AdminDashboard = () => {
   // Get settings context
@@ -81,6 +82,7 @@ const AdminDashboard = () => {
           <div className="container mx-auto px-6 overflow-x-auto">
             <TabsList className="h-14">
               <TabsTrigger value="analytics" className="data-[state=active]:text-radio-accent">Analytics</TabsTrigger>
+              <TabsTrigger value="customize" className="data-[state=active]:text-radio-accent">Customize</TabsTrigger>
               <TabsTrigger value="shows" className="data-[state=active]:text-radio-accent">Shows</TabsTrigger>
               <TabsTrigger value="users" className="data-[state=active]:text-radio-accent">Users</TabsTrigger>
               <TabsTrigger value="blog" className="data-[state=active]:text-radio-accent">Blog</TabsTrigger>
@@ -104,6 +106,10 @@ const AdminDashboard = () => {
             <>
               <TabsContent value="analytics">
                 <AnalyticsTab />
+              </TabsContent>
+              
+              <TabsContent value="customize">
+                <SiteCustomizationTab />
               </TabsContent>
               
               <TabsContent value="shows">
