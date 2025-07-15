@@ -65,7 +65,7 @@
 .theme-red .gradient-bg,
 .theme-orange .gradient-bg,
 .theme-pink .gradient-bg {
-  background: linear-gradient(to right, #054A29, #033A1F) !important;
+  background: linear-gradient(to right, #054A29, #033A1F);
 }
 
 /* Primary buttons color for different themes with high contrast text - all green */
@@ -75,7 +75,7 @@
 .theme-red .primary-theme-button,
 .theme-orange .primary-theme-button,
 .theme-pink .primary-theme-button {
-  background: linear-gradient(to right, #047857, #059669) !important;
+  background: linear-gradient(to right, #047857, #059669);
   color: white !important;
 }
 
@@ -96,7 +96,7 @@
 .theme-red button.gradient-hover:hover,
 .theme-orange button.gradient-hover:hover,
 .theme-pink button.gradient-hover:hover {
-  background: linear-gradient(to right, #065F46, #047857) !important;
+  background: linear-gradient(to right, #065F46, #047857);
 }
 
 /* Theme-specific header colors - all green */
@@ -106,7 +106,7 @@
 .theme-red .theme-header,
 .theme-orange .theme-header,
 .theme-pink .theme-header {
-  color: #047857 !important;
+  color: #047857;
 }
 
 /* Theme-specific accent elements - all green borders */
@@ -116,7 +116,7 @@
 .theme-red .theme-accent,
 .theme-orange .theme-accent,
 .theme-pink .theme-accent {
-  border-color: #047857 !important;
+  border-color: #047857;
 }
 
 /* Text colors for themes - all green */
@@ -126,7 +126,7 @@
 .theme-red .theme-text,
 .theme-orange .theme-text,
 .theme-pink .theme-text {
-  color: #047857 !important;
+  color: #047857;
 }
 
 /* Logo text in header - follows theme colors with white outline for visibility - all green */
@@ -136,7 +136,7 @@
 .theme-red .theme-logo-text,
 .theme-orange .theme-logo-text,
 .theme-pink .theme-logo-text {
-  color: #047857 !important;
+  color: #047857;
   text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
 }
 
@@ -154,12 +154,12 @@
 /* Ensure button text is always visible */
 .gradient-bg a, 
 .gradient-bg button {
-  color: white !important;
+  color: white;
 }
 
 /* Content area buttons with theme colors should have white text */
 button.primary-theme-button * {
-  color: white !important;
+  color: white;
 }
 
 /* Special override for Browse Shows button to use theme colors */
@@ -168,9 +168,11 @@ button.white-button .theme-button-text {
   font-weight: bold;
 }
 
-/* COMPREHENSIVE PURPLE TO GREEN OVERRIDES */
-
 /* Override any purple borders globally */
+* {
+  border-color: inherit;
+}
+
 [class*="border-purple"] {
   border-color: #16a34a !important;
 }
@@ -190,76 +192,22 @@ button.white-button .theme-button-text {
   color: white !important;
 }
 
-/* Override any indigo backgrounds globally with green and white text */
-[class*="bg-indigo"] {
-  background-color: #16a34a !important;
-  color: white !important;
-}
-
-[class*="bg-indigo"] * {
-  color: white !important;
-}
-
-/* Override any indigo text globally */
-[class*="text-indigo"] {
-  color: #16a34a !important;
-}
-
-/* Override any indigo borders globally */
-[class*="border-indigo"] {
-  border-color: #16a34a !important;
-}
-
-/* Override purple gradient backgrounds with green gradients - comprehensive */
+/* Override purple gradient backgrounds with green gradients */
 .bg-gradient-to-r.from-purple-500.to-indigo-500,
 .bg-gradient-to-r.from-purple-600.to-indigo-600,
-.bg-gradient-to-r.from-purple-700.to-indigo-700,
-.bg-gradient-to-r.from-purple-800.to-indigo-800,
-.bg-gradient-to-r.from-purple-900.to-indigo-900,
-.bg-gradient-to-br.from-purple-500.to-purple-600,
-.bg-gradient-to-br.from-purple-600.to-purple-700,
-.bg-gradient-to-l.from-purple-500.to-indigo-500,
-.bg-gradient-to-l.from-purple-600.to-indigo-600,
-.bg-gradient-to-t.from-purple-500.to-indigo-500,
-.bg-gradient-to-b.from-purple-500.to-indigo-500 {
+.bg-gradient-to-r.from-purple-900.to-indigo-900 {
   background: linear-gradient(to right, #047857, #059669) !important;
   color: white !important;
 }
 
 .bg-gradient-to-r.from-purple-500.to-indigo-500 *,
 .bg-gradient-to-r.from-purple-600.to-indigo-600 *,
-.bg-gradient-to-r.from-purple-700.to-indigo-700 *,
-.bg-gradient-to-r.from-purple-800.to-indigo-800 *,
-.bg-gradient-to-r.from-purple-900.to-indigo-900 *,
-.bg-gradient-to-br.from-purple-500.to-purple-600 *,
-.bg-gradient-to-br.from-purple-600.to-purple-700 *,
-.bg-gradient-to-l.from-purple-500.to-indigo-500 *,
-.bg-gradient-to-l.from-purple-600.to-indigo-600 *,
-.bg-gradient-to-t.from-purple-500.to-indigo-500 *,
-.bg-gradient-to-b.from-purple-500.to-indigo-500 * {
+.bg-gradient-to-r.from-purple-900.to-indigo-900 * {
   color: white !important;
 }
 
 /* Override hover states for purple gradients */
-.hover\:from-purple-600.hover\:to-indigo-600:hover,
-.hover\:from-purple-700.hover\:to-indigo-700:hover,
-.hover\:from-purple-500.hover\:to-purple-600:hover,
-.hover\:bg-purple-500:hover,
-.hover\:bg-purple-600:hover,
-.hover\:bg-purple-700:hover {
+.hover\:from-purple-600.hover\:to-indigo-600:hover {
   background: linear-gradient(to right, #065F46, #047857) !important;
-  color: white !important;
-}
-
-/* Global catch-all for any missed purple elements */
-*[style*="purple"],
-*[style*="indigo"] {
-  background-color: #16a34a !important;
-  color: white !important;
-}
-
-/* Ensure all child elements of purple backgrounds have white text */
-*[class*="purple"] *,
-*[class*="indigo"] * {
   color: white !important;
 }
