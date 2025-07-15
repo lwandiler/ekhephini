@@ -1,4 +1,3 @@
-
 import ShowCard from '@/components/ShowCard';
 import ShowSchedule from '@/components/ShowSchedule';
 import NewsList from '@/components/NewsList';
@@ -170,21 +169,21 @@ const ModernTemplate = ({
           </div>
         </section>
         
-        {/* Newsletter - Modern Style with darker gradient */}
-        <section className="py-20 bg-gradient-to-r from-purple-950 to-indigo-950 text-white">
+        {/* Newsletter - Modern Style with green gradient */}
+        <section className="py-20 bg-gradient-to-r from-green-800 to-green-700 text-white">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-4xl font-bold mb-6">Stay Connected</h2>
-              <p className="text-xl text-purple-200 mb-8">
+              <h2 className="text-4xl font-bold mb-6 text-white">Stay Connected</h2>
+              <p className="text-xl text-white/80 mb-8">
                 Subscribe to our newsletter for exclusive content, special offers, and updates on your favorite shows and podcasts.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4 max-w-lg mx-auto">
                 <input 
                   type="email" 
                   placeholder="Your email address" 
-                  className="w-full px-6 py-4 rounded-full flex-1 bg-white/10 border border-purple-400/30 text-white placeholder:text-purple-200/60 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                  className="w-full px-6 py-4 rounded-full flex-1 bg-white/10 border border-green-400/30 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
                 />
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white rounded-full px-8 py-4">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-full px-8 py-4">
                   <Mail className="mr-2" />
                   Subscribe
                 </Button>
