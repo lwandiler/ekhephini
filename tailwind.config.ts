@@ -71,9 +71,9 @@ export default {
 					'muted': 'hsl(214 32% 65%)'       // #94a3b8 converted to HSL
 				},
 				clickradio: {
-					'primary': '#047857', // green-700 (changed from purple)
-					'secondary': '#059669', // emerald-700 (changed from indigo)
-					'accent': '#A7F3D0', // emerald-200 (changed from purple-300)
+					'primary': '#6D28D9', // purple-700
+					'secondary': '#4338CA', // indigo-700
+					'accent': '#D8B4FE', // purple-300
 					'light': '#F3F4F6', // gray-100
 					'dark': '#1E1B4B', // indigo-900
 					'text': '#4B5563', // gray-600

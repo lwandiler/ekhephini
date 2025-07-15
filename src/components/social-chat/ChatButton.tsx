@@ -11,7 +11,7 @@ interface ChatButtonProps {
 const ChatButton = ({ isOpen, toggleChat }: ChatButtonProps) => {
   return (
     <Button
-      className={`fixed z-40 bottom-40 md:bottom-44 right-4 md:right-8 rounded-full w-12 h-12 shadow-lg ${isOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-green-600 hover:bg-green-700'}`}
+      className={`fixed z-40 bottom-40 md:bottom-44 right-4 md:right-8 rounded-full w-12 h-12 shadow-lg ${isOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-purple-600 hover:bg-purple-700'}`}
       size="icon"
       onClick={toggleChat}
     >

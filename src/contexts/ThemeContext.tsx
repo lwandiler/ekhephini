@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useEffect } from "react";
 import { ThemeOptions } from "@/types/theme";
 import { 
@@ -6,12 +7,12 @@ import {
   applyThemeToDocument 
 } from "@/utils/themeManager";
 
-// Define the default theme options with green as primary color
+// Define the default theme options
 const defaultThemeOptions = {
   type: 'modern' as const,
   fontFamily: 'inter' as const,
   fontSize: 'medium' as const,
-  colorScheme: 'green' as const
+  colorScheme: 'purple' as const
 };
 
 // Create the theme context with correct typing
@@ -29,7 +30,7 @@ export const ThemeContext = createContext<{
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [themeOptions, setThemeOptions] = useState<ThemeOptions>(defaultThemeOptions);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false); // Default to false for light mode
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(true); // Default to true for dark mode
 
   useEffect(() => {
     // Load the theme from localStorage on mount
@@ -44,9 +45,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       applyThemeToDocument(defaultThemeOptions);
     }
     
-    // Force light mode (white background)
-    setIsDarkMode(false);
-    localStorage.setItem('clickRadioDarkMode', 'false');
+    // Load dark mode preference but default to true if not set
+    const darkModePref = localStorage.getItem('clickRadioDarkMode');
+    if (darkModePref) {
+      setIsDarkMode(darkModePref === 'true');
+    } else {
+      // Default to dark mode
+      setIsDarkMode(true);
+      localStorage.setItem('clickRadioDarkMode', 'true');
+    }
   }, []);
 
   // Apply theme changes when themeOptions change
@@ -58,20 +65,21 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     applyThemeToDocument(themeOptions);
   }, [themeOptions]);
   
-  // Apply light mode class to document (remove dark)
+  // Apply dark mode class to document
   useEffect(() => {
-    // Always remove dark mode class for white background
-    document.documentElement.classList.remove('dark');
-    document.body.style.backgroundColor = 'white';
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
     
     // Save preference to localStorage
-    localStorage.setItem('clickRadioDarkMode', 'false');
+    localStorage.setItem('clickRadioDarkMode', isDarkMode ? 'true' : 'false');
   }, [isDarkMode]);
 
-  // Function to toggle dark mode (disabled for white background)
+  // Function to toggle dark mode
   const toggleDarkMode = () => {
-    // Keep it light mode
-    setIsDarkMode(false);
+    setIsDarkMode(prev => !prev);
   };
 
   return (

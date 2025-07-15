@@ -1,3 +1,4 @@
+
 import {
   PieChart,
   Pie,
@@ -20,8 +21,8 @@ const config = {
   Mobile: {
     label: 'Mobile',
     theme: {
-      light: '#047857',
-      dark: '#059669',
+      light: '#8b5cf6',
+      dark: '#a78bfa',
     },
   },
   Desktop: {
@@ -47,7 +48,7 @@ const config = {
   },
 };
 
-const COLORS = ['#047857', '#10b981', '#3b82f6', '#f59e0b'];
+const COLORS = ['#8b5cf6', '#10b981', '#3b82f6', '#f59e0b'];
 
 const DeviceUsageChart = () => {
   return (

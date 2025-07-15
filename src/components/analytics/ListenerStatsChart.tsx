@@ -1,3 +1,4 @@
+
 import {
   LineChart,
   Line,
@@ -25,8 +26,8 @@ const config = {
   listeners: {
     label: 'Total Listeners',
     theme: {
-      light: '#047857',
-      dark: '#059669',
+      light: '#8b5cf6',
+      dark: '#a78bfa',
     },
   },
   newListeners: {

@@ -58,150 +58,247 @@
   line-height: 1.75rem;
 }
 
-/* Force white backgrounds and dark text for all pages */
-body, main, .main-content, .page-container, .container {
-  background-color: white !important;
-  color: #1f2937 !important;
+/* Color scheme specific styles */
+.theme-purple .gradient-bg {
+  background: linear-gradient(to right, #4A1A82, #3A1372);
 }
 
-/* Ensure all text elements are dark and visible */
-h1, h2, h3, h4, h5, h6, p, span, div, a, li {
-  color: #1f2937 !important;
+.theme-blue .gradient-bg {
+  background: linear-gradient(to right, #0A2463, #051C59);
 }
 
-/* Green as primary theme - updated gradients */
-.theme-green .gradient-bg,
-.theme-purple .gradient-bg,
-.theme-blue .gradient-bg,
-.theme-red .gradient-bg,
-.theme-orange .gradient-bg,
+.theme-green .gradient-bg {
+  background: linear-gradient(to right, #054A29, #033A1F);
+}
+
+.theme-red .gradient-bg {
+  background: linear-gradient(to right, #8B0000, #6B0000);
+}
+
+.theme-orange .gradient-bg {
+  background: linear-gradient(to right, #A04000, #7E3000);
+}
+
 .theme-pink .gradient-bg {
-  background: linear-gradient(to right, #047857, #059669) !important;
+  background: linear-gradient(to right, #A01B7C, #801566);
 }
 
-/* Primary buttons - all use green theme now */
-.theme-green .primary-theme-button,
-.theme-purple .primary-theme-button,
-.theme-blue .primary-theme-button,
-.theme-red .primary-theme-button,
-.theme-orange .primary-theme-button,
-.theme-pink .primary-theme-button,
-.primary-theme-button {
-  background: linear-gradient(to right, #047857, #059669) !important;
+/* Primary buttons color for different themes with high contrast text */
+.theme-purple .primary-theme-button {
+  background: linear-gradient(to right, #6D28D9, #4338CA);
   color: white !important;
 }
 
-/* Ensure all buttons use green theme */
-button.primary-theme-button,
-button.primary-theme-button *,
-.btn-primary,
-.bg-primary {
-  background: linear-gradient(to right, #047857, #059669) !important;
+.theme-blue .primary-theme-button {
+  background: linear-gradient(to right, #1E40AF, #0891B2);
   color: white !important;
 }
 
-/* Button hover effects - all use green */
-.theme-green button.gradient-hover:hover,
-.theme-purple button.gradient-hover:hover,
-.theme-blue button.gradient-hover:hover,
-.theme-red button.gradient-hover:hover,
-.theme-orange button.gradient-hover:hover,
-.theme-pink button.gradient-hover:hover,
-button.gradient-hover:hover {
-  background: linear-gradient(to right, #065F46, #047857) !important;
+.theme-green .primary-theme-button {
+  background: linear-gradient(to right, #047857, #059669);
+  color: white !important;
 }
 
-/* Theme-specific header colors - all use green */
-.theme-green .theme-header,
-.theme-purple .theme-header,
-.theme-blue .theme-header,
-.theme-red .theme-header,
-.theme-orange .theme-header,
-.theme-pink .theme-header,
-.theme-header {
+.theme-red .primary-theme-button {
+  background: linear-gradient(to right, #DC2626, #9F1239);
+  color: white !important;
+}
+
+.theme-orange .primary-theme-button {
+  background: linear-gradient(to right, #F97316, #D97706);
+  color: white !important;
+}
+
+.theme-pink .primary-theme-button {
+  background: linear-gradient(to right, #EC4899, #8B5CF6);
+  color: white !important;
+}
+
+/* Ensure contrast for button text in all themes */
+.theme-purple button.primary-theme-button,
+.theme-blue button.primary-theme-button,
+.theme-green button.primary-theme-button,
+.theme-red button.primary-theme-button,
+.theme-orange button.primary-theme-button,
+.theme-pink button.primary-theme-button {
+  color: white !important;
+}
+
+/* Button hover effects for different color schemes */
+.theme-purple button.gradient-hover:hover {
+  background: linear-gradient(to right, #5B21B6, #3730A3);
+}
+
+.theme-blue button.gradient-hover:hover {
+  background: linear-gradient(to right, #1E3A8A, #0E7490);
+}
+
+.theme-green button.gradient-hover:hover {
+  background: linear-gradient(to right, #065F46, #047857);
+}
+
+.theme-red button.gradient-hover:hover {
+  background: linear-gradient(to right, #B91C1C, #881337);
+}
+
+.theme-orange button.gradient-hover:hover {
+  background: linear-gradient(to right, #EA580C, #B45309);
+}
+
+.theme-pink button.gradient-hover:hover {
+  background: linear-gradient(to right, #DB2777, #7C3AED);
+}
+
+/* Theme-specific header colors */
+.theme-purple .theme-header {
+  color: #6D28D9;
+}
+
+.theme-blue .theme-header {
+  color: #1E40AF;
+}
+
+.theme-green .theme-header {
+  color: #047857;
+}
+
+.theme-red .theme-header {
+  color: #DC2626;
+}
+
+.theme-orange .theme-header {
+  color: #F97316;
+}
+
+.theme-pink .theme-header {
+  color: #EC4899;
+}
+
+/* Theme-specific accent elements */
+.theme-purple .theme-accent {
+  border-color: #6D28D9;
+}
+
+.theme-blue .theme-accent {
+  border-color: #1E40AF;
+}
+
+.theme-green .theme-accent {
+  border-color: #047857;
+}
+
+.theme-red .theme-accent {
+  border-color: #DC2626;
+}
+
+.theme-orange .theme-accent {
+  border-color: #F97316;
+}
+
+.theme-pink .theme-accent {
+  border-color: #EC4899;
+}
+
+/* Text colors for themes */
+.theme-purple .theme-text {
+  color: #6D28D9;
+}
+
+.theme-blue .theme-text {
+  color: #1E40AF;
+}
+
+.theme-green .theme-text {
+  color: #047857;
+}
+
+.theme-red .theme-text {
+  color: #DC2626;
+}
+
+.theme-orange .theme-text {
+  color: #F97316;
+}
+
+.theme-pink .theme-text {
+  color: #EC4899;
+}
+
+/* Logo text in header - follows theme colors with white outline for visibility */
+.theme-purple .theme-logo-text {
+  color: #6D28D9;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-blue .theme-logo-text {
+  color: #1E40AF;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-green .theme-logo-text {
+  color: #047857;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-red .theme-logo-text {
+  color: #DC2626;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-orange .theme-logo-text {
+  color: #F97316;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+.theme-pink .theme-logo-text {
+  color: #EC4899;
+  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
+}
+
+/* Button text colors - theme specific for Browse Shows button */
+.theme-purple .theme-button-text {
+  color: #6D28D9 !important;
+  font-weight: bold;
+}
+
+.theme-blue .theme-button-text {
+  color: #1E40AF !important;
+  font-weight: bold;
+}
+
+.theme-green .theme-button-text {
   color: #047857 !important;
+  font-weight: bold;
 }
 
-/* Theme-specific accent elements - all use green */
-.theme-green .theme-accent,
-.theme-purple .theme-accent,
-.theme-blue .theme-accent,
-.theme-red .theme-accent,
-.theme-orange .theme-accent,
-.theme-pink .theme-accent,
-.theme-accent {
-  border-color: #047857 !important;
+.theme-red .theme-button-text {
+  color: #DC2626 !important;
+  font-weight: bold;
 }
 
-/* Text colors for themes - dark text for visibility */
-.theme-green .theme-text,
-.theme-purple .theme-text,
-.theme-blue .theme-text,
-.theme-red .theme-text,
-.theme-orange .theme-text,
-.theme-pink .theme-text,
-.theme-text {
-  color: #1f2937 !important;
+.theme-orange .theme-button-text {
+  color: #F97316 !important;
+  font-weight: bold;
 }
 
-/* Logo text in header - green for branding */
-.theme-green .theme-logo-text,
-.theme-purple .theme-logo-text,
-.theme-blue .theme-logo-text,
-.theme-red .theme-text,
-.theme-orange .theme-logo-text,
-.theme-pink .theme-logo-text,
-.theme-logo-text {
-  color: #047857 !important;
-}
-
-/* Button text colors - ensure visibility */
-.theme-green .theme-button-text,
-.theme-purple .theme-button-text,
-.theme-blue .theme-button-text,
-.theme-red .theme-button-text,
-.theme-orange .theme-button-text,
-.theme-pink .theme-button-text,
-.theme-button-text {
-  color: #1f2937 !important;
+.theme-pink .theme-button-text {
+  color: #EC4899 !important;
   font-weight: bold;
 }
 
 /* Ensure button text is always visible */
 .gradient-bg a, 
 .gradient-bg button {
-  color: white !important;
+  color: white;
 }
 
 /* Content area buttons with theme colors should have white text */
 button.primary-theme-button * {
-  color: white !important;
+  color: white;
 }
 
 /* Special override for Browse Shows button to use theme colors */
 button.white-button .theme-button-text {
+  /* This will be overridden by the theme-specific rules above */
   font-weight: bold;
-  color: #047857 !important;
-}
-
-/* Navigation text visibility */
-nav, nav a, nav span, nav div, .nav, .navigation {
-  color: #1f2937 !important;
-}
-
-/* Override any dark backgrounds that might hide text */
-.bg-gray-800, .bg-gray-900, .bg-slate-800, .bg-slate-900 {
-  background-color: white !important;
-  color: #1f2937 !important;
-}
-
-/* Card content visibility */
-.card, .card-content, .show-card, .podcast-card {
-  background-color: white !important;
-  color: #1f2937 !important;
-}
-
-/* Ensure all content is visible */
-.content, .main-content, article, section {
-  color: #1f2937 !important;
 }

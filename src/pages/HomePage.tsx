@@ -31,9 +31,9 @@ const HomePage = () => {
     setIsAdmin(!!isAdminUser);
   }, [user]);
 
-  // Force dark mode OFF to ensure white background
+  // Force dark mode
   useEffect(() => {
-    if (isDarkMode) {
+    if (!isDarkMode) {
       toggleDarkMode();
     }
   }, [isDarkMode, toggleDarkMode]);
@@ -50,10 +50,10 @@ const HomePage = () => {
 
   return (
     <InlineEditProvider>
-      <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} bg-white`}>
+      <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} dark`}>
         <Header />
         
-        <main className="flex-1 bg-white">
+        <main className="flex-1 bg-gray-900">
           <div className="w-full">
             <HeroBannerCarousel />
           </div>

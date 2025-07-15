@@ -25,7 +25,7 @@ import {
   loadSettingsFromDatabase 
 } from "./settings/databaseManager";
 
-// Default station settings with green theme
+// Default station settings
 export const defaultStationSettings = {
   stationName: "Moutse Community Radio Station",
   stationTagline: "Your friend to rely on MCRS 96.9 FM",
