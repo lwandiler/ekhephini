@@ -10,13 +10,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="space-y-4">
             <div className="flex justify-center mb-4 group">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-600 to-green-500 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 overflow-hidden">
-                <img 
-                  src="/lovable-uploads/38150e55-823d-433a-8672-ae40d2fcf2da.png" 
-                  alt="Moutse Community Radio"
-                  className="w-10 h-10 object-contain"
-                />
-              </div>
+              <img 
+                src="/lovable-uploads/38150e55-823d-433a-8672-ae40d2fcf2da.png" 
+                alt="Moutse Community Radio"
+                className="w-12 h-12 object-contain transform transition-all duration-300 group-hover:scale-110"
+              />
             </div>
             <p className="text-gray-300 leading-relaxed">
               Your favorite radio station bringing you the best music, shows, and entertainment 24/7. Tune in and experience the sound of tomorrow, today.
