@@ -6,7 +6,17 @@ import { Edit3, Eye } from 'lucide-react';
 const EditModeToggle = () => {
   const { isEditMode, toggleEditMode, isAdmin } = useInlineEdit();
 
-  if (!isAdmin) return null;
+  // Debug logging
+  console.log('EditModeToggle - isAdmin:', isAdmin);
+  console.log('EditModeToggle - isEditMode:', isEditMode);
+  console.log('EditModeToggle - sessionStorage radioAdminLoggedIn:', sessionStorage.getItem('radioAdminLoggedIn'));
+
+  if (!isAdmin) {
+    console.log('EditModeToggle - Not showing because user is not admin');
+    return null;
+  }
+
+  console.log('EditModeToggle - Rendering button');
 
   return (
     <div className="fixed bottom-4 right-4 z-50">

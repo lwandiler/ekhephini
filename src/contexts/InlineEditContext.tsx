@@ -22,6 +22,11 @@ export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
   // Check if user is admin
   const isAdmin = user && sessionStorage.getItem('radioAdminLoggedIn') === 'true';
 
+  // Debug logging
+  console.log('InlineEditProvider - user:', user);
+  console.log('InlineEditProvider - sessionStorage radioAdminLoggedIn:', sessionStorage.getItem('radioAdminLoggedIn'));
+  console.log('InlineEditProvider - isAdmin:', isAdmin);
+
   useEffect(() => {
     // Load existing page content from station settings
     const loadPageContent = async () => {
