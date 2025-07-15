@@ -72,7 +72,38 @@
   }
 }
 
-/* Force white background on body and html */
+/* Force white background and dark text on body and html */
 html, body {
   background-color: white !important;
+  color: #1f2937 !important; /* Dark gray text */
+}
+
+/* Ensure all text elements are visible */
+h1, h2, h3, h4, h5, h6, p, span, div, a, li, button {
+  color: #1f2937 !important; /* Dark gray text for readability */
+}
+
+/* Override any hidden or invisible text */
+.text-white {
+  color: #1f2937 !important;
+}
+
+/* Special handling for buttons to maintain visibility */
+button:not(.primary-theme-button):not(.gradient-bg) {
+  color: #1f2937 !important;
+}
+
+/* Ensure links are visible */
+a:not(.primary-theme-button):not(.gradient-bg) {
+  color: #047857 !important; /* Green color for links */
+}
+
+/* Navigation and menu text */
+nav, nav a, nav span, nav div {
+  color: #1f2937 !important;
+}
+
+/* Card and content text */
+.card, .card *, .content, .content * {
+  color: #1f2937 !important;
 }

@@ -58,13 +58,15 @@
   line-height: 1.75rem;
 }
 
-/* Force white backgrounds for all pages */
-body {
+/* Force white backgrounds and dark text for all pages */
+body, main, .main-content, .page-container, .container {
   background-color: white !important;
+  color: #1f2937 !important;
 }
 
-.bg-gray-900 {
-  background-color: white !important;
+/* Ensure all text elements are dark and visible */
+h1, h2, h3, h4, h5, h6, p, span, div, a, li {
+  color: #1f2937 !important;
 }
 
 /* Green as primary theme - updated gradients */
@@ -131,7 +133,7 @@ button.gradient-hover:hover {
   border-color: #047857 !important;
 }
 
-/* Text colors for themes - all use green */
+/* Text colors for themes - dark text for visibility */
 .theme-green .theme-text,
 .theme-purple .theme-text,
 .theme-blue .theme-text,
@@ -139,22 +141,21 @@ button.gradient-hover:hover {
 .theme-orange .theme-text,
 .theme-pink .theme-text,
 .theme-text {
-  color: #047857 !important;
+  color: #1f2937 !important;
 }
 
-/* Logo text in header - green with white outline for visibility */
+/* Logo text in header - green for branding */
 .theme-green .theme-logo-text,
 .theme-purple .theme-logo-text,
 .theme-blue .theme-logo-text,
-.theme-red .theme-logo-text,
+.theme-red .theme-text,
 .theme-orange .theme-logo-text,
 .theme-pink .theme-logo-text,
 .theme-logo-text {
   color: #047857 !important;
-  text-shadow: 0 0 2px white, 0 0 4px rgba(255,255,255,0.7);
 }
 
-/* Button text colors - green for Browse Shows button */
+/* Button text colors - ensure visibility */
 .theme-green .theme-button-text,
 .theme-purple .theme-button-text,
 .theme-blue .theme-button-text,
@@ -162,7 +163,7 @@ button.gradient-hover:hover {
 .theme-orange .theme-button-text,
 .theme-pink .theme-button-text,
 .theme-button-text {
-  color: #047857 !important;
+  color: #1f2937 !important;
   font-weight: bold;
 }
 
@@ -180,27 +181,27 @@ button.primary-theme-button * {
 /* Special override for Browse Shows button to use theme colors */
 button.white-button .theme-button-text {
   font-weight: bold;
-}
-
-/* Force green color scheme on all elements */
-[class*="bg-purple"], [class*="bg-blue"], [class*="bg-red"], [class*="bg-orange"], [class*="bg-pink"] {
-  background: linear-gradient(to right, #047857, #059669) !important;
-}
-
-[class*="text-purple"], [class*="text-blue"], [class*="text-red"], [class*="text-orange"], [class*="text-pink"] {
   color: #047857 !important;
 }
 
-[class*="border-purple"], [class*="border-blue"], [class*="border-red"], [class*="border-orange"], [class*="border-pink"] {
-  border-color: #047857 !important;
+/* Navigation text visibility */
+nav, nav a, nav span, nav div, .nav, .navigation {
+  color: #1f2937 !important;
 }
 
-/* Ensure page containers have white background */
-main, .main-content, .page-container, .container {
-  background-color: white !important;
-}
-
-/* Override any dark backgrounds */
+/* Override any dark backgrounds that might hide text */
 .bg-gray-800, .bg-gray-900, .bg-slate-800, .bg-slate-900 {
   background-color: white !important;
+  color: #1f2937 !important;
+}
+
+/* Card content visibility */
+.card, .card-content, .show-card, .podcast-card {
+  background-color: white !important;
+  color: #1f2937 !important;
+}
+
+/* Ensure all content is visible */
+.content, .main-content, article, section {
+  color: #1f2937 !important;
 }
