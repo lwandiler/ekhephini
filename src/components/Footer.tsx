@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Youtube, Music, Headphones, Mail, Phone } from 'lucide-react';
 
@@ -42,7 +43,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6 text-purple-300 border-b border-purple-700 pb-2">Quick Links</h3>
             <ul className="space-y-3">
               <li><Link to="/" className="text-gray-300 hover:text-purple-300 transition-colors flex items-center gap-2"><Music className="h-4 w-4" />Home</Link></li>
-              <li><Link to="/shows" className="text-gray-300 hover:text-purple-300 transition-colors flex items-center gap-2"><Radio className="h-4 w-4" />Shows</Link></li>
+              <li><Link to="/shows" className="text-gray-300 hover:text-purple-300 transition-colors flex items-center gap-2"><Music className="h-4 w-4" />Shows</Link></li>
               <li><Link to="/podcasts" className="text-gray-300 hover:text-purple-300 transition-colors flex items-center gap-2"><Headphones className="h-4 w-4" />Podcasts</Link></li>
               <li><Link to="/news" className="text-gray-300 hover:text-purple-300 transition-colors flex items-center gap-2">News</Link></li>
               <li><Link to="/announcements" className="text-gray-300 hover:text-purple-300 transition-colors flex items-center gap-2">Announcements</Link></li>
