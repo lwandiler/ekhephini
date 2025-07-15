@@ -76,4 +76,23 @@
   input[type="submit"], input[type="button"] {
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
+  
+  /* Change all purple borders to green */
+  .border-purple-500, .border-purple-600, .border-purple-700 {
+    @apply border-green-600 !important;
+  }
+  
+  /* Change all purple text to green */
+  .text-purple-500, .text-purple-600, .text-purple-700 {
+    @apply text-green-600 !important;
+  }
+  
+  /* Ensure Listen button has green background with white text and icon */
+  .listen-button, [data-testid="listen-button"] {
+    @apply bg-green-600 text-white hover:bg-green-700 !important;
+  }
+  
+  .listen-button svg, [data-testid="listen-button"] svg {
+    @apply text-white !important;
+  }
 }
