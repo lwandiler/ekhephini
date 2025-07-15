@@ -62,6 +62,35 @@
     @apply text-white !important;
   }
   
+  /* Specific Listen Button targeting with green gradient */
+  button:has-text("Listen"), 
+  [data-testid*="listen"], 
+  .listen-button,
+  button[class*="listen"],
+  button:contains("Listen") {
+    background: linear-gradient(to right, #16a34a, #15803d) !important;
+    color: white !important;
+    border: none !important;
+  }
+  
+  button:has-text("Listen") *,
+  [data-testid*="listen"] *,
+  .listen-button *,
+  button[class*="listen"] *,
+  button:contains("Listen") * {
+    color: white !important;
+  }
+  
+  /* Listen button hover state */
+  button:has-text("Listen"):hover,
+  [data-testid*="listen"]:hover,
+  .listen-button:hover,
+  button[class*="listen"]:hover,
+  button:contains("Listen"):hover {
+    background: linear-gradient(to right, #15803d, #166534) !important;
+    color: white !important;
+  }
+  
   /* Badge/tag styling - Green background with white text */
   .badge, [class*="badge"] {
     @apply bg-green-600 text-white !important;
@@ -116,7 +145,14 @@
   
   /* Ensure Listen button has green background with white text and icon */
   .listen-button, [data-testid="listen-button"] {
-    @apply bg-green-600 text-white hover:bg-green-700 !important;
+    background: linear-gradient(to right, #16a34a, #15803d) !important;
+    color: white !important;
+    border: none !important;
+  }
+  
+  .listen-button:hover, [data-testid="listen-button"]:hover {
+    background: linear-gradient(to right, #15803d, #166534) !important;
+    color: white !important;
   }
   
   .listen-button *, [data-testid="listen-button"] * {
@@ -134,5 +170,19 @@
   
   .bg-green-500 *, .bg-green-600 *, .bg-green-700 *, .bg-green-800 * {
     @apply text-white !important;
+  }
+  
+  /* Target buttons with "Listen" text content more specifically */
+  button[class*="gradient"]:has-text("Listen"),
+  button[style*="gradient"]:has-text("Listen") {
+    background: linear-gradient(to right, #16a34a, #15803d) !important;
+    color: white !important;
+  }
+  
+  /* Override any inline styles on Listen buttons */
+  button[style*="purple"]:has-text("Listen"),
+  button[style*="blue"]:has-text("Listen") {
+    background: linear-gradient(to right, #16a34a, #15803d) !important;
+    color: white !important;
   }
 }
