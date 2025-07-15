@@ -57,6 +57,11 @@
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
   
+  /* Ensure all button text and child elements are white */
+  button * {
+    @apply text-white !important;
+  }
+  
   /* Badge/tag styling - Green background with white text */
   .badge, [class*="badge"] {
     @apply bg-green-600 text-white !important;
@@ -67,9 +72,17 @@
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
   
+  .btn *, [class*="btn"] * {
+    @apply text-white !important;
+  }
+  
   /* Ensure buttons in specific components use green */
   .ui-button, [role="button"] {
     @apply bg-green-600 text-white hover:bg-green-700 !important;
+  }
+  
+  .ui-button *, [role="button"] * {
+    @apply text-white !important;
   }
   
   /* Form buttons */
@@ -92,7 +105,20 @@
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
   
+  .listen-button *, [data-testid="listen-button"] * {
+    @apply text-white !important;
+  }
+  
   .listen-button svg, [data-testid="listen-button"] svg {
+    @apply text-white !important;
+  }
+  
+  /* Ensure any button with green background classes has white text */
+  .bg-green-500, .bg-green-600, .bg-green-700, .bg-green-800 {
+    @apply text-white !important;
+  }
+  
+  .bg-green-500 *, .bg-green-600 *, .bg-green-700 *, .bg-green-800 * {
     @apply text-white !important;
   }
 }
