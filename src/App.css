@@ -181,3 +181,33 @@ button.white-button .theme-button-text {
 [class*="text-purple"] {
   color: #16a34a !important;
 }
+
+/* Override any purple backgrounds globally with green and white text */
+[class*="bg-purple"] {
+  background-color: #16a34a !important;
+  color: white !important;
+}
+
+[class*="bg-purple"] * {
+  color: white !important;
+}
+
+/* Override purple gradient backgrounds with green gradients */
+.bg-gradient-to-r.from-purple-500.to-indigo-500,
+.bg-gradient-to-r.from-purple-600.to-indigo-600,
+.bg-gradient-to-r.from-purple-900.to-indigo-900 {
+  background: linear-gradient(to right, #047857, #059669) !important;
+  color: white !important;
+}
+
+.bg-gradient-to-r.from-purple-500.to-indigo-500 *,
+.bg-gradient-to-r.from-purple-600.to-indigo-600 *,
+.bg-gradient-to-r.from-purple-900.to-indigo-900 * {
+  color: white !important;
+}
+
+/* Override hover states for purple gradients */
+.hover\:from-purple-600.hover\:to-indigo-600:hover {
+  background: linear-gradient(to right, #065F46, #047857) !important;
+  color: white !important;
+}

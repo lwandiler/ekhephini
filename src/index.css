@@ -100,6 +100,20 @@
     @apply text-green-600 !important;
   }
   
+  /* Change all purple backgrounds to green with white text */
+  .bg-purple-500, .bg-purple-600, .bg-purple-700, .bg-purple-800, .bg-purple-900 {
+    @apply bg-green-600 text-white !important;
+  }
+  
+  .bg-purple-500 *, .bg-purple-600 *, .bg-purple-700 *, .bg-purple-800 *, .bg-purple-900 * {
+    @apply text-white !important;
+  }
+  
+  /* Change purple hover states to green */
+  .hover\:bg-purple-500:hover, .hover\:bg-purple-600:hover, .hover\:bg-purple-700:hover, .hover\:bg-purple-800:hover {
+    @apply bg-green-700 text-white !important;
+  }
+  
   /* Ensure Listen button has green background with white text and icon */
   .listen-button, [data-testid="listen-button"] {
     @apply bg-green-600 text-white hover:bg-green-700 !important;
