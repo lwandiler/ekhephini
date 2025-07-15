@@ -1,6 +1,5 @@
-
 import { Link } from 'react-router-dom';
-import { Radio, Facebook, Twitter, Instagram, Youtube, Music, Headphones, Mail, Phone } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, Music, Headphones, Mail, Phone } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -11,10 +10,14 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-4 group">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110">
-                <Radio size={20} className="text-white" />
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-600 to-green-500 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 overflow-hidden">
+                <img 
+                  src="/lovable-uploads/38150e55-823d-433a-8672-ae40d2fcf2da.png" 
+                  alt="Moutse Community Radio"
+                  className="w-10 h-10 object-contain"
+                />
               </div>
-              <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-300 to-blue-400">Click Radio</h3>
+              <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-green-300 to-green-400">Click Radio</h3>
             </div>
             <p className="text-gray-300 leading-relaxed">
               Your favorite radio station bringing you the best music, shows, and entertainment 24/7. Tune in and experience the sound of tomorrow, today.
