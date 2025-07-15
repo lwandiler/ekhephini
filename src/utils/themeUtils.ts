@@ -23,13 +23,13 @@ export const applyThemeToDocument = (options: ThemeOptions) => {
 
 export const getGradientClasses = (scheme: ColorScheme): string => {
   const colorSchemes = [
-    { value: 'purple', gradientClasses: "from-purple-700 to-indigo-700" },
-    { value: 'blue', gradientClasses: "from-blue-700 to-cyan-700" },
     { value: 'green', gradientClasses: "from-green-700 to-emerald-700" },
+    { value: 'blue', gradientClasses: "from-blue-700 to-cyan-700" },
+    { value: 'purple', gradientClasses: "from-purple-700 to-indigo-700" },
     { value: 'red', gradientClasses: "from-red-600 to-rose-700" },
     { value: 'orange', gradientClasses: "from-orange-500 to-amber-600" },
     { value: 'pink', gradientClasses: "from-pink-500 to-purple-500" }
   ];
   
-  return colorSchemes.find(s => s.value === scheme)?.gradientClasses || "from-purple-700 to-indigo-700";
+  return colorSchemes.find(s => s.value === scheme)?.gradientClasses || "from-green-700 to-emerald-700";
 };

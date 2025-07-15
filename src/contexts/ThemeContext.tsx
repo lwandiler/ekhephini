@@ -7,12 +7,12 @@ import {
   applyThemeToDocument 
 } from "@/utils/themeManager";
 
-// Define the default theme options
+// Define the default theme options with green as primary color
 const defaultThemeOptions = {
   type: 'modern' as const,
   fontFamily: 'inter' as const,
   fontSize: 'medium' as const,
-  colorScheme: 'purple' as const
+  colorScheme: 'green' as const
 };
 
 // Create the theme context with correct typing
