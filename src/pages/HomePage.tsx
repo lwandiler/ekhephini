@@ -7,7 +7,6 @@ import ChatBot from '@/components/ChatBot';
 import SocialChat from '@/components/SocialChat';
 import HeroBannerCarousel from '@/components/HeroBannerCarousel';
 import EditModeToggle from '@/components/EditModeToggle';
-import ThemeToggle from '@/components/theme/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { InlineEditProvider } from '@/contexts/InlineEditContext';
@@ -32,6 +31,13 @@ const HomePage = () => {
     setIsAdmin(!!isAdminUser);
   }, [user]);
 
+  // Force dark mode
+  useEffect(() => {
+    if (!isDarkMode) {
+      toggleDarkMode();
+    }
+  }, [isDarkMode, toggleDarkMode]);
+
   const handleListenLiveClick = () => {
     setModalOpen(true);
     // Also trigger play if not already playing
@@ -44,15 +50,10 @@ const HomePage = () => {
 
   return (
     <InlineEditProvider>
-      <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} ${isDarkMode ? 'dark' : ''}`}>
+      <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} dark`}>
         <Header />
         
-        {/* Theme Toggle Button - positioned in top right */}
-        <div className="fixed top-4 right-4 z-50">
-          <ThemeToggle variant="switch" />
-        </div>
-        
-        <main className="flex-1 bg-gray-900 dark:bg-gray-900">
+        <main className="flex-1 bg-gray-900">
           <div className="w-full">
             <HeroBannerCarousel />
           </div>
