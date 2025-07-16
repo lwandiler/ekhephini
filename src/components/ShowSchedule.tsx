@@ -7,7 +7,7 @@ import { fetchShows, type DaySchedule, type ShowWithFormattedTime } from '@/serv
 import { Skeleton } from '@/components/ui/skeleton';
 
 const ShowSchedule = () => {
-  const { themeOptions, isDarkMode } = useContext(ThemeContext);
+  const { themeOptions } = useContext(ThemeContext);
   const [currentDay, setCurrentDay] = useState(() => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return days[new Date().getDay()];
@@ -36,8 +36,8 @@ const ShowSchedule = () => {
 
   if (loading) {
     return (
-      <div className={`bg-card rounded-lg shadow-md p-6 border ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
-        <h2 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-foreground'}`}>Show Schedule</h2>
+      <div className="bg-white rounded-lg shadow-md p-6 border">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900">Show Schedule</h2>
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
             <Skeleton key={i} className="h-20 w-full" />
@@ -49,10 +49,10 @@ const ShowSchedule = () => {
 
   if (error) {
     return (
-      <div className={`bg-card rounded-lg shadow-md p-6 border ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
-        <h2 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-foreground'}`}>Show Schedule</h2>
+      <div className="bg-white rounded-lg shadow-md p-6 border">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900">Show Schedule</h2>
         <div className="text-center py-8">
-          <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <p className="text-lg text-gray-600">
             {error}
           </p>
           <Button 
@@ -68,16 +68,16 @@ const ShowSchedule = () => {
   }
 
   return (
-    <div className={`bg-card rounded-lg shadow-md p-6 border ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
-      <h2 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-foreground'}`}>Show Schedule</h2>
+    <div className="bg-white rounded-lg shadow-md p-6 border">
+      <h2 className="text-2xl font-bold mb-6 text-gray-900">Show Schedule</h2>
       
       <Tabs defaultValue={currentDay} className="w-full">
-        <TabsList className={`grid grid-cols-7 mb-6 overflow-x-auto ${isDarkMode ? 'bg-gray-700' : 'bg-muted'}`}>
+        <TabsList className="grid grid-cols-7 mb-6 overflow-x-auto bg-gray-100">
           {schedule.map((day) => (
             <TabsTrigger 
               key={day.day} 
               value={day.day}
-              className={`data-[state=active]:bg-sky-200 data-[state=active]:text-sky-800 dark:data-[state=active]:bg-sky-900 dark:data-[state=active]:text-sky-100 ${isDarkMode ? 'text-gray-300 hover:text-white' : ''}`}
+              className="data-[state=active]:bg-green-600 data-[state=active]:text-white text-gray-600 hover:text-gray-900"
             >
               {day.day.substring(0, 3)}
             </TabsTrigger>
@@ -87,31 +87,31 @@ const ShowSchedule = () => {
         {schedule.map((day) => (
           <TabsContent key={day.day} value={day.day} className="space-y-4">
             {day.shows.length === 0 ? (
-              <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <div className="text-center py-8 text-gray-600">
                 <p>No shows scheduled for {day.day}</p>
               </div>
             ) : (
               day.shows.map((show) => (
                 <div 
                   key={show.id} 
-                  className={`flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-primary rounded-r-md transition-colors ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-muted/20 hover:bg-muted/40'}`}
+                  className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-green-600 rounded-r-md transition-colors bg-gray-50 hover:bg-gray-100"
                 >
                   <div className="mb-3 md:mb-0">
-                    <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-foreground'}`}>{show.title}</h3>
-                    <p className={`${isDarkMode ? 'text-gray-300' : 'text-muted-foreground'}`}>with {show.host}</p>
+                    <h3 className="font-bold text-lg text-gray-900">{show.title}</h3>
+                    <p className="text-gray-600">with {show.host}</p>
                     {show.description && (
-                      <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      <p className="text-sm mt-1 text-gray-500">
                         {show.description}
                       </p>
                     )}
                   </div>
                   
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
-                    <span className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm font-medium">
+                    <span className="bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium">
                       {show.time}
                     </span>
                     
-                    <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                    <Button variant="outline" size="sm" className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
                       More Info
                     </Button>
                   </div>
