@@ -43,7 +43,7 @@ const ModernTemplate = ({
                   <Play size={24} className="mr-2" fill="currentColor" />
                   Listen Live
                 </Button>
-                <Button size="lg" variant="outline" className="border-2 border-white hover:bg-green-600 hover:text-white rounded-full px-8 py-6 text-white" asChild>
+                <Button size="lg" variant="outline" className="border-2 border-white hover:bg-green-700 hover:text-white rounded-full px-8 py-6 text-white" asChild>
                   <Link to="/shows">
                     Explore Shows
                   </Link>
