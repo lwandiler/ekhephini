@@ -1,394 +1,10 @@
-import { useState, useContext } from 'react';
+
+import { useState, useContext, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ThemeContext } from '@/contexts/ThemeContext';
-
-interface Show {
-  id: number;
-  title: string;
-  host: string;
-  time: string;
-  description: string;
-}
-
-interface DaySchedule {
-  day: string;
-  shows: Show[];
-}
-
-const mockSchedule: DaySchedule[] = [
-  {
-    day: "Monday",
-    shows: [
-      {
-        id: 42,
-        title: "Music",
-        host: "TBA",
-        time: "12:00 AM - 3:00 AM",
-        description: "Late night music to keep you company through the early hours."
-      },
-      {
-        id: 47,
-        title: "Mahube Drive",
-        host: "TBA",
-        time: "3:00 AM - 6:00 AM",
-        description: "Early morning drive show to start your day with energy and great music."
-      },
-      {
-        id: 52,
-        title: "Namba S'khambe Breakfast Show",
-        host: "TBA",
-        time: "6:00 AM - 9:00 AM",
-        description: "Start your morning with great music and breakfast conversations."
-      },
-      {
-        id: 17,
-        title: "Nethezeka Nathi",
-        host: "TBA",
-        time: "9:00 AM - 12:00 PM",
-        description: "Join us for an engaging morning show with great music and local content."
-      },
-      {
-        id: 22,
-        title: "Re Mmogo",
-        host: "TBA",
-        time: "12:00 PM - 3:00 PM",
-        description: "Join us together for an afternoon of great music and community conversations."
-      },
-      {
-        id: 27,
-        title: "Merithing Afternoon Drive Show",
-        host: "TBA",
-        time: "3:00 PM - 6:00 PM",
-        description: "Your perfect companion for the afternoon drive with great music and entertainment."
-      },
-      {
-        id: 32,
-        title: "Sabelana Ngolwazi",
-        host: "TBA",
-        time: "6:00 PM - 9:00 PM",
-        description: "Join us for an evening show packed with knowledge and entertainment."
-      },
-      {
-        id: 37,
-        title: "Pitšeng Tše Kgolo",
-        host: "TBA",
-        time: "9:00 PM - 11:59 PM",
-        description: "Join us for late night entertainment and great music."
-      },
-      {
-        id: 3,
-        title: "Drive Time",
-        host: "Michael Rodriguez",
-        time: "5:00 PM - 8:00 PM",
-        description: "Your companion for the evening commute with traffic updates and great music."
-      }
-    ]
-  },
-  {
-    day: "Tuesday",
-    shows: [
-      {
-        id: 43,
-        title: "Music",
-        host: "TBA",
-        time: "12:00 AM - 3:00 AM",
-        description: "Late night music to keep you company through the early hours."
-      },
-      {
-        id: 48,
-        title: "Mahube Drive",
-        host: "TBA",
-        time: "3:00 AM - 6:00 AM",
-        description: "Early morning drive show to start your day with energy and great music."
-      },
-      {
-        id: 53,
-        title: "Namba S'khambe Breakfast Show",
-        host: "TBA",
-        time: "6:00 AM - 9:00 AM",
-        description: "Start your morning with great music and breakfast conversations."
-      },
-      {
-        id: 18,
-        title: "Nethezeka Nathi",
-        host: "TBA",
-        time: "9:00 AM - 12:00 PM",
-        description: "Join us for an engaging morning show with great music and local content."
-      },
-      {
-        id: 23,
-        title: "Re Mmogo",
-        host: "TBA",
-        time: "12:00 PM - 3:00 PM",
-        description: "Join us together for an afternoon of great music and community conversations."
-      },
-      {
-        id: 28,
-        title: "Merithing Afternoon Drive Show",
-        host: "TBA",
-        time: "3:00 PM - 6:00 PM",
-        description: "Your perfect companion for the afternoon drive with great music and entertainment."
-      },
-      {
-        id: 33,
-        title: "Sabelana Ngolwazi",
-        host: "TBA",
-        time: "6:00 PM - 9:00 PM",
-        description: "Join us for an evening show packed with knowledge and entertainment."
-      },
-      {
-        id: 38,
-        title: "Pitšeng Tše Kgolo",
-        host: "TBA",
-        time: "9:00 PM - 11:59 PM",
-        description: "Join us for late night entertainment and great music."
-      },
-      {
-        id: 6,
-        title: "Evening Chill",
-        host: "Sophia Lee",
-        time: "8:00 PM - 11:00 PM",
-        description: "Wind down your day with relaxing tunes and calm conversation."
-      }
-    ]
-  },
-  {
-    day: "Wednesday",
-    shows: [
-      {
-        id: 44,
-        title: "Music",
-        host: "TBA",
-        time: "12:00 AM - 3:00 AM",
-        description: "Late night music to keep you company through the early hours."
-      },
-      {
-        id: 49,
-        title: "Mahube Drive",
-        host: "TBA",
-        time: "3:00 AM - 6:00 AM",
-        description: "Early morning drive show to start your day with energy and great music."
-      },
-      {
-        id: 54,
-        title: "Namba S'khambe Breakfast Show",
-        host: "TBA",
-        time: "6:00 AM - 9:00 AM",
-        description: "Start your morning with great music and breakfast conversations."
-      },
-      {
-        id: 19,
-        title: "Nethezeka Nathi",
-        host: "TBA",
-        time: "9:00 AM - 12:00 PM",
-        description: "Join us for an engaging morning show with great music and local content."
-      },
-      {
-        id: 24,
-        title: "Re Mmogo",
-        host: "TBA",
-        time: "12:00 PM - 3:00 PM",
-        description: "Join us together for an afternoon of great music and community conversations."
-      },
-      {
-        id: 29,
-        title: "Merithing Afternoon Drive Show",
-        host: "TBA",
-        time: "3:00 PM - 6:00 PM",
-        description: "Your perfect companion for the afternoon drive with great music and entertainment."
-      },
-      {
-        id: 34,
-        title: "Sabelana Ngolwazi",
-        host: "TBA",
-        time: "6:00 PM - 9:00 PM",
-        description: "Join us for an evening show packed with knowledge and entertainment."
-      },
-      {
-        id: 39,
-        title: "Pitšeng Tše Kgolo",
-        host: "TBA",
-        time: "9:00 PM - 11:59 PM",
-        description: "Join us for late night entertainment and great music."
-      },
-      {
-        id: 8,
-        title: "Local Spotlight",
-        host: "David Chen",
-        time: "2:00 PM - 4:00 PM",
-        description: "Featuring music and interviews from local artists."
-      }
-    ]
-  },
-  {
-    day: "Thursday",
-    shows: [
-      {
-        id: 45,
-        title: "Music",
-        host: "TBA",
-        time: "12:00 AM - 3:00 AM",
-        description: "Late night music to keep you company through the early hours."
-      },
-      {
-        id: 50,
-        title: "Mahube Drive",
-        host: "TBA",
-        time: "3:00 AM - 6:00 AM",
-        description: "Early morning drive show to start your day with energy and great music."
-      },
-      {
-        id: 55,
-        title: "Namba S'khambe Breakfast Show",
-        host: "TBA",
-        time: "6:00 AM - 9:00 AM",
-        description: "Start your morning with great music and breakfast conversations."
-      },
-      {
-        id: 20,
-        title: "Nethezeka Nathi",
-        host: "TBA",
-        time: "9:00 AM - 12:00 PM",
-        description: "Join us for an engaging morning show with great music and local content."
-      },
-      {
-        id: 25,
-        title: "Re Mmogo",
-        host: "TBA",
-        time: "12:00 PM - 3:00 PM",
-        description: "Join us together for an afternoon of great music and community conversations."
-      },
-      {
-        id: 30,
-        title: "Merithing Afternoon Drive Show",
-        host: "TBA",
-        time: "3:00 PM - 6:00 PM",
-        description: "Your perfect companion for the afternoon drive with great music and entertainment."
-      },
-      {
-        id: 35,
-        title: "Sabelana Ngolwazi",
-        host: "TBA",
-        time: "6:00 PM - 9:00 PM",
-        description: "Join us for an evening show packed with knowledge and entertainment."
-      },
-      {
-        id: 40,
-        title: "Pitšeng Tše Kgolo",
-        host: "TBA",
-        time: "9:00 PM - 11:59 PM",
-        description: "Join us for late night entertainment and great music."
-      }
-    ]
-  },
-  {
-    day: "Friday",
-    shows: [
-      {
-        id: 46,
-        title: "Music",
-        host: "TBA",
-        time: "12:00 AM - 3:00 AM",
-        description: "Late night music to keep you company through the early hours."
-      },
-      {
-        id: 51,
-        title: "Mahube Drive",
-        host: "TBA",
-        time: "3:00 AM - 6:00 AM",
-        description: "Early morning drive show to start your day with energy and great music."
-      },
-      {
-        id: 56,
-        title: "Namba S'khambe Breakfast Show",
-        host: "TBA",
-        time: "6:00 AM - 9:00 AM",
-        description: "Start your morning with great music and breakfast conversations."
-      },
-      {
-        id: 21,
-        title: "Nethezeka Nathi",
-        host: "TBA",
-        time: "9:00 AM - 12:00 PM",
-        description: "Join us for an engaging morning show with great music and local content."
-      },
-      {
-        id: 26,
-        title: "Re Mmogo",
-        host: "TBA",
-        time: "12:00 PM - 3:00 PM",
-        description: "Join us together for an afternoon of great music and community conversations."
-      },
-      {
-        id: 31,
-        title: "Merithing Afternoon Drive Show",
-        host: "TBA",
-        time: "3:00 PM - 6:00 PM",
-        description: "Your perfect companion for the afternoon drive with great music and entertainment."
-      },
-      {
-        id: 36,
-        title: "Sabelana Ngolwazi",
-        host: "TBA",
-        time: "6:00 PM - 9:00 PM",
-        description: "Join us for an evening show packed with knowledge and entertainment."
-      },
-      {
-        id: 41,
-        title: "Woza Weekend",
-        host: "TBA",
-        time: "9:00 PM - 11:59 PM",
-        description: "Get ready for the weekend with great music and entertainment."
-      },
-      {
-        id: 12,
-        title: "Weekend Kickoff",
-        host: "Alex Turner",
-        time: "4:00 PM - 8:00 PM",
-        description: "Get your weekend started with the biggest hits and party favorites."
-      }
-    ]
-  },
-  {
-    day: "Saturday",
-    shows: [
-      {
-        id: 13,
-        title: "Weekend Breakfast",
-        host: "Lisa Nguyen",
-        time: "8:00 AM - 11:00 AM",
-        description: "A relaxed start to your weekend with easy listening music."
-      },
-      {
-        id: 14,
-        title: "Saturday Sessions",
-        host: "Marcus King",
-        time: "2:00 PM - 6:00 PM",
-        description: "Four hours of non-stop dance and electronic music."
-      }
-    ]
-  },
-  {
-    day: "Sunday",
-    shows: [
-      {
-        id: 15,
-        title: "Sunday Soul",
-        host: "Aisha Jordan",
-        time: "10:00 AM - 1:00 PM",
-        description: "Soul and gospel music to lift your spirits."
-      },
-      {
-        id: 16,
-        title: "The Wind Down",
-        host: "James Patterson",
-        time: "7:00 PM - 10:00 PM",
-        description: "Prepare for the week ahead with calm, reflective music."
-      }
-    ]
-  }
-];
+import { fetchShows, type DaySchedule, type ShowWithFormattedTime } from '@/services/api/showsService';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ShowSchedule = () => {
   const { themeOptions, isDarkMode } = useContext(ThemeContext);
@@ -396,6 +12,60 @@ const ShowSchedule = () => {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return days[new Date().getDay()];
   });
+  const [schedule, setSchedule] = useState<DaySchedule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadShows = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await fetchShows();
+        setSchedule(data);
+      } catch (err) {
+        console.error('Error loading shows:', err);
+        setError('Failed to load shows');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadShows();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={`bg-card rounded-lg shadow-md p-6 border ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+        <h2 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-foreground'}`}>Show Schedule</h2>
+        <div className="space-y-4">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-20 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={`bg-card rounded-lg shadow-md p-6 border ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+        <h2 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-foreground'}`}>Show Schedule</h2>
+        <div className="text-center py-8">
+          <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            {error}
+          </p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4"
+            variant="outline"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`bg-card rounded-lg shadow-md p-6 border ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
@@ -403,7 +73,7 @@ const ShowSchedule = () => {
       
       <Tabs defaultValue={currentDay} className="w-full">
         <TabsList className={`grid grid-cols-7 mb-6 overflow-x-auto ${isDarkMode ? 'bg-gray-700' : 'bg-muted'}`}>
-          {mockSchedule.map((day) => (
+          {schedule.map((day) => (
             <TabsTrigger 
               key={day.day} 
               value={day.day}
@@ -414,29 +84,40 @@ const ShowSchedule = () => {
           ))}
         </TabsList>
         
-        {mockSchedule.map((day) => (
+        {schedule.map((day) => (
           <TabsContent key={day.day} value={day.day} className="space-y-4">
-            {day.shows.map((show) => (
-              <div 
-                key={show.id} 
-                className={`flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-primary rounded-r-md transition-colors ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-muted/20 hover:bg-muted/40'}`}
-              >
-                <div className="mb-3 md:mb-0">
-                  <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-foreground'}`}>{show.title}</h3>
-                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-muted-foreground'}`}>with {show.host}</p>
-                </div>
-                
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
-                  <span className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm font-medium">
-                    {show.time}
-                  </span>
-                  
-                  <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                    More Info
-                  </Button>
-                </div>
+            {day.shows.length === 0 ? (
+              <div className={`text-center py-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                <p>No shows scheduled for {day.day}</p>
               </div>
-            ))}
+            ) : (
+              day.shows.map((show) => (
+                <div 
+                  key={show.id} 
+                  className={`flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-primary rounded-r-md transition-colors ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-muted/20 hover:bg-muted/40'}`}
+                >
+                  <div className="mb-3 md:mb-0">
+                    <h3 className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-foreground'}`}>{show.title}</h3>
+                    <p className={`${isDarkMode ? 'text-gray-300' : 'text-muted-foreground'}`}>with {show.host}</p>
+                    {show.description && (
+                      <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {show.description}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
+                    <span className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm font-medium">
+                      {show.time}
+                    </span>
+                    
+                    <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                      More Info
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
           </TabsContent>
         ))}
       </Tabs>
