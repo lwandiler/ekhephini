@@ -47,12 +47,12 @@ const HomePage = () => {
       <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} ${isDarkMode ? 'dark' : ''}`}>
         <Header />
         
-        {/* Theme Toggle Button - positioned in top right */}
+        {/* Theme Toggle in Floating Button */}
         <div className="fixed top-4 right-4 z-50">
-          <ThemeToggle variant="switch" />
+          <ThemeToggle />
         </div>
         
-        <main className="flex-1 bg-gray-900 dark:bg-gray-900">
+        <main className={`flex-1 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
           <div className="w-full">
             <HeroBannerCarousel />
           </div>
