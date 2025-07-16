@@ -35,11 +35,11 @@ const mockSchedule: DaySchedule[] = [
         description: "Early morning drive show to start your day with energy and great music."
       },
       {
-        id: 1,
-        title: "Morning Brew",
-        host: "Sarah Johnson",
+        id: 52,
+        title: "Namba S'khambe Breakfast Show",
+        host: "TBA",
         time: "6:00 AM - 9:00 AM",
-        description: "Start your day with upbeat music and interesting discussions."
+        description: "Start your morning with great music and breakfast conversations."
       },
       {
         id: 17,
@@ -103,11 +103,11 @@ const mockSchedule: DaySchedule[] = [
         description: "Early morning drive show to start your day with energy and great music."
       },
       {
-        id: 4,
-        title: "Morning Brew",
-        host: "Sarah Johnson",
+        id: 53,
+        title: "Namba S'khambe Breakfast Show",
+        host: "TBA",
         time: "6:00 AM - 9:00 AM",
-        description: "Start your day with upbeat music and interesting discussions."
+        description: "Start your morning with great music and breakfast conversations."
       },
       {
         id: 18,
@@ -171,11 +171,11 @@ const mockSchedule: DaySchedule[] = [
         description: "Early morning drive show to start your day with energy and great music."
       },
       {
-        id: 7,
-        title: "Morning Brew",
-        host: "Sarah Johnson",
+        id: 54,
+        title: "Namba S'khambe Breakfast Show",
+        host: "TBA",
         time: "6:00 AM - 9:00 AM",
-        description: "Start your day with upbeat music and interesting discussions."
+        description: "Start your morning with great music and breakfast conversations."
       },
       {
         id: 19,
@@ -239,11 +239,11 @@ const mockSchedule: DaySchedule[] = [
         description: "Early morning drive show to start your day with energy and great music."
       },
       {
-        id: 9,
-        title: "Morning Brew",
-        host: "Sarah Johnson",
+        id: 55,
+        title: "Namba S'khambe Breakfast Show",
+        host: "TBA",
         time: "6:00 AM - 9:00 AM",
-        description: "Start your day with upbeat music and interesting discussions."
+        description: "Start your morning with great music and breakfast conversations."
       },
       {
         id: 20,
@@ -300,11 +300,11 @@ const mockSchedule: DaySchedule[] = [
         description: "Early morning drive show to start your day with energy and great music."
       },
       {
-        id: 11,
-        title: "Morning Brew",
-        host: "Sarah Johnson",
+        id: 56,
+        title: "Namba S'khambe Breakfast Show",
+        host: "TBA",
         time: "6:00 AM - 9:00 AM",
-        description: "Start your day with upbeat music and interesting discussions."
+        description: "Start your morning with great music and breakfast conversations."
       },
       {
         id: 21,
