@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Radio, Music, Headphones, Video } from "lucide-react";
+
 interface BannerContentProps {
   title: string;
   subtitle?: string;
@@ -9,6 +10,7 @@ interface BannerContentProps {
   url?: string;
   id: string;
 }
+
 const BannerContent: React.FC<BannerContentProps> = ({
   title,
   subtitle,
@@ -28,6 +30,7 @@ const BannerContent: React.FC<BannerContentProps> = ({
     const charCode = id.charCodeAt(0);
     return icons[charCode % icons.length];
   };
+
   return <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/50 to-transparent p-8 sm:p-12 z-20">
       <div className="max-w-3xl">
         <h3 className="text-3xl sm:text-5xl font-bold text-white mb-3 font-second">
@@ -43,4 +46,5 @@ const BannerContent: React.FC<BannerContentProps> = ({
       </div>
     </div>;
 };
+
 export default BannerContent;
