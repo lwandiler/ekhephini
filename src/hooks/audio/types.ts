@@ -1,4 +1,3 @@
-
 export interface RadioStation {
   id?: string;
   name: string;
@@ -8,6 +7,7 @@ export interface RadioStation {
   genre?: string;
   logo?: string;
   streamUrl?: string; // Added to support station settings stream URL
+  location?: string; // Added to support station location
 }
 
 export interface SongMetadata {
