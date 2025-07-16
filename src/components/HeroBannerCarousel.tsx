@@ -121,9 +121,9 @@ const HeroBannerCarousel = () => {
       {/* Indicators */}
       {banners.length > 1 && (
         <CarouselIndicators
-          total={banners.length}
-          current={currentSlide}
-          onIndicatorClick={goToSlide}
+          count={banners.length}
+          currentIndex={currentSlide}
+          onClick={goToSlide}
         />
       )}
     </div>
