@@ -1,7 +1,6 @@
 
 import { useEffect } from 'react';
 import { tryUnlockAllAudioContexts } from '@/hooks/audio/utils/audioContextUnlockUtils';
-import { loadCurrentStation, preloadAdjacentStations } from './audioLoaders';
 import { MutableRefObject } from 'react';
 import { Howl } from 'howler';
 import { RadioStation } from '@/hooks/audio/types';
@@ -19,18 +18,21 @@ export function useAudioInitialization(
 ) {
   useEffect(() => {
     const initializeAudio = async () => {
-      await tryUnlockAllAudioContexts();
-      loadCurrentStation(
-        stations[currentStationIndex], 
-        volume, 
-        currentSound, 
-        setIsLoading, 
-        setStreamError, 
-        setIsPlaying
-      );
-      preloadAdjacentStations(stations, currentStationIndex, nextSound, previousSound);
+      try {
+        await tryUnlockAllAudioContexts();
+        console.log('Audio context unlocked successfully');
+        
+        // Clear any existing errors
+        setStreamError(null);
+        
+        // The HLS player will be initialized automatically when needed
+        console.log('Audio initialization complete - HLS player ready');
+      } catch (error) {
+        console.error('Audio initialization failed:', error);
+        setStreamError('Audio initialization failed');
+      }
     };
 
     initializeAudio();
-  }, []);
+  }, [setStreamError]);
 }

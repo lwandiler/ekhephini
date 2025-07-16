@@ -1,7 +1,8 @@
+
 import { MutableRefObject } from 'react';
 import { Howl } from 'howler';
 import { RadioStation } from '@/hooks/audio/types';
-import { loadCurrentStation, preloadAdjacentStations } from './audioLoaders';
+import { useHlsPlayer } from '@/hooks/audio/useHlsPlayer';
 import { tryUnlockAllAudioContexts } from '@/hooks/audio/utils/audioContextUnlockUtils';
 
 export function createAudioControls(
@@ -39,27 +40,43 @@ export function createAudioControls(
     previousSound
   } = audioState;
 
-  // Play current station - only play existing audio, don't reinitialize
-  const playCurrentStation = () => {
-    if (!currentSound.current) {
-      setStreamError("No audio source available. Try changing stations.");
-      return;
+  // Initialize HLS player for current station
+  const currentStation = stations[currentStationIndex];
+  const hlsPlayer = useHlsPlayer({
+    station: currentStation,
+    volume,
+    setIsPlaying,
+    setIsLoading,
+    setStreamError
+  });
+
+  // Initialize HLS player when station changes
+  const initializeCurrentStation = () => {
+    // Clean up Howler instances if they exist
+    if (currentSound.current) {
+      currentSound.current.unload();
+      currentSound.current = null;
     }
     
-    setIsLoading(true);
-    currentSound.current.volume(volume / 100);
-    currentSound.current.play();
+    hlsPlayer.initializeHlsPlayer();
+  };
+
+  // Play current station
+  const playCurrentStation = () => {
+    if (!hlsPlayer.audioElement) {
+      initializeCurrentStation();
+      setTimeout(() => hlsPlayer.play(), 500);
+    } else {
+      hlsPlayer.play();
+    }
   };
   
   // Pause current station
   const pauseCurrentStation = () => {
-    if (currentSound.current) {
-      currentSound.current.pause();
-      setIsPlaying(false);
-    }
+    hlsPlayer.pause();
   };
   
-  // Toggle play/pause - won't initialize audio if not available
+  // Toggle play/pause
   const togglePlayPause = () => {
     if (isPlaying) {
       pauseCurrentStation();
@@ -73,40 +90,12 @@ export function createAudioControls(
     const nextIndex = (currentStationIndex + 1) % stations.length;
     setCurrentStationIndex(nextIndex);
     
-    // Stop current audio
+    // Clean up current audio
     if (currentSound.current) {
       currentSound.current.unload();
     }
     
-    // Use preloaded next audio if available
-    if (nextSound.current) {
-      currentSound.current = nextSound.current;
-      nextSound.current = null;
-      
-      // Set volume and play
-      if (currentSound.current) {
-        setIsLoading(true);
-        currentSound.current.volume(volume / 100);
-        currentSound.current.play();
-      }
-    } else {
-      // Load and play if preloaded audio isn't available
-      loadCurrentStation(
-        stations[nextIndex],
-        volume,
-        currentSound,
-        setIsLoading,
-        setStreamError,
-        setIsPlaying
-      );
-      if (currentSound.current) {
-        setIsLoading(true);
-        currentSound.current.play();
-      }
-    }
-    
-    // Preload new adjacent stations
-    setTimeout(() => preloadAdjacentStations(stations, nextIndex, nextSound, previousSound), 500);
+    // Initialize will happen automatically via useEffect in the hook
   };
   
   // Play previous station
@@ -114,48 +103,18 @@ export function createAudioControls(
     const prevIndex = (currentStationIndex - 1 + stations.length) % stations.length;
     setCurrentStationIndex(prevIndex);
     
-    // Stop current audio
+    // Clean up current audio
     if (currentSound.current) {
       currentSound.current.unload();
     }
     
-    // Use preloaded previous audio if available
-    if (previousSound.current) {
-      currentSound.current = previousSound.current;
-      previousSound.current = null;
-      
-      // Set volume and play
-      if (currentSound.current) {
-        setIsLoading(true);
-        currentSound.current.volume(volume / 100);
-        currentSound.current.play();
-      }
-    } else {
-      // Load and play if preloaded audio isn't available
-      loadCurrentStation(
-        stations[prevIndex],
-        volume,
-        currentSound,
-        setIsLoading,
-        setStreamError,
-        setIsPlaying
-      );
-      if (currentSound.current) {
-        setIsLoading(true);
-        currentSound.current.play();
-      }
-    }
-    
-    // Preload new adjacent stations
-    setTimeout(() => preloadAdjacentStations(stations, prevIndex, nextSound, previousSound), 500);
+    // Initialize will happen automatically via useEffect in the hook
   };
   
   // Set volume
   const setVolumeHandler = (newVolume: number) => {
     setVolume(newVolume);
-    if (currentSound.current) {
-      currentSound.current.volume(newVolume / 100);
-    }
+    hlsPlayer.setVolumeLevel(newVolume);
   };
   
   // Force try play (for mobile devices)
@@ -166,22 +125,11 @@ export function createAudioControls(
       // Try to unlock audio context first
       await tryUnlockAllAudioContexts();
       
-      if (currentSound.current) {
-        // Try to force play
-        currentSound.current.play();
+      if (!hlsPlayer.audioElement) {
+        initializeCurrentStation();
+        setTimeout(() => hlsPlayer.play(), 500);
       } else {
-        // Load and play if no sound exists
-        loadCurrentStation(
-          stations[currentStationIndex],
-          volume,
-          currentSound,
-          setIsLoading,
-          setStreamError,
-          setIsPlaying
-        );
-        if (currentSound.current) {
-          currentSound.current.play();
-        }
+        hlsPlayer.play();
       }
     } catch (error) {
       console.error("Force play failed:", error);
