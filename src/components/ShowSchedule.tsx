@@ -21,6 +21,13 @@ const mockSchedule: DaySchedule[] = [
     day: "Monday",
     shows: [
       {
+        id: 42,
+        title: "Music",
+        host: "TBA",
+        time: "12:00 AM - 3:00 AM",
+        description: "Late night music to keep you company through the early hours."
+      },
+      {
         id: 1,
         title: "Morning Brew",
         host: "Sarah Johnson",
@@ -74,6 +81,13 @@ const mockSchedule: DaySchedule[] = [
   {
     day: "Tuesday",
     shows: [
+      {
+        id: 43,
+        title: "Music",
+        host: "TBA",
+        time: "12:00 AM - 3:00 AM",
+        description: "Late night music to keep you company through the early hours."
+      },
       {
         id: 4,
         title: "Morning Brew",
@@ -129,6 +143,13 @@ const mockSchedule: DaySchedule[] = [
     day: "Wednesday",
     shows: [
       {
+        id: 44,
+        title: "Music",
+        host: "TBA",
+        time: "12:00 AM - 3:00 AM",
+        description: "Late night music to keep you company through the early hours."
+      },
+      {
         id: 7,
         title: "Morning Brew",
         host: "Sarah Johnson",
@@ -183,6 +204,13 @@ const mockSchedule: DaySchedule[] = [
     day: "Thursday",
     shows: [
       {
+        id: 45,
+        title: "Music",
+        host: "TBA",
+        time: "12:00 AM - 3:00 AM",
+        description: "Late night music to keep you company through the early hours."
+      },
+      {
         id: 9,
         title: "Morning Brew",
         host: "Sarah Johnson",
@@ -229,6 +257,13 @@ const mockSchedule: DaySchedule[] = [
   {
     day: "Friday",
     shows: [
+      {
+        id: 46,
+        title: "Music",
+        host: "TBA",
+        time: "12:00 AM - 3:00 AM",
+        description: "Late night music to keep you company through the early hours."
+      },
       {
         id: 11,
         title: "Morning Brew",
