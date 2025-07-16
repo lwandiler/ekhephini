@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { RadioStation } from './types';
 
 export function useHtmlAudio() {
-  // Initialize HTML5 Audio Element
+  // Initialize HTML5 Audio as fallback
   const initializeHtmlAudio = useCallback((
     currentStation: number,
     stations: RadioStation[],
@@ -12,133 +12,100 @@ export function useHtmlAudio() {
     setIsPlaying: (value: boolean) => void,
     setIsLoading: (value: boolean) => void,
     setStreamError: (value: string | null) => void,
-    audioElementRef: React.MutableRefObject<HTMLAudioElement | null>
+    audioElement: React.MutableRefObject<HTMLAudioElement | null>
   ) => {
+    setStreamError(null);
+    
     try {
-      console.log("Initializing HTML5 Audio");
-      
-      // If there's already an audio element, clean it up
-      if (audioElementRef.current) {
-        console.log("Cleaning up previous HTML5 Audio element");
-        audioElementRef.current.pause();
-        audioElementRef.current.src = "";
-        audioElementRef.current.load();
+      // Clean up previous audio element
+      if (audioElement.current) {
+        audioElement.current.pause();
+        audioElement.current.removeAttribute('src');
+        audioElement.current.load();
       }
 
-      // Create a new audio element
-      const audio = new Audio();
+      // Create new audio element
+      audioElement.current = new Audio();
       
-      // Try to unlock audio context immediately
-      const unlockAudio = () => {
-        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-        if (ctx.state === 'suspended') {
-          ctx.resume().then(() => console.log("AudioContext resumed by HTML Audio init"));
-          
-          // Create and play a silent audio element
-          const silentAudio = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAACAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMD/8AAEQgAAQADAQIRAQIRAf/EAHMAAQEBAQEBAAAAAAAAAAAAAAECAAUHBgMBAQEBAAAAAAAAAAAAAAAAAAECA//aAAwDAQACEQMRAD8A8hAAAAAEAEAf/9k=");
-          silentAudio.volume = 0.01;
-          silentAudio.play().then(() => {
-            console.log("Silent audio played successfully");
-            setTimeout(() => silentAudio.pause(), 1000);
-          }).catch(e => console.log("Silent audio failed:", e));
-        }
-      };
+      // Set volume
+      audioElement.current.volume = volume / 100;
       
-      unlockAudio();
+      // Get the station URL (prefer settings URL over station URL)
+      const station = stations[currentStation];
+      const stationUrl = station.streamUrl || station.url;
       
-      audio.autoplay = true; // Try autoplay
-      audio.preload = "auto";
-      audio.crossOrigin = "anonymous"; // Try to handle CORS
+      console.log("HTML5 Audio - Setting source to:", stationUrl);
       
-      // Try fallback URL first as it might work better for direct playback
-      const stationUrl = stations[currentStation].fallbackUrl || stations[currentStation].url;
+      // Set the source - HTML5 Audio can handle M3U8 natively in many browsers
+      audioElement.current.src = stationUrl;
+      audioElement.current.crossOrigin = 'anonymous'; // Enable CORS for streaming
       
-      console.log("Using HTML5 Audio with URL:", stationUrl);
-      audio.src = stationUrl;
+      // Event listeners
+      audioElement.current.addEventListener('loadstart', () => {
+        console.log("HTML5 Audio - Load started");
+        setIsLoading(true);
+      });
       
-      audio.oncanplay = () => {
-        console.log("HTML Audio can play");
+      audioElement.current.addEventListener('canplay', () => {
+        console.log("HTML5 Audio - Can play");
         setIsLoading(false);
         setStreamError(null);
-        // Try to play immediately when can play
-        audio.play().then(() => {
-          console.log("HTML Audio playback started successfully");
-        }).catch(err => console.log("Auto play attempt failed:", err));
-      };
+      });
       
-      audio.onplaying = () => {
-        console.log("HTML Audio started playing");
+      audioElement.current.addEventListener('play', () => {
+        console.log("HTML5 Audio - Started playing");
         setIsPlaying(true);
         setIsLoading(false);
-        setStreamError(null);
-        toast.success(`Now playing: ${stations[currentStation].name}`);
-      };
+        toast.success(`Now playing: ${station.name}`);
+      });
       
-      audio.onwaiting = () => {
-        console.log("HTML Audio waiting for data");
-        setIsLoading(true);
-      };
+      audioElement.current.addEventListener('pause', () => {
+        console.log("HTML5 Audio - Paused");
+        setIsPlaying(false);
+      });
       
-      audio.onerror = (e) => {
-        console.error("HTML Audio error:", e);
+      audioElement.current.addEventListener('error', (e) => {
+        console.error("HTML5 Audio error:", e);
         setIsLoading(false);
         setIsPlaying(false);
         
-        // Try alternative URL if available
-        const alternativeUrl = stations[currentStation].url;
-        if (audio.src !== alternativeUrl && alternativeUrl) {
-          console.log("Trying alternative URL:", alternativeUrl);
-          audio.src = alternativeUrl;
-          audio.load();
-          audio.play().then(() => {
-            console.log("Alternative URL working");
-          }).catch(err => {
-            console.error("Alternative URL also failed:", err);
-            setStreamError("Stream failed to play. Try opening in browser.");
-          });
-        } else {
-          setStreamError("Stream failed to play. Try opening in browser.");
-        }
-      };
-      
-      audio.onended = () => {
-        console.log("HTML Audio ended");
-        setIsPlaying(false);
-      };
-      
-      audio.volume = volume / 100;
-      audioElementRef.current = audio;
-      
-      // Try to play immediately
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          console.log("HTML Audio initial play successful");
-        }).catch(err => {
-          console.log("Initial play attempt failed:", err);
-          if (err.name === "NotAllowedError") {
-            setStreamError("Browser blocked autoplay. Click play button to start.");
-          } else {
-            setStreamError("Unable to play stream. Click play button to try again.");
+        // Try fallback URL if available
+        if (station.fallbackUrl && station.fallbackUrl !== stationUrl) {
+          console.log("Trying fallback URL:", station.fallbackUrl);
+          if (audioElement.current) {
+            audioElement.current.src = station.fallbackUrl;
+            audioElement.current.load();
           }
-        });
-      }
-      
-      // Try to unlock audio context on iOS/mobile
-      const unlockAudioOnInteraction = () => {
-        if (audioElementRef.current) {
-          audioElementRef.current.play().then(() => {
-            console.log("Touch unlock successful");
-          }).catch(e => console.log("Touch unlock attempt:", e));
+        } else {
+          setStreamError("Failed to load stream. Browser may not support this format.");
+          toast.error("Failed to load stream. Try the Force Play button.");
         }
-      };
+      });
       
-      document.addEventListener('touchstart', unlockAudioOnInteraction, { once: true });
-      document.addEventListener('click', unlockAudioOnInteraction, { once: true });
-      document.addEventListener('keydown', unlockAudioOnInteraction, { once: true });
+      audioElement.current.addEventListener('stalled', () => {
+        console.log("HTML5 Audio - Stalled");
+        setStreamError("Stream is buffering...");
+      });
+      
+      audioElement.current.addEventListener('waiting', () => {
+        console.log("HTML5 Audio - Waiting for data");
+        setIsLoading(true);
+      });
+      
+      audioElement.current.addEventListener('progress', () => {
+        if (audioElement.current && audioElement.current.buffered.length > 0) {
+          setIsLoading(false);
+          setStreamError(null);
+        }
+      });
+      
+      // Load the audio
+      audioElement.current.load();
+      
     } catch (error) {
-      console.error("Error initializing HTML Audio:", error);
-      setStreamError("Failed to initialize audio player");
+      console.error("Error creating HTML5 Audio:", error);
+      setIsLoading(false);
+      setStreamError("Failed to initialize HTML5 audio player");
     }
   }, []);
 

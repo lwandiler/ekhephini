@@ -26,11 +26,15 @@ export function useHowlerInitializer() {
       sound.current.unload();
     }
 
+    // Determine format based on URL
+    const format = stationUrl.includes('.m3u8') ? ['m3u8'] : ['mp3'];
+    console.log("Using format:", format);
+
     // Create a new instance with autoplay enabled
     sound.current = new Howl({
       src: [stationUrl],
-      html5: true, // Required for streaming audio
-      format: ['mp3'], 
+      html5: true, // Required for streaming audio and M3U8
+      format: format, // Support M3U8 format
       autoplay: true, // Try to autoplay
       preload: true, // Ensure audio is preloaded
       volume: volume / 100,
@@ -161,11 +165,14 @@ function tryAlternativeUrl(
   if (sound.current) {
     sound.current.unload();
   }
+
+  // Determine format for alternative URL
+  const format = alternativeUrl.includes('.m3u8') ? ['m3u8'] : ['mp3'];
   
   sound.current = new Howl({
     src: [alternativeUrl],
     html5: true,
-    format: ['mp3'],
+    format: format,
     autoplay: true,
     preload: true,
     volume: volume / 100,
@@ -227,11 +234,14 @@ function retryAttempt(
     const stationUrl = stations[currentStation].url;
     const alternativeUrl = stations[currentStation].fallbackUrl;
     
+    // Determine format based on URL
+    const format = stationUrl.includes('.m3u8') ? ['m3u8'] : ['mp3'];
+    
     // Create a new Howl instance with the same URL
     sound.current = new Howl({
       src: [stationUrl],
       html5: true,
-      format: ['mp3'],
+      format: format,
       autoplay: true,
       preload: true,
       volume: volume / 100,
