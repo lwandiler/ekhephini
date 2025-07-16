@@ -56,6 +56,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us for an evening show packed with knowledge and entertainment."
       },
       {
+        id: 37,
+        title: "Pitšeng Tše Kgolo",
+        host: "TBA",
+        time: "9:00 PM - 11:59 PM",
+        description: "Join us for late night entertainment and great music."
+      },
+      {
         id: 3,
         title: "Drive Time",
         host: "Michael Rodriguez",
@@ -101,6 +108,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "6:00 PM - 9:00 PM",
         description: "Join us for an evening show packed with knowledge and entertainment."
+      },
+      {
+        id: 38,
+        title: "Pitšeng Tše Kgolo",
+        host: "TBA",
+        time: "9:00 PM - 11:59 PM",
+        description: "Join us for late night entertainment and great music."
       },
       {
         id: 6,
@@ -150,6 +164,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us for an evening show packed with knowledge and entertainment."
       },
       {
+        id: 39,
+        title: "Pitšeng Tše Kgolo",
+        host: "TBA",
+        time: "9:00 PM - 11:59 PM",
+        description: "Join us for late night entertainment and great music."
+      },
+      {
         id: 8,
         title: "Local Spotlight",
         host: "David Chen",
@@ -195,6 +216,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "6:00 PM - 9:00 PM",
         description: "Join us for an evening show packed with knowledge and entertainment."
+      },
+      {
+        id: 40,
+        title: "Pitšeng Tše Kgolo",
+        host: "TBA",
+        time: "9:00 PM - 11:59 PM",
+        description: "Join us for late night entertainment and great music."
       }
     ]
   },
