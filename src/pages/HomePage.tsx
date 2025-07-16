@@ -53,7 +53,7 @@ const HomePage = () => {
       <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} dark`}>
         <Header />
         
-        <main className="flex-1 bg-gray-900">
+        <main className="flex-1 bg-white">
           <div className="w-full">
             <HeroBannerCarousel />
           </div>
