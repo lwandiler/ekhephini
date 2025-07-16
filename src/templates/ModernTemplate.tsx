@@ -54,12 +54,12 @@ const ModernTemplate = ({
           <div className="h-16 bg-gradient-to-b from-green-700 to-transparent"></div>
         </section>
         
-        {/* Featured Podcasts - Modern Style */}
-        <section className="py-20 bg-gradient-to-b from-gray-950 to-black">
+        {/* Featured Podcasts - White Background */}
+        <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <span className="text-purple-400 font-semibold tracking-wider uppercase text-sm">Listen Anytime</span>
-              <h2 className="text-4xl font-bold mt-2 text-white">Popular Podcasts</h2>
+              <span className="text-green-600 font-semibold tracking-wider uppercase text-sm">Listen Anytime</span>
+              <h2 className="text-4xl font-bold mt-2 text-gray-900">Popular Podcasts</h2>
             </div>
             
             <div className="mb-12">
@@ -73,7 +73,7 @@ const ModernTemplate = ({
             </div>
             
             <div className="mt-12 text-center">
-              <Button variant="outline" size="lg" className="rounded-full border-2 border-purple-500 text-purple-400 hover:bg-purple-900 hover:text-white px-8">
+              <Button variant="outline" size="lg" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-600 hover:text-white px-8">
                 <Headphones className="mr-2" />
                 Browse All Episodes
               </Button>
