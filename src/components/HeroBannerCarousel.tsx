@@ -1,94 +1,131 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
-import BannerSlide from './banner/BannerSlide';
-import { Button } from './ui/button';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useBannerData } from '@/hooks/useBannerData';
+import BannerSlide from './banner/BannerSlide';
+import CarouselIndicators from './banner/CarouselIndicators';
+import { supabase } from '@/integrations/supabase/client';
+import { Banner } from '@/types/banner';
+import { mapDatabaseBannerToModel } from '@/utils/bannerUtils';
 
-const HeroBannerCarousel: React.FC = () => {
-  const { banners, isLoading, error } = useBannerData();
+const HeroBannerCarousel = () => {
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const nextSlide = useCallback(() => {
-    if (banners.length === 0) return;
-    setCurrentSlide((prev) => (prev + 1) % banners.length);
-  }, [banners.length]);
+  // Fetch banners from database
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('banners')
+          .select('*')
+          .eq('active', true)
+          .order('display_order', { ascending: true });
+        
+        if (error) {
+          console.error("Error fetching banners:", error);
+          return;
+        }
+        
+        // Convert database format to our app format
+        const formattedBanners = data.map(banner => mapDatabaseBannerToModel(banner));
+        setBanners(formattedBanners);
+      } catch (error) {
+        console.error("Unexpected error fetching banners:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const prevSlide = useCallback(() => {
-    if (banners.length === 0) return;
-    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
-  }, [banners.length]);
+    fetchBanners();
+  }, []);
 
-  // Auto-advance slides every 7 seconds
+  // Auto-advance slides
   useEffect(() => {
     if (banners.length <= 1) return;
     
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 7000);
-    
-    return () => clearInterval(interval);
-  }, [nextSlide, banners.length]);
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % banners.length);
+    }, 5000);
 
-  // If loading or error, display appropriate UI
+    return () => clearInterval(timer);
+  }, [banners.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide(prev => (prev + 1) % banners.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide(prev => (prev - 1 + banners.length) % banners.length);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
   if (isLoading) {
     return (
-      <div className="h-[400px] sm:h-[500px] w-full bg-gray-100 animate-pulse"></div>
+      <div className="relative h-[400px] sm:h-[500px] w-full bg-gray-900 flex items-center justify-center">
+        <div className="text-white">Loading banners...</div>
+      </div>
     );
   }
 
-  if (error || banners.length === 0) {
-    return null;
+  if (banners.length === 0) {
+    return (
+      <div className="relative h-[400px] sm:h-[500px] w-full bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-center">
+          <h2 className="text-2xl font-bold mb-2">Welcome to Moutse Community Radio</h2>
+          <p className="text-gray-300">Your friend to rely on MCRS 96.9 FM</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="relative w-full overflow-hidden">
-      <div className="relative overflow-hidden">
-        {/* Current slide */}
-        {banners[currentSlide] && (
-          <BannerSlide key={banners[currentSlide].id} banner={banners[currentSlide]} />
-        )}
-        
-        {/* Navigation arrows */}
-        {banners.length > 1 && (
-          <>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full z-20"
-              onClick={prevSlide}
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="h-8 w-8" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full z-20"
-              onClick={nextSlide}
-              aria-label="Next slide"
-            >
-              <ChevronRight className="h-8 w-8" />
-            </Button>
-          </>
-        )}
-        
-        {/* Slide indicators */}
-        {banners.length > 1 && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full ${
-                  currentSlide === index ? "bg-white" : "bg-white/50"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
+    <div className="relative h-[400px] sm:h-[500px] w-full overflow-hidden bg-gray-900">
+      {/* Banner Slides */}
+      <div 
+        className="flex h-full transition-transform duration-500 ease-in-out"
+        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+      >
+        {banners.map((banner) => (
+          <div key={banner.id} className="min-w-full h-full">
+            <BannerSlide banner={banner} />
           </div>
-        )}
+        ))}
       </div>
+
+      {/* Navigation Arrows */}
+      {banners.length > 1 && (
+        <>
+          <button
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          
+          <button
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+            aria-label="Next slide"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </>
+      )}
+
+      {/* Indicators */}
+      {banners.length > 1 && (
+        <CarouselIndicators
+          total={banners.length}
+          current={currentSlide}
+          onIndicatorClick={goToSlide}
+        />
+      )}
     </div>
   );
 };
