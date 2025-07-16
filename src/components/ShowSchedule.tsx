@@ -265,6 +265,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us for an evening show packed with knowledge and entertainment."
       },
       {
+        id: 41,
+        title: "Woza Weekend",
+        host: "TBA",
+        time: "9:00 PM - 11:59 PM",
+        description: "Get ready for the weekend with great music and entertainment."
+      },
+      {
         id: 12,
         title: "Weekend Kickoff",
         host: "Alex Turner",
