@@ -1,3 +1,4 @@
+
 import { useState, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -42,6 +43,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us together for an afternoon of great music and community conversations."
       },
       {
+        id: 27,
+        title: "Merithing Afternoon Drive Show",
+        host: "TBA",
+        time: "3:00 PM - 6:00 PM",
+        description: "Your perfect companion for the afternoon drive with great music and entertainment."
+      },
+      {
         id: 3,
         title: "Drive Time",
         host: "Michael Rodriguez",
@@ -73,6 +81,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "12:00 PM - 3:00 PM",
         description: "Join us together for an afternoon of great music and community conversations."
+      },
+      {
+        id: 28,
+        title: "Merithing Afternoon Drive Show",
+        host: "TBA",
+        time: "3:00 PM - 6:00 PM",
+        description: "Your perfect companion for the afternoon drive with great music and entertainment."
       },
       {
         id: 6,
@@ -108,6 +123,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us together for an afternoon of great music and community conversations."
       },
       {
+        id: 29,
+        title: "Merithing Afternoon Drive Show",
+        host: "TBA",
+        time: "3:00 PM - 6:00 PM",
+        description: "Your perfect companion for the afternoon drive with great music and entertainment."
+      },
+      {
         id: 8,
         title: "Local Spotlight",
         host: "David Chen",
@@ -139,6 +161,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "12:00 PM - 3:00 PM",
         description: "Join us together for an afternoon of great music and community conversations."
+      },
+      {
+        id: 30,
+        title: "Merithing Afternoon Drive Show",
+        host: "TBA",
+        time: "3:00 PM - 6:00 PM",
+        description: "Your perfect companion for the afternoon drive with great music and entertainment."
       }
     ]
   },
@@ -165,6 +194,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "12:00 PM - 3:00 PM",
         description: "Join us together for an afternoon of great music and community conversations."
+      },
+      {
+        id: 31,
+        title: "Merithing Afternoon Drive Show",
+        host: "TBA",
+        time: "3:00 PM - 6:00 PM",
+        description: "Your perfect companion for the afternoon drive with great music and entertainment."
       },
       {
         id: 12,
