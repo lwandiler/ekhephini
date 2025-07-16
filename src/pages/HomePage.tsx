@@ -50,11 +50,11 @@ const HomePage = () => {
 
   return (
     <InlineEditProvider>
-      <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} dark`}>
+      <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} dark bg-white`}>
         <Header />
         
         <main className="flex-1 bg-white">
-          <div className="w-full">
+          <div className="w-full bg-white">
             <HeroBannerCarousel />
           </div>
           <TemplateRenderer 
