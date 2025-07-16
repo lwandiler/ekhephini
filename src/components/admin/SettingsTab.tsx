@@ -107,12 +107,12 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, onSaveSettings }) =
       onSaveSettings({...localSettings});
       
       // Force a global settings refresh using the context's refresh function
-      console.log("SettingsTab: Settings saved, triggering global refresh");
+      // But delay it to prevent immediate refresh loop
+      console.log("SettingsTab: Settings saved, triggering delayed refresh");
       if (refreshSettings) {
-        await refreshSettings();
-      } else {
-        // Dispatch a custom event as a fallback
-        document.dispatchEvent(new CustomEvent('settingsUpdated'));
+        setTimeout(() => {
+          refreshSettings();
+        }, 1000);
       }
       
       toast({

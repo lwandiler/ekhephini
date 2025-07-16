@@ -28,11 +28,18 @@ export function saveSettingsToStorage(settings) {
 
 // Force a refresh of settings across the application
 export function forceSettingsRefresh() {
-  // Use a debounced approach to prevent multiple rapid updates
-  // This helps prevent audio initialization loops
+  // Prevent multiple rapid calls by using a debounced approach
   if (window._settingsRefreshTimer) {
     clearTimeout(window._settingsRefreshTimer);
   }
+  
+  // Only refresh if we're not already in a refresh cycle
+  if (window._isRefreshing) {
+    console.log("Settings refresh already in progress, skipping");
+    return;
+  }
+  
+  window._isRefreshing = true;
   
   window._settingsRefreshTimer = setTimeout(() => {
     console.log("Broadcasting settings update event");
@@ -40,12 +47,10 @@ export function forceSettingsRefresh() {
     const event = new CustomEvent('settingsUpdated');
     document.dispatchEvent(event);
     
-    // Also trigger a storage event which some components might be listening for
-    // But use a different timer to ensure they don't collide
+    // Clear the refresh flag after a delay to allow components to update
     setTimeout(() => {
-      window.dispatchEvent(new Event('storage'));
-    }, 100);
-    
-    window._settingsRefreshTimer = null;
+      window._isRefreshing = false;
+      window._settingsRefreshTimer = null;
+    }, 1000);
   }, 300);
 }

@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useRef } from "react";
 import { StationSettings } from "@/types/theme";
 import { 
   defaultStationSettings, 
@@ -20,12 +20,18 @@ export const StationContext = createContext<{
 export const StationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [stationSettings, setStationSettings] = useState<StationSettings>(defaultStationSettings);
   const [isLoading, setIsLoading] = useState(true);
+  const isInitialLoad = useRef(true);
+  const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Function to load settings from database or localStorage
-  const loadSettings = async () => {
+  const loadSettings = async (skipDelay = false) => {
     try {
       console.log("StationContext: Loading settings...");
-      setIsLoading(true);
+      
+      // Only show loading for initial load
+      if (isInitialLoad.current) {
+        setIsLoading(true);
+      }
       
       // Try to load settings from database first
       const dbSettings = await loadSettingsFromDatabase();
@@ -69,8 +75,25 @@ export const StationProvider: React.FC<{ children: React.ReactNode }> = ({ child
       console.error("StationContext: Error loading settings:", error);
       setStationSettings(defaultStationSettings);
     } finally {
-      setIsLoading(false);
+      if (isInitialLoad.current) {
+        setIsLoading(false);
+        isInitialLoad.current = false;
+      }
     }
+  };
+
+  // Debounced refresh function to prevent rapid calls
+  const debouncedRefresh = async () => {
+    if (refreshTimeoutRef.current) {
+      clearTimeout(refreshTimeoutRef.current);
+    }
+    
+    refreshTimeoutRef.current = setTimeout(() => {
+      if (!isInitialLoad.current) {
+        console.log("StationContext: Debounced settings refresh triggered");
+        loadSettings(true);
+      }
+    }, 500);
   };
 
   // Load settings on initial mount
@@ -78,23 +101,25 @@ export const StationProvider: React.FC<{ children: React.ReactNode }> = ({ child
     loadSettings();
   }, []);
 
-  // Listen for settings update events
+  // Listen for settings update events with debouncing
   useEffect(() => {
     const handleSettingsUpdated = () => {
-      console.log("StationContext: Settings update event detected, refreshing...");
-      loadSettings();
+      console.log("StationContext: Settings update event detected");
+      debouncedRefresh();
     };
     
+    // Only listen for manual updates, not storage events that could cause loops
     document.addEventListener('settingsUpdated', handleSettingsUpdated);
-    window.addEventListener('storage', handleSettingsUpdated);
     
     return () => {
       document.removeEventListener('settingsUpdated', handleSettingsUpdated);
-      window.removeEventListener('storage', handleSettingsUpdated);
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
     };
   }, []);
 
-  if (isLoading) {
+  if (isLoading && isInitialLoad.current) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
