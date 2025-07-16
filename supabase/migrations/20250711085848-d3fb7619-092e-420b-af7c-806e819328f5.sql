@@ -1,3 +1,4 @@
+
 -- Create admin_users table for admin authentication
 CREATE TABLE public.admin_users (
     id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,

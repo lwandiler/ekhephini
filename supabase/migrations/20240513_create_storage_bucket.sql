@@ -1,4 +1,5 @@
 
+
 -- Create a storage bucket for banner media files
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('media', 'Media Files', true);
@@ -13,3 +14,4 @@ CREATE POLICY "Allow authenticated users to upload media"
 ON storage.objects 
 FOR INSERT 
 WITH CHECK (bucket_id = 'media' AND auth.role() = 'authenticated');
+

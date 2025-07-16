@@ -14,7 +14,273 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string
+          name: string
+          password_hash: string
+          updated_at: string | null
+          username: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          name: string
+          password_hash: string
+          updated_at?: string | null
+          username: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          password_hash?: string
+          updated_at?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
+      announcements: {
+        Row: {
+          active: boolean | null
+          category: string | null
+          content: string
+          created_at: string | null
+          date: string
+          id: string
+          important: boolean | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          category?: string | null
+          content: string
+          created_at?: string | null
+          date: string
+          id?: string
+          important?: boolean | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          date?: string
+          id?: string
+          important?: boolean | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      banners: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          cta_text: string | null
+          display_order: number | null
+          id: string
+          media_type: string
+          media_url: string
+          subtitle: string | null
+          title: string
+          updated_at: string | null
+          url: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          cta_text?: string | null
+          display_order?: number | null
+          id?: string
+          media_type: string
+          media_url: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string | null
+          url?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          cta_text?: string | null
+          display_order?: number | null
+          id?: string
+          media_type?: string
+          media_url?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string | null
+          url?: string | null
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          author: string
+          category: string | null
+          content: string
+          created_at: string | null
+          excerpt: string | null
+          featured_image: string | null
+          id: string
+          published: boolean | null
+          published_at: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author: string
+          category?: string | null
+          content: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          published?: boolean | null
+          published_at?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author?: string
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          published?: boolean | null
+          published_at?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          provider: string | null
+          status: string | null
+          user_avatar: string | null
+          user_email: string
+          user_id: string
+          user_name: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          provider?: string | null
+          status?: string | null
+          user_avatar?: string | null
+          user_email: string
+          user_id: string
+          user_name?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          provider?: string | null
+          status?: string | null
+          user_avatar?: string | null
+          user_email?: string
+          user_id?: string
+          user_name?: string | null
+        }
+        Relationships: []
+      }
+      shows: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          day_of_week: string | null
+          description: string | null
+          end_time: string
+          host: string
+          id: string
+          image_url: string | null
+          start_time: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          day_of_week?: string | null
+          description?: string | null
+          end_time: string
+          host: string
+          id?: string
+          image_url?: string | null
+          start_time: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          day_of_week?: string | null
+          description?: string | null
+          end_time?: string
+          host?: string
+          id?: string
+          image_url?: string | null
+          start_time?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      station_settings: {
+        Row: {
+          contact_info: Json | null
+          id: number
+          logo_url: string | null
+          page_content: Json | null
+          social_links: Json | null
+          station_description: string | null
+          station_name: string
+          station_tagline: string | null
+          stream_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          contact_info?: Json | null
+          id?: number
+          logo_url?: string | null
+          page_content?: Json | null
+          social_links?: Json | null
+          station_description?: string | null
+          station_name?: string
+          station_tagline?: string | null
+          stream_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          contact_info?: Json | null
+          id?: number
+          logo_url?: string | null
+          page_content?: Json | null
+          social_links?: Json | null
+          station_description?: string | null
+          station_name?: string
+          station_tagline?: string | null
+          stream_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
