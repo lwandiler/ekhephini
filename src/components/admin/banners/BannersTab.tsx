@@ -19,6 +19,12 @@ const BannersTab = () => {
     isEditing,
     resetFormState
   } = useBannerManagement();
+
+  // Add a function to refresh banners after adding samples
+  const handleBannersAdded = () => {
+    // This will trigger a re-fetch of banners
+    window.location.reload();
+  };
   
   return (
     <div className="space-y-6">
@@ -32,6 +38,7 @@ const BannersTab = () => {
           }
         }} 
         isEditing={isEditing}
+        onBannersAdded={handleBannersAdded}
       />
       
       {showForm ? (
