@@ -35,11 +35,11 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us for an engaging morning show with great music and local content."
       },
       {
-        id: 2,
-        title: "Midday Mix",
-        host: "Jason Parker",
+        id: 22,
+        title: "Re Mmogo",
+        host: "TBA",
         time: "12:00 PM - 3:00 PM",
-        description: "The best mix of today's hits and yesterday's classics."
+        description: "Join us together for an afternoon of great music and community conversations."
       },
       {
         id: 3,
@@ -68,11 +68,11 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us for an engaging morning show with great music and local content."
       },
       {
-        id: 5,
-        title: "Jazz Hour",
-        host: "Robert Williams",
-        time: "1:00 PM - 3:00 PM",
-        description: "Two hours of smooth jazz to brighten your afternoon."
+        id: 23,
+        title: "Re Mmogo",
+        host: "TBA",
+        time: "12:00 PM - 3:00 PM",
+        description: "Join us together for an afternoon of great music and community conversations."
       },
       {
         id: 6,
@@ -101,6 +101,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us for an engaging morning show with great music and local content."
       },
       {
+        id: 24,
+        title: "Re Mmogo",
+        host: "TBA",
+        time: "12:00 PM - 3:00 PM",
+        description: "Join us together for an afternoon of great music and community conversations."
+      },
+      {
         id: 8,
         title: "Local Spotlight",
         host: "David Chen",
@@ -127,11 +134,11 @@ const mockSchedule: DaySchedule[] = [
         description: "Join us for an engaging morning show with great music and local content."
       },
       {
-        id: 10,
-        title: "Throwback Thursday",
-        host: "Emma Wilson",
+        id: 25,
+        title: "Re Mmogo",
+        host: "TBA",
         time: "12:00 PM - 3:00 PM",
-        description: "Nothing but classic hits from the 80s, 90s, and 2000s."
+        description: "Join us together for an afternoon of great music and community conversations."
       }
     ]
   },
@@ -151,6 +158,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "9:00 AM - 12:00 PM",
         description: "Join us for an engaging morning show with great music and local content."
+      },
+      {
+        id: 26,
+        title: "Re Mmogo",
+        host: "TBA",
+        time: "12:00 PM - 3:00 PM",
+        description: "Join us together for an afternoon of great music and community conversations."
       },
       {
         id: 12,
