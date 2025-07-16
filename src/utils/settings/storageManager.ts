@@ -28,6 +28,14 @@ export function saveSettingsToStorage(settings) {
 
 // Force a refresh of settings across the application
 export function forceSettingsRefresh() {
+  // Initialize window properties if they don't exist
+  if (typeof window._settingsRefreshTimer === 'undefined') {
+    window._settingsRefreshTimer = null;
+  }
+  if (typeof window._isRefreshing === 'undefined') {
+    window._isRefreshing = false;
+  }
+
   // Prevent multiple rapid calls by using a debounced approach
   if (window._settingsRefreshTimer) {
     clearTimeout(window._settingsRefreshTimer);
