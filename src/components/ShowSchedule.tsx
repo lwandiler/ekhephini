@@ -1,4 +1,3 @@
-
 import { useState, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -50,6 +49,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Your perfect companion for the afternoon drive with great music and entertainment."
       },
       {
+        id: 32,
+        title: "Sabelana Ngolwazi",
+        host: "TBA",
+        time: "6:00 PM - 9:00 PM",
+        description: "Join us for an evening show packed with knowledge and entertainment."
+      },
+      {
         id: 3,
         title: "Drive Time",
         host: "Michael Rodriguez",
@@ -88,6 +94,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "3:00 PM - 6:00 PM",
         description: "Your perfect companion for the afternoon drive with great music and entertainment."
+      },
+      {
+        id: 33,
+        title: "Sabelana Ngolwazi",
+        host: "TBA",
+        time: "6:00 PM - 9:00 PM",
+        description: "Join us for an evening show packed with knowledge and entertainment."
       },
       {
         id: 6,
@@ -130,6 +143,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Your perfect companion for the afternoon drive with great music and entertainment."
       },
       {
+        id: 34,
+        title: "Sabelana Ngolwazi",
+        host: "TBA",
+        time: "6:00 PM - 9:00 PM",
+        description: "Join us for an evening show packed with knowledge and entertainment."
+      },
+      {
         id: 8,
         title: "Local Spotlight",
         host: "David Chen",
@@ -168,6 +188,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "3:00 PM - 6:00 PM",
         description: "Your perfect companion for the afternoon drive with great music and entertainment."
+      },
+      {
+        id: 35,
+        title: "Sabelana Ngolwazi",
+        host: "TBA",
+        time: "6:00 PM - 9:00 PM",
+        description: "Join us for an evening show packed with knowledge and entertainment."
       }
     ]
   },
@@ -201,6 +228,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "3:00 PM - 6:00 PM",
         description: "Your perfect companion for the afternoon drive with great music and entertainment."
+      },
+      {
+        id: 36,
+        title: "Sabelana Ngolwazi",
+        host: "TBA",
+        time: "6:00 PM - 9:00 PM",
+        description: "Join us for an evening show packed with knowledge and entertainment."
       },
       {
         id: 12,
