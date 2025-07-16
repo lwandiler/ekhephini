@@ -28,6 +28,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Late night music to keep you company through the early hours."
       },
       {
+        id: 47,
+        title: "Mahube Drive",
+        host: "TBA",
+        time: "3:00 AM - 6:00 AM",
+        description: "Early morning drive show to start your day with energy and great music."
+      },
+      {
         id: 1,
         title: "Morning Brew",
         host: "Sarah Johnson",
@@ -87,6 +94,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "12:00 AM - 3:00 AM",
         description: "Late night music to keep you company through the early hours."
+      },
+      {
+        id: 48,
+        title: "Mahube Drive",
+        host: "TBA",
+        time: "3:00 AM - 6:00 AM",
+        description: "Early morning drive show to start your day with energy and great music."
       },
       {
         id: 4,
@@ -150,6 +164,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Late night music to keep you company through the early hours."
       },
       {
+        id: 49,
+        title: "Mahube Drive",
+        host: "TBA",
+        time: "3:00 AM - 6:00 AM",
+        description: "Early morning drive show to start your day with energy and great music."
+      },
+      {
         id: 7,
         title: "Morning Brew",
         host: "Sarah Johnson",
@@ -211,6 +232,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Late night music to keep you company through the early hours."
       },
       {
+        id: 50,
+        title: "Mahube Drive",
+        host: "TBA",
+        time: "3:00 AM - 6:00 AM",
+        description: "Early morning drive show to start your day with energy and great music."
+      },
+      {
         id: 9,
         title: "Morning Brew",
         host: "Sarah Johnson",
@@ -263,6 +291,13 @@ const mockSchedule: DaySchedule[] = [
         host: "TBA",
         time: "12:00 AM - 3:00 AM",
         description: "Late night music to keep you company through the early hours."
+      },
+      {
+        id: 51,
+        title: "Mahube Drive",
+        host: "TBA",
+        time: "3:00 AM - 6:00 AM",
+        description: "Early morning drive show to start your day with energy and great music."
       },
       {
         id: 11,
