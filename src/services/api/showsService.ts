@@ -30,6 +30,8 @@ function formatTimeRange(startTime: string, endTime: string): string {
 }
 
 export async function fetchShows(): Promise<DaySchedule[]> {
+  const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
   try {
     const { data: shows, error } = await supabase
       .from('shows')
@@ -44,7 +46,6 @@ export async function fetchShows(): Promise<DaySchedule[]> {
     }
 
     // Group shows by day
-    const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const groupedShows: { [key: string]: ShowWithFormattedTime[] } = {};
 
     shows?.forEach(show => {
