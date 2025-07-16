@@ -4,6 +4,7 @@ import { Howl } from 'howler';
 import { defaultStations } from './defaultStations';
 import { StationContext } from '@/contexts/StationContext';
 import { RadioStation } from '@/hooks/audio/types';
+import { useStreamUrlExtractor } from '@/hooks/useStreamUrlExtractor';
 
 export function useAudioState() {
   const { settings } = useContext(StationContext);
@@ -19,22 +20,41 @@ export function useAudioState() {
   const nextSound = useRef<Howl | null>(null);
   const previousSound = useRef<Howl | null>(null);
 
-  // Update the first station with the stream URL from settings when available
+  // Extract stream URL from MCRS website
+  const { extractedUrl, isExtracting, extractionError } = useStreamUrlExtractor();
+
+  // Update the first station with the stream URL from settings or extracted URL
   useEffect(() => {
-    if (settings?.streamUrl && stations.length > 0) {
-      console.log("Setting stream URL from settings:", settings.streamUrl);
+    const streamUrl = settings?.streamUrl || extractedUrl;
+    
+    if (streamUrl && stations.length > 0) {
+      console.log("Setting stream URL:", streamUrl);
       
       const updatedStations = [...stations];
       updatedStations[0] = {
         ...updatedStations[0],
-        url: settings.streamUrl,
-        name: settings.stationName || updatedStations[0].name,
-        description: settings.stationDescription || updatedStations[0].description
+        url: streamUrl,
+        streamUrl: streamUrl,
+        name: settings?.stationName || updatedStations[0].name,
+        description: settings?.stationDescription || updatedStations[0].description
       };
       
       setStations(updatedStations);
     }
-  }, [settings?.streamUrl, settings?.stationName, settings?.stationDescription]);
+  }, [settings?.streamUrl, settings?.stationName, settings?.stationDescription, extractedUrl]);
+
+  // Show extraction status
+  useEffect(() => {
+    if (isExtracting) {
+      console.log("Extracting stream URL from MCRS website...");
+    }
+    if (extractionError) {
+      console.warn("Stream URL extraction failed:", extractionError);
+    }
+    if (extractedUrl) {
+      console.log("Successfully extracted stream URL:", extractedUrl);
+    }
+  }, [isExtracting, extractionError, extractedUrl]);
 
   // Function to get current station name
   const getCurrentStationName = () => {
@@ -68,6 +88,9 @@ export function useAudioState() {
     previousSound,
     getCurrentStationName,
     playNextStation,
-    playPreviousStation
+    playPreviousStation,
+    extractedUrl,
+    isExtracting,
+    extractionError
   };
 }
