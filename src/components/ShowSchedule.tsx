@@ -1,4 +1,3 @@
-
 import { useState, useContext } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,6 +28,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Start your day with upbeat music and interesting discussions."
       },
       {
+        id: 17,
+        title: "Nethezeka Nathi",
+        host: "TBA",
+        time: "9:00 AM - 12:00 PM",
+        description: "Join us for an engaging morning show with great music and local content."
+      },
+      {
         id: 2,
         title: "Midday Mix",
         host: "Jason Parker",
@@ -53,6 +59,13 @@ const mockSchedule: DaySchedule[] = [
         host: "Sarah Johnson",
         time: "6:00 AM - 9:00 AM",
         description: "Start your day with upbeat music and interesting discussions."
+      },
+      {
+        id: 18,
+        title: "Nethezeka Nathi",
+        host: "TBA",
+        time: "9:00 AM - 12:00 PM",
+        description: "Join us for an engaging morning show with great music and local content."
       },
       {
         id: 5,
@@ -81,6 +94,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Start your day with upbeat music and interesting discussions."
       },
       {
+        id: 19,
+        title: "Nethezeka Nathi",
+        host: "TBA",
+        time: "9:00 AM - 12:00 PM",
+        description: "Join us for an engaging morning show with great music and local content."
+      },
+      {
         id: 8,
         title: "Local Spotlight",
         host: "David Chen",
@@ -100,6 +120,13 @@ const mockSchedule: DaySchedule[] = [
         description: "Start your day with upbeat music and interesting discussions."
       },
       {
+        id: 20,
+        title: "Nethezeka Nathi",
+        host: "TBA",
+        time: "9:00 AM - 12:00 PM",
+        description: "Join us for an engaging morning show with great music and local content."
+      },
+      {
         id: 10,
         title: "Throwback Thursday",
         host: "Emma Wilson",
@@ -117,6 +144,13 @@ const mockSchedule: DaySchedule[] = [
         host: "Sarah Johnson",
         time: "6:00 AM - 9:00 AM",
         description: "Start your day with upbeat music and interesting discussions."
+      },
+      {
+        id: 21,
+        title: "Nethezeka Nathi",
+        host: "TBA",
+        time: "9:00 AM - 12:00 PM",
+        description: "Join us for an engaging morning show with great music and local content."
       },
       {
         id: 12,
