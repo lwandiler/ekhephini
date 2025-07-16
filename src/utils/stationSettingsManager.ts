@@ -30,7 +30,7 @@ export const defaultStationSettings = {
   stationName: "Moutse Community Radio Station",
   stationTagline: "Your friend to rely on MCRS 96.9 FM",
   stationDescription: "Moutse Community Radio Station - Your trusted voice in the community, broadcasting on 96.9 FM.",
-  streamUrl: "https://kexp.streamguys1.com/kexp128.mp3",
+  streamUrl: "https://streamlive-edge-01.broadsmart-streaming.co.za:5443/mdda/streams/mcr128kbps.m3u8",
   logoUrl: "/lovable-uploads/38150e55-823d-433a-8672-ae40d2fcf2da.png",
   socialLinks: defaultSocialLinks,
   contactInfo: defaultContactInfo
