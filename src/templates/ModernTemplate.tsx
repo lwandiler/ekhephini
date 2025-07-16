@@ -81,15 +81,15 @@ const ModernTemplate = ({
           </div>
         </section>
         
-        {/* Featured Shows - Modern Split Style */}
-        <section className="py-20 bg-gray-950">
+        {/* Featured Shows - White Background */}
+        <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center justify-between mb-12">
               <div>
-                <span className="text-purple-400 font-semibold tracking-wider uppercase text-sm">What's Playing</span>
-                <h2 className="text-4xl font-bold mt-2 text-white">Featured Shows</h2>
+                <span className="text-green-600 font-semibold tracking-wider uppercase text-sm">What's Playing</span>
+                <h2 className="text-4xl font-bold mt-2 text-gray-900">Featured Shows</h2>
               </div>
-              <Button variant="link" className="text-purple-400 hover:text-purple-300 mt-4 md:mt-0">
+              <Button variant="link" className="text-green-600 hover:text-green-700 mt-4 md:mt-0">
                 View All Shows →
               </Button>
             </div>
