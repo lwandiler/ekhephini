@@ -35,6 +35,12 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const handlePlayClick = () => {
+    if (podcast.listenUrl && podcast.listenUrl !== '#') {
+      window.open(podcast.listenUrl, '_blank');
+    }
+  };
+
   if (variant === 'compact') {
     return (
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 bg-gray-900 border-gray-800 text-white">
@@ -180,12 +186,10 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
             variant="default" 
             size="sm"
             className="bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white"
-            asChild
+            onClick={handlePlayClick}
           >
-            <Link to={podcast.listenUrl}>
-              <Play size={16} fill="currentColor" className="mr-1" />
-              Listen
-            </Link>
+            <Play size={16} fill="currentColor" className="mr-1" />
+            Listen
           </Button>
         </div>
       </CardFooter>

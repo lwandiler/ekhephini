@@ -1,117 +1,81 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
 import ChatBot from '@/components/ChatBot';
-import PodcastCard, { Podcast } from '@/components/PodcastCard';
+import PodcastCard from '@/components/PodcastCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import { podcastsService, type Podcast as DatabasePodcast } from '@/services/api/podcastsService';
+
+// Transform database podcast to component podcast format
+const transformPodcast = (dbPodcast: DatabasePodcast) => ({
+  id: parseInt(dbPodcast.id) || Math.random(), // Convert UUID to number for compatibility
+  title: dbPodcast.title,
+  host: dbPodcast.host,
+  description: dbPodcast.description || '',
+  image: dbPodcast.image_url || '/placeholder.svg',
+  duration: dbPodcast.duration || '0 min',
+  publishDate: dbPodcast.publish_date,
+  episodeNumber: dbPodcast.episode_number || 1,
+  listenUrl: dbPodcast.listen_url || '#'
+});
 
 const Podcasts = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [podcasts, setPodcasts] = useState<ReturnType<typeof transformPodcast>[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  // Sample podcasts data
-  const podcastsData: Podcast[] = [
-    {
-      id: 1,
-      title: "Behind the Music",
-      host: "James Wilson",
-      description: "An in-depth look at the stories behind your favorite songs and the artists who created them.",
-      image: "/placeholder.svg",
-      duration: "45 min",
-      publishDate: "2025-05-01",
-      episodeNumber: 42,
-      listenUrl: "/podcasts/behind-the-music/42"
-    },
-    {
-      id: 2,
-      title: "Tech Talk Radio",
-      host: "Emily Chen",
-      description: "Stay up-to-date with the latest tech news and trends in this weekly tech podcast.",
-      image: "/placeholder.svg",
-      duration: "38 min",
-      publishDate: "2025-04-28",
-      episodeNumber: 156,
-      listenUrl: "/podcasts/tech-talk-radio/156"
-    },
-    {
-      id: 3,
-      title: "The Film Review",
-      host: "Michael Scott",
-      description: "Film critics discuss and review the latest movies hitting theaters and streaming services.",
-      image: "/placeholder.svg",
-      duration: "52 min",
-      publishDate: "2025-04-25",
-      episodeNumber: 89,
-      listenUrl: "/podcasts/film-review/89"
-    },
-    {
-      id: 4,
-      title: "Health & Wellness Hour",
-      host: "Dr. Sarah Thompson",
-      description: "Expert advice on health topics, wellness practices, and living your best life.",
-      image: "/placeholder.svg",
-      duration: "41 min",
-      publishDate: "2025-04-22",
-      episodeNumber: 65,
-      listenUrl: "/podcasts/health-wellness/65"
-    },
-    {
-      id: 5,
-      title: "True Crime Stories",
-      host: "Detective Mark Johnson",
-      description: "Dive into fascinating real-life mysteries and criminal cases with expert analysis.",
-      image: "/placeholder.svg",
-      duration: "58 min",
-      publishDate: "2025-04-19",
-      episodeNumber: 27,
-      listenUrl: "/podcasts/true-crime/27"
-    },
-    {
-      id: 6,
-      title: "Business Insights",
-      host: "Rachel Green",
-      description: "Interviews with entrepreneurs and business leaders sharing their insights and experiences.",
-      image: "/placeholder.svg",
-      duration: "47 min",
-      publishDate: "2025-04-15",
-      episodeNumber: 112,
-      listenUrl: "/podcasts/business-insights/112"
-    },
-    {
-      id: 7,
-      title: "Science Today",
-      host: "Dr. Alex Murray",
-      description: "Breaking down complex scientific topics and discoveries in an accessible way.",
-      image: "/placeholder.svg",
-      duration: "36 min",
-      publishDate: "2025-04-12",
-      episodeNumber: 78,
-      listenUrl: "/podcasts/science-today/78"
-    },
-    {
-      id: 8,
-      title: "Sports Talk",
-      host: "Mike Johnson & Tom Wilson",
-      description: "In-depth analysis of recent games, player performance, and sports news.",
-      image: "/placeholder.svg",
-      duration: "63 min",
-      publishDate: "2025-04-08",
-      episodeNumber: 205,
-      listenUrl: "/podcasts/sports-talk/205"
+  useEffect(() => {
+    fetchPodcasts();
+  }, []);
+
+  const fetchPodcasts = async () => {
+    try {
+      setLoading(true);
+      const data = await podcastsService.getAllPodcasts();
+      const transformedPodcasts = data.map(transformPodcast);
+      setPodcasts(transformedPodcasts);
+    } catch (error) {
+      console.error('Error fetching podcasts:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load podcasts. Please try again later.",
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
   
   // Filter podcasts based on search query
   const filteredPodcasts = searchQuery 
-    ? podcastsData.filter(podcast => 
+    ? podcasts.filter(podcast => 
         podcast.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         podcast.host.toLowerCase().includes(searchQuery.toLowerCase()) ||
         podcast.description.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : podcastsData;
+    : podcasts;
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-radio-accent mb-4 mx-auto"></div>
+            <p className="text-gray-600">Loading podcasts...</p>
+          </div>
+        </main>
+        <Footer />
+        <RadioPlayer />
+        <ChatBot />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -155,12 +119,14 @@ const Podcasts = () => {
         </section>
         
         {/* Featured Podcast */}
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-radio-blue mb-8">Featured Podcast</h2>
-            <PodcastCard podcast={podcastsData[0]} variant="featured" />
-          </div>
-        </section>
+        {filteredPodcasts.length > 0 && (
+          <section className="py-12">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-radio-blue mb-8">Featured Podcast</h2>
+              <PodcastCard podcast={filteredPodcasts[0]} variant="featured" />
+            </div>
+          </section>
+        )}
         
         {/* All Podcasts */}
         <section className="py-12 bg-gray-50">
@@ -174,10 +140,14 @@ const Podcasts = () => {
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-xl text-gray-500">No podcasts found matching your search.</p>
-                <Button variant="link" className="text-radio-blue mt-4" onClick={() => setSearchQuery('')}>
-                  Clear search
-                </Button>
+                <p className="text-xl text-gray-500">
+                  {searchQuery ? 'No podcasts found matching your search.' : 'No podcasts available yet.'}
+                </p>
+                {searchQuery && (
+                  <Button variant="link" className="text-radio-blue mt-4" onClick={() => setSearchQuery('')}>
+                    Clear search
+                  </Button>
+                )}
               </div>
             )}
           </div>

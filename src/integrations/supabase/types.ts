@@ -200,6 +200,51 @@ export type Database = {
         }
         Relationships: []
       }
+      podcasts: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          duration: string | null
+          episode_number: number | null
+          host: string
+          id: string
+          image_url: string | null
+          listen_url: string | null
+          publish_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          episode_number?: number | null
+          host: string
+          id?: string
+          image_url?: string | null
+          listen_url?: string | null
+          publish_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          duration?: string | null
+          episode_number?: number | null
+          host?: string
+          id?: string
+          image_url?: string | null
+          listen_url?: string | null
+          publish_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       shows: {
         Row: {
           active: boolean | null
