@@ -176,100 +176,110 @@ const PodcastsTab = () => {
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{editingPodcast ? 'Edit Podcast' : 'Add New Podcast'}</DialogTitle>
-            <DialogDescription>
+        <DialogContent className="max-w-2xl bg-green-50 border-green-200">
+          <DialogHeader className="bg-green-600 -m-6 mb-4 p-6 rounded-t-lg">
+            <DialogTitle className="text-white text-xl">
+              {editingPodcast ? 'Edit Podcast' : 'Add New Podcast'}
+            </DialogTitle>
+            <DialogDescription className="text-green-100">
               {editingPodcast ? 'Update the podcast details below.' : 'Fill in the details for the new podcast episode.'}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 px-6 pb-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title" className="text-black font-medium">Title</Label>
                 <Input
                   id="title"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
+                  className="bg-white border-green-300 text-black focus:border-green-500"
                 />
               </div>
               <div>
-                <Label htmlFor="host">Host</Label>
+                <Label htmlFor="host" className="text-black font-medium">Host</Label>
                 <Input
                   id="host"
                   value={formData.host}
                   onChange={(e) => setFormData({ ...formData, host: e.target.value })}
                   required
+                  className="bg-white border-green-300 text-black focus:border-green-500"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description" className="text-black font-medium">Description</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
+                className="bg-white border-green-300 text-black focus:border-green-500"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="episode_number">Episode Number</Label>
+                <Label htmlFor="episode_number" className="text-black font-medium">Episode Number</Label>
                 <Input
                   id="episode_number"
                   type="number"
                   value={formData.episode_number}
                   onChange={(e) => setFormData({ ...formData, episode_number: parseInt(e.target.value) || 1 })}
+                  className="bg-white border-green-300 text-black focus:border-green-500"
                 />
               </div>
               <div>
-                <Label htmlFor="duration">Duration</Label>
+                <Label htmlFor="duration" className="text-black font-medium">Duration</Label>
                 <Input
                   id="duration"
                   placeholder="e.g., 45 min"
                   value={formData.duration}
                   onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                  className="bg-white border-green-300 text-black focus:border-green-500"
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="publish_date">Publish Date</Label>
+                <Label htmlFor="publish_date" className="text-black font-medium">Publish Date</Label>
                 <Input
                   id="publish_date"
                   type="date"
                   value={formData.publish_date}
                   onChange={(e) => setFormData({ ...formData, publish_date: e.target.value })}
                   required
+                  className="bg-white border-green-300 text-black focus:border-green-500"
                 />
               </div>
               <div>
-                <Label htmlFor="image_url">Image URL</Label>
+                <Label htmlFor="image_url" className="text-black font-medium">Image URL</Label>
                 <Input
                   id="image_url"
                   type="url"
                   placeholder="https://example.com/image.jpg"
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  className="bg-white border-green-300 text-black focus:border-green-500"
                 />
               </div>
             </div>
             <div>
-              <Label htmlFor="listen_url">Listen URL</Label>
+              <Label htmlFor="listen_url" className="text-black font-medium">Listen URL</Label>
               <Input
                 id="listen_url"
                 type="url"
                 placeholder="https://example.com/episode"
                 value={formData.listen_url}
                 onChange={(e) => setFormData({ ...formData, listen_url: e.target.value })}
+                className="bg-white border-green-300 text-black focus:border-green-500"
               />
             </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+            <DialogFooter className="bg-green-50 -mx-6 -mb-6 mt-6 p-6 rounded-b-lg border-t border-green-200">
+              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} className="border-green-600 text-green-600 hover:bg-green-100">
                 Cancel
               </Button>
-              <Button type="submit" className="bg-radio-accent hover:bg-radio-accent/90">
+              <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white">
                 {editingPodcast ? 'Update' : 'Create'} Podcast
               </Button>
             </DialogFooter>
