@@ -30,9 +30,11 @@ const Podcasts = () => {
   const [podcasts, setPodcasts] = useState<ReturnType<typeof transformPodcast>[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPodcast, setCurrentPodcast] = useState<ReturnType<typeof transformPodcast> | null>(null);
+  const [recentlyPlayed, setRecentlyPlayed] = useState<ReturnType<typeof transformPodcast>[]>([]);
   
   useEffect(() => {
     fetchPodcasts();
+    loadRecentlyPlayed();
   }, []);
 
   const fetchPodcasts = async () => {
@@ -53,8 +55,22 @@ const Podcasts = () => {
     }
   };
 
+  const loadRecentlyPlayed = () => {
+    const stored = localStorage.getItem('recentlyPlayedPodcasts');
+    if (stored) {
+      setRecentlyPlayed(JSON.parse(stored));
+    }
+  };
+
+  const addToRecentlyPlayed = (podcast: ReturnType<typeof transformPodcast>) => {
+    const updated = [podcast, ...recentlyPlayed.filter(p => p.id !== podcast.id)].slice(0, 6);
+    setRecentlyPlayed(updated);
+    localStorage.setItem('recentlyPlayedPodcasts', JSON.stringify(updated));
+  };
+
   const handlePlayPodcast = (podcast: ReturnType<typeof transformPodcast>) => {
     setCurrentPodcast(podcast);
+    addToRecentlyPlayed(podcast);
   };
 
   const handleClosePodcastPlayer = () => {
@@ -157,29 +173,27 @@ const Podcasts = () => {
           </div>
         </section>
         
-        {/* Subscribe CTA */}
-        <section className="py-12 bg-radio-blue text-white">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Never Miss an Episode</h2>
-            <p className="text-xl text-radio-muted mb-6 max-w-2xl mx-auto">
-              Subscribe to our podcast feed and get notified when new episodes are released.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button className="bg-white text-radio-blue hover:bg-gray-100">
-                Apple Podcasts
-              </Button>
-              <Button className="bg-white text-radio-blue hover:bg-gray-100">
-                Spotify
-              </Button>
-              <Button className="bg-white text-radio-blue hover:bg-gray-100">
-                Google Podcasts
-              </Button>
-              <Button className="bg-white text-radio-blue hover:bg-gray-100">
-                RSS Feed
-              </Button>
+        {/* Recently Played Section */}
+        {recentlyPlayed.length > 0 && (
+          <section className="py-12 bg-radio-blue text-white">
+            <div className="container mx-auto px-4 text-center">
+              <h2 className="text-3xl font-bold mb-4">Recently Played</h2>
+              <p className="text-xl text-radio-muted mb-6 max-w-2xl mx-auto">
+                Continue listening to your recently played episodes.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recentlyPlayed.map(podcast => (
+                  <PodcastCard 
+                    key={`recent-${podcast.id}`} 
+                    podcast={podcast} 
+                    variant="compact"
+                    onPlay={handlePlayPodcast}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
       
       <Footer />

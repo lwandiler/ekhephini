@@ -1,8 +1,8 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Headphones, Download, Share2, Bookmark, Play } from 'lucide-react';
-import { useState } from 'react';
+import { Headphones, Download, Share2, Bookmark, Play, Heart } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export interface Podcast {
   id: number;
@@ -24,6 +24,13 @@ interface PodcastCardProps {
 
 const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps) => {
   const [isSaved, setIsSaved] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  
+  // Check if podcast is liked on component mount
+  useEffect(() => {
+    const likedPodcasts = JSON.parse(localStorage.getItem('likedPodcasts') || '[]');
+    setIsLiked(likedPodcasts.includes(podcast.id));
+  }, [podcast.id]);
   
   // Use realistic podcast images if the image is placeholder.svg
   const podcastImage = podcast.image === "/placeholder.svg" 
@@ -54,6 +61,20 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
     }
   };
 
+  const handleLikeClick = () => {
+    const likedPodcasts = JSON.parse(localStorage.getItem('likedPodcasts') || '[]');
+    let updatedLikes;
+    
+    if (isLiked) {
+      updatedLikes = likedPodcasts.filter((id: number) => id !== podcast.id);
+    } else {
+      updatedLikes = [...likedPodcasts, podcast.id];
+    }
+    
+    localStorage.setItem('likedPodcasts', JSON.stringify(updatedLikes));
+    setIsLiked(!isLiked);
+  };
+
   if (variant === 'compact') {
     return (
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 bg-gray-900 border-gray-800 text-white">
@@ -69,14 +90,24 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
               Episode {podcast.episodeNumber} • {podcast.duration}
             </CardDescription>
           </div>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="text-green-400 hover:text-white hover:bg-green-600 rounded-full"
-            onClick={handlePlayClick}
-          >
-            <Play size={18} fill="currentColor" />
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className={`rounded-full ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-500'}`}
+              onClick={handleLikeClick}
+            >
+              <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="text-green-400 hover:text-white hover:bg-green-600 rounded-full"
+              onClick={handlePlayClick}
+            >
+              <Play size={18} fill="currentColor" />
+            </Button>
+          </div>
         </div>
       </Card>
     );
@@ -116,6 +147,15 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
             <div className="flex items-center justify-between">
               <span className="text-gray-400">{podcast.duration} • {formatDate(podcast.publishDate)}</span>
               <div className="flex space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className={`border-green-400 hover:bg-green-700 hover:text-white ${isLiked ? 'text-red-400' : 'text-green-300'}`}
+                  onClick={handleLikeClick}
+                >
+                  <Heart size={16} fill={isLiked ? "currentColor" : "none"} className="mr-1" />
+                  {isLiked ? 'Liked' : 'Like'}
+                </Button>
                 <Button 
                   variant="outline" 
                   size="sm"
@@ -183,6 +223,14 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
       <CardFooter className="flex justify-between pt-3 border-t border-gray-800">
         <span className="text-sm text-gray-400">{formatDate(podcast.publishDate)}</span>
         <div className="flex space-x-2">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className={`rounded-full ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-500'}`}
+            onClick={handleLikeClick}
+          >
+            <Heart size={16} fill={isLiked ? "currentColor" : "none"} />
+          </Button>
           <Button 
             variant="ghost" 
             size="icon"
