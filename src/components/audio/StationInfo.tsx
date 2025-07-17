@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Headphones, Music, Album } from 'lucide-react';
+import { Headphones, Music, Radio } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { SongMetadata } from '@/hooks/audio/types';
 
@@ -9,13 +9,15 @@ interface StationInfoProps {
   hostName: string;
   streamError: string | null;
   songMetadata?: SongMetadata;
+  isLive?: boolean;
 }
 
 const StationInfo: React.FC<StationInfoProps> = ({ 
   showName, 
   hostName, 
   streamError,
-  songMetadata
+  songMetadata,
+  isLive = false
 }) => {
   console.log('StationInfo: Received songMetadata', songMetadata);
   
@@ -42,7 +44,15 @@ const StationInfo: React.FC<StationInfoProps> = ({
       </div>
       
       <div>
-        <h3 className="font-bold text-white text-shadow-sm dark:text-gray-100">{showName}</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="font-bold text-white text-shadow-sm dark:text-gray-100">{showName}</h3>
+          {isLive && (
+            <div className="flex items-center gap-1 bg-red-600 px-2 py-1 rounded-full">
+              <Radio size={12} className="text-white" />
+              <span className="text-xs font-medium text-white">LIVE</span>
+            </div>
+          )}
+        </div>
         <p className="text-sm text-gray-200 dark:text-gray-300">with {hostName}</p>
         {streamError && (
           <p className="text-xs text-red-300 mt-1 font-medium">{streamError}</p>

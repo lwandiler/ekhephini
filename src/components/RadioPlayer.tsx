@@ -8,6 +8,7 @@ import { useRadioModal } from '@/hooks/useRadioModal';
 import { useRadioKeyboardControls } from '@/hooks/useRadioKeyboardControls';
 import { openStreamInNewTab } from '@/utils/streamUtils';
 import { useSongMetadata } from '@/hooks/audio/useSongMetadata';
+import { useCurrentShow } from '@/hooks/useCurrentShow';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import PlayerControlsWrapper from '@/components/audio/PlayerControlsWrapper';
 import { toast } from 'sonner';
@@ -26,6 +27,7 @@ const RadioPlayer = ({
   const [fallbackMode, setFallbackMode] = useState(false);
   const { settings } = useContext(StationContext);
   const radioPlayerRef = useRef<HTMLDivElement>(null);
+  const { currentShow, loading: showLoading } = useCurrentShow();
   
   const {
     stations,
@@ -92,6 +94,10 @@ const RadioPlayer = ({
     setVolume(newVolume[0]);
   };
 
+  // Use current show info if available, otherwise fall back to props
+  const displayShowName = currentShow?.title || showName;
+  const displayHostName = currentShow?.host || hostName;
+
   // Debug for toggling play
   console.log("RadioPlayer: togglePlayPause is", typeof togglePlayPause === 'function' ? 'a function' : 'not a function');
 
@@ -105,10 +111,11 @@ const RadioPlayer = ({
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <StationInfo 
-              showName={showName} 
-              hostName={hostName}
+              showName={displayShowName} 
+              hostName={displayHostName}
               streamError={streamError}
               songMetadata={songMetadata}
+              isLive={!!currentShow}
             />
             
             <PlayerControlsWrapper
@@ -147,6 +154,7 @@ const RadioPlayer = ({
         fallbackMode={fallbackMode}
         setFallbackMode={setFallbackMode}
         songMetadata={songMetadata}
+        currentShow={currentShow}
       />
     </TooltipProvider>
   );
