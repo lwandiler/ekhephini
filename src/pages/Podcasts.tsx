@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
 import ChatBot from '@/components/ChatBot';
 import PodcastCard from '@/components/PodcastCard';
+import PodcastPlayer from '@/components/PodcastPlayer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -28,6 +29,7 @@ const Podcasts = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [podcasts, setPodcasts] = useState<ReturnType<typeof transformPodcast>[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPodcast, setCurrentPodcast] = useState<ReturnType<typeof transformPodcast> | null>(null);
   
   useEffect(() => {
     fetchPodcasts();
@@ -49,6 +51,14 @@ const Podcasts = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePlayPodcast = (podcast: ReturnType<typeof transformPodcast>) => {
+    setCurrentPodcast(podcast);
+  };
+
+  const handleClosePodcastPlayer = () => {
+    setCurrentPodcast(null);
   };
   
   // Filter podcasts based on search query
@@ -120,10 +130,14 @@ const Podcasts = () => {
         
         {/* Featured Podcast */}
         {filteredPodcasts.length > 0 && (
-          <section className="py-12">
+          <section className="py-8">
             <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-radio-blue mb-8">Featured Podcast</h2>
-              <PodcastCard podcast={filteredPodcasts[0]} variant="featured" />
+              <h2 className="text-3xl font-bold text-radio-blue mb-6">Featured Podcast</h2>
+              <PodcastCard 
+                podcast={filteredPodcasts[0]} 
+                variant="featured" 
+                onPlay={handlePlayPodcast}
+              />
             </div>
           </section>
         )}
@@ -135,7 +149,11 @@ const Podcasts = () => {
             {filteredPodcasts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredPodcasts.slice(1).map(podcast => (
-                  <PodcastCard key={podcast.id} podcast={podcast} />
+                  <PodcastCard 
+                    key={podcast.id} 
+                    podcast={podcast} 
+                    onPlay={handlePlayPodcast}
+                  />
                 ))}
               </div>
             ) : (
@@ -181,6 +199,12 @@ const Podcasts = () => {
       <Footer />
       <RadioPlayer />
       <ChatBot />
+      
+      {/* Podcast Player */}
+      <PodcastPlayer 
+        currentPodcast={currentPodcast}
+        onClose={handleClosePodcastPlayer}
+      />
     </div>
   );
 };

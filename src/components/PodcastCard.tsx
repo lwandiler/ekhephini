@@ -2,7 +2,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Headphones, Download, Share2, Bookmark, Play } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
 export interface Podcast {
@@ -20,9 +19,10 @@ export interface Podcast {
 interface PodcastCardProps {
   podcast: Podcast;
   variant?: 'default' | 'compact' | 'featured';
+  onPlay?: (podcast: Podcast) => void;
 }
 
-const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
+const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps) => {
   const [isSaved, setIsSaved] = useState(false);
   
   // Use realistic podcast images if the image is placeholder.svg
@@ -36,8 +36,21 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
   };
 
   const handlePlayClick = () => {
-    if (podcast.listenUrl && podcast.listenUrl !== '#') {
+    if (onPlay) {
+      onPlay(podcast);
+    } else if (podcast.listenUrl && podcast.listenUrl !== '#') {
       window.open(podcast.listenUrl, '_blank');
+    }
+  };
+
+  const handleDownloadClick = () => {
+    if (podcast.listenUrl && podcast.listenUrl !== '#') {
+      const link = document.createElement('a');
+      link.href = podcast.listenUrl;
+      link.download = `${podcast.title}.mp3`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
@@ -60,11 +73,9 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
             variant="ghost" 
             size="icon"
             className="text-green-400 hover:text-white hover:bg-green-600 rounded-full"
-            asChild
+            onClick={handlePlayClick}
           >
-            <Link to={podcast.listenUrl}>
-              <Play size={18} fill="currentColor" />
-            </Link>
+            <Play size={18} fill="currentColor" />
           </Button>
         </div>
       </Card>
@@ -79,18 +90,16 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
             <img 
               src={podcastImage} 
               alt={podcast.title} 
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-64 md:h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 to-transparent md:bg-gradient-to-t md:from-black/80 md:via-black/40 md:to-transparent"></div>
             <Button 
               variant="default" 
               size="icon"
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white h-16 w-16 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
-              asChild
+              onClick={handlePlayClick}
             >
-              <Link to={podcast.listenUrl}>
-                <Play size={30} fill="currentColor" />
-              </Link>
+              <Play size={30} fill="currentColor" />
             </Button>
           </div>
           <div className="md:w-3/5 p-6">
@@ -111,17 +120,16 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
                   variant="outline" 
                   size="sm"
                   className="border-green-400 text-green-300 hover:bg-green-700 hover:text-white"
-                  asChild
+                  onClick={handlePlayClick}
                 >
-                  <Link to={podcast.listenUrl}>
-                    <Headphones size={16} className="mr-1" />
-                    Listen
-                  </Link>
+                  <Headphones size={16} className="mr-1" />
+                  Listen
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm"
                   className="border-green-400 text-green-300 hover:bg-green-700 hover:text-white"
+                  onClick={handleDownloadClick}
                 >
                   <Download size={16} className="mr-1" />
                   Download
@@ -175,6 +183,14 @@ const PodcastCard = ({ podcast, variant = 'default' }: PodcastCardProps) => {
       <CardFooter className="flex justify-between pt-3 border-t border-gray-800">
         <span className="text-sm text-gray-400">{formatDate(podcast.publishDate)}</span>
         <div className="flex space-x-2">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="text-green-400 hover:text-white hover:bg-green-700 h-8 w-8 rounded-full"
+            onClick={handleDownloadClick}
+          >
+            <Download size={16} />
+          </Button>
           <Button 
             variant="ghost" 
             size="icon"
