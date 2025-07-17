@@ -8,7 +8,7 @@ import { RadioStation } from '@/hooks/audio/types';
 import { SongMetadata } from '@/hooks/audio/types';
 import { ShowWithFormattedTime } from '@/services/api/showsService';
 import PlaybackControls from './PlaybackControls';
-import SongMetadata from './SongMetadata';
+import SongMetadataComponent from './SongMetadata';
 import FallbackModeToggle from './modal/FallbackModeToggle';
 import TroubleshootingTips from './modal/TroubleshootingTips';
 import StreamUrlDisplay from './modal/StreamUrlDisplay';
@@ -86,7 +86,7 @@ const StationModal: React.FC<StationModalProps> = ({
 
         {/* Song Metadata */}
         <div className="mb-6">
-          <SongMetadata
+          <SongMetadataComponent
             artist={songMetadata?.artist}
             title={songMetadata?.title}
             albumCover={songMetadata?.albumCover}
@@ -128,7 +128,7 @@ const StationModal: React.FC<StationModalProps> = ({
         />
 
         {/* Stream URL Display */}
-        <StreamUrlDisplay streamUrl={station.streamUrl || station.url} />
+        <StreamUrlDisplay station={station} />
 
         {/* Open in New Tab Button */}
         <Button

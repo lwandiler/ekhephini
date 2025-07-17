@@ -6,6 +6,8 @@ export type Show = Tables<'shows'>;
 
 export interface ShowWithFormattedTime extends Omit<Show, 'start_time' | 'end_time'> {
   time: string;
+  start_time: string;
+  end_time: string;
 }
 
 export interface DaySchedule {
@@ -57,7 +59,9 @@ export async function fetchShows(): Promise<DaySchedule[]> {
 
       groupedShows[show.day_of_week].push({
         ...show,
-        time: formatTimeRange(show.start_time, show.end_time)
+        time: formatTimeRange(show.start_time, show.end_time),
+        start_time: show.start_time,
+        end_time: show.end_time
       });
     });
 
