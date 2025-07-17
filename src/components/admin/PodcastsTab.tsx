@@ -149,6 +149,11 @@ const PodcastsTab = () => {
     });
   };
 
+  const handleAddClick = () => {
+    resetForm();
+    setDialogOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -164,114 +169,113 @@ const PodcastsTab = () => {
           <h2 className="text-2xl font-bold text-gray-900">Podcasts Management</h2>
           <p className="text-gray-600">Manage your podcast episodes</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={resetForm} className="bg-radio-accent hover:bg-radio-accent/90">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Podcast
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>{editingPodcast ? 'Edit Podcast' : 'Add New Podcast'}</DialogTitle>
-              <DialogDescription>
-                {editingPodcast ? 'Update the podcast details below.' : 'Fill in the details for the new podcast episode.'}
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="host">Host</Label>
-                  <Input
-                    id="host"
-                    value={formData.host}
-                    onChange={(e) => setFormData({ ...formData, host: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="episode_number">Episode Number</Label>
-                  <Input
-                    id="episode_number"
-                    type="number"
-                    value={formData.episode_number}
-                    onChange={(e) => setFormData({ ...formData, episode_number: parseInt(e.target.value) || 1 })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="duration">Duration</Label>
-                  <Input
-                    id="duration"
-                    placeholder="e.g., 45 min"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="publish_date">Publish Date</Label>
-                  <Input
-                    id="publish_date"
-                    type="date"
-                    value={formData.publish_date}
-                    onChange={(e) => setFormData({ ...formData, publish_date: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="image_url">Image URL</Label>
-                  <Input
-                    id="image_url"
-                    type="url"
-                    placeholder="https://example.com/image.jpg"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="listen_url">Listen URL</Label>
-                <Input
-                  id="listen_url"
-                  type="url"
-                  placeholder="https://example.com/episode"
-                  value={formData.listen_url}
-                  onChange={(e) => setFormData({ ...formData, listen_url: e.target.value })}
-                />
-              </div>
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" className="bg-radio-accent hover:bg-radio-accent/90">
-                  {editingPodcast ? 'Update' : 'Create'} Podcast
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={handleAddClick} className="bg-radio-accent hover:bg-radio-accent/90">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Podcast
+        </Button>
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{editingPodcast ? 'Edit Podcast' : 'Add New Podcast'}</DialogTitle>
+            <DialogDescription>
+              {editingPodcast ? 'Update the podcast details below.' : 'Fill in the details for the new podcast episode.'}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="host">Host</Label>
+                <Input
+                  id="host"
+                  value={formData.host}
+                  onChange={(e) => setFormData({ ...formData, host: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                rows={3}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="episode_number">Episode Number</Label>
+                <Input
+                  id="episode_number"
+                  type="number"
+                  value={formData.episode_number}
+                  onChange={(e) => setFormData({ ...formData, episode_number: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="duration">Duration</Label>
+                <Input
+                  id="duration"
+                  placeholder="e.g., 45 min"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="publish_date">Publish Date</Label>
+                <Input
+                  id="publish_date"
+                  type="date"
+                  value={formData.publish_date}
+                  onChange={(e) => setFormData({ ...formData, publish_date: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="image_url">Image URL</Label>
+                <Input
+                  id="image_url"
+                  type="url"
+                  placeholder="https://example.com/image.jpg"
+                  value={formData.image_url}
+                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="listen_url">Listen URL</Label>
+              <Input
+                id="listen_url"
+                type="url"
+                placeholder="https://example.com/episode"
+                value={formData.listen_url}
+                onChange={(e) => setFormData({ ...formData, listen_url: e.target.value })}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" className="bg-radio-accent hover:bg-radio-accent/90">
+                {editingPodcast ? 'Update' : 'Create'} Podcast
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <div className="grid gap-4">
         {podcasts.length === 0 ? (
