@@ -128,27 +128,13 @@ const Podcasts = () => {
           </div>
         </section>
         
-        {/* Featured Podcast */}
-        {filteredPodcasts.length > 0 && (
-          <section className="py-8">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-radio-blue mb-6">Featured Podcast</h2>
-              <PodcastCard 
-                podcast={filteredPodcasts[0]} 
-                variant="featured" 
-                onPlay={handlePlayPodcast}
-              />
-            </div>
-          </section>
-        )}
-        
         {/* All Podcasts */}
         <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-radio-blue mb-8">All Podcasts</h2>
             {filteredPodcasts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPodcasts.slice(1).map(podcast => (
+                {filteredPodcasts.map(podcast => (
                   <PodcastCard 
                     key={podcast.id} 
                     podcast={podcast} 
