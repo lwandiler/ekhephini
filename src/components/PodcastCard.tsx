@@ -226,7 +226,7 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
           <Button 
             variant="ghost" 
             size="icon"
-            className={`rounded-full ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-500'}`}
+            className={`rounded-full h-8 w-8 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-red-500'}`}
             onClick={handleLikeClick}
           >
             <Heart size={16} fill={isLiked ? "currentColor" : "none"} />
