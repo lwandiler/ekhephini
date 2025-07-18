@@ -2,9 +2,12 @@
 import { useState, useContext, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import { AudioPlayerContext } from '@/contexts/AudioPlayerContext';
 import { fetchShows, type DaySchedule, type ShowWithFormattedTime } from '@/services/api/showsService';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Play } from 'lucide-react';
 
 const ShowSchedule = () => {
   const { themeOptions } = useContext(ThemeContext);
@@ -15,6 +18,67 @@ const ShowSchedule = () => {
   const [schedule, setSchedule] = useState<DaySchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedShow, setSelectedShow] = useState<ShowWithFormattedTime | null>(null);
+  
+  const { togglePlayPause, isPlaying } = useContext(AudioPlayerContext);
+
+  const isShowCurrentlyHappening = (show: ShowWithFormattedTime): boolean => {
+    const now = new Date();
+    const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    
+    // Check if it's the right day
+    const showDay = schedule.find(day => day.shows.some(s => s.id === show.id))?.day;
+    if (showDay !== currentDay) return false;
+    
+    // Parse show times
+    const startTime = parseTimeToMinutes(show.start_time);
+    const endTime = parseTimeToMinutes(show.end_time);
+    
+    // Handle shows that cross midnight
+    if (endTime < startTime) {
+      return currentTime >= startTime || currentTime < endTime;
+    } else {
+      return currentTime >= startTime && currentTime < endTime;
+    }
+  };
+
+  const parseTimeToMinutes = (timeString: string): number => {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const getNextShowTime = (show: ShowWithFormattedTime): string => {
+    const showDay = schedule.find(day => day.shows.some(s => s.id === show.id))?.day;
+    if (!showDay) return show.time;
+    
+    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const todayIndex = daysOfWeek.indexOf(today);
+    const showDayIndex = daysOfWeek.indexOf(showDay);
+    
+    if (showDayIndex === todayIndex) {
+      return `today at ${show.time}`;
+    } else if (showDayIndex === (todayIndex + 1) % 7) {
+      return `tomorrow at ${show.time}`;
+    } else {
+      return `on ${showDay} at ${show.time}`;
+    }
+  };
+
+  const handleListenClick = (show: ShowWithFormattedTime) => {
+    if (isShowCurrentlyHappening(show)) {
+      // Show is live, start playing
+      if (!isPlaying) {
+        togglePlayPause();
+      }
+    } else {
+      // Show is not live, show dialog
+      setSelectedShow(show);
+      setDialogOpen(true);
+    }
+  };
 
   useEffect(() => {
     const loadShows = async () => {
@@ -111,8 +175,14 @@ const ShowSchedule = () => {
                       {show.time}
                     </span>
                     
-                    <Button variant="outline" size="sm" className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white">
-                      More Info
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                      onClick={() => handleListenClick(show)}
+                    >
+                      <Play className="w-4 h-4 mr-1" />
+                      Listen
                     </Button>
                   </div>
                 </div>
@@ -121,6 +191,28 @@ const ShowSchedule = () => {
           </TabsContent>
         ))}
       </Tabs>
+      
+      {/* Show Not Started Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">Show Not Started</DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-center">
+            <p className="text-gray-600 mb-4">
+              <strong>{selectedShow?.title}</strong> with {selectedShow?.host} hasn't started yet.
+            </p>
+            <p className="text-sm text-gray-500">
+              Come back {selectedShow ? getNextShowTime(selectedShow) : ''} to listen live!
+            </p>
+          </div>
+          <div className="flex justify-center">
+            <Button onClick={() => setDialogOpen(false)} variant="outline">
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

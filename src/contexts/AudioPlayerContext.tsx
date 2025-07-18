@@ -5,7 +5,7 @@ import { useAudioState } from './audio/useAudioState';
 import { createAudioControls } from './audio/audioControls';
 import { useAudioInitialization } from './audio/useAudioInitialization';
 
-const AudioPlayerContext = createContext<AudioPlayerContextProps | undefined>(undefined);
+export const AudioPlayerContext = createContext<AudioPlayerContextProps | undefined>(undefined);
 
 export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Initialize audio state
