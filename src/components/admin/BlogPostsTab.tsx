@@ -219,12 +219,19 @@ const BlogPostsTab = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-4">
                     <div className="flex-1">
-                      <Input 
+                      <input 
                         type="file"
                         accept="image/*"
                         onChange={handleImageUpload}
-                        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-primary file:text-primary-foreground hover:file:bg-primary/80 mb-6"
+                        className="hidden"
+                        id="featured-image-upload"
                       />
+                      <label 
+                        htmlFor="featured-image-upload"
+                        className="cursor-pointer text-primary hover:text-primary/80 underline"
+                      >
+                        Click here to upload image
+                      </label>
                     </div>
                     {isUploading && (
                       <div className="text-sm text-muted-foreground">
