@@ -3,15 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { blogService, BlogPost } from '@/services/api/blogService';
 import { useToast } from '@/hooks/use-toast';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
 import { Upload, Image } from 'lucide-react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import './BlogPostEditor.css';
 
 const BlogPostsTab = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -101,61 +99,12 @@ const BlogPostsTab = () => {
     }));
   };
 
-  const handleContentChange = (content: string) => {
-    setFormData(prev => ({ ...prev, content }));
-  };
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setFeaturedImageFile(file);
     }
   };
-
-  // Quill modules configuration
-  const quillModules = {
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        [{ 'font': [] }],
-        [{ 'size': ['small', false, 'large', 'huge'] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'direction': 'rtl' }],
-        [{ 'align': [] }],
-        ['link', 'image', 'video'],
-        ['blockquote', 'code-block'],
-        ['clean']
-      ],
-      handlers: {
-        image: function() {
-          const range = this.quill.getSelection();
-          const value = prompt('Please enter the image URL');
-          if (value) {
-            this.quill.insertEmbed(range.index, 'image', value, 'user');
-          }
-        }
-      }
-    },
-    clipboard: {
-      matchVisual: false
-    }
-  };
-
-  // Quill formats configuration
-  const quillFormats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike',
-    'color', 'background',
-    'script',
-    'list', 'bullet', 'indent',
-    'direction', 'align',
-    'link', 'image', 'video',
-    'blockquote', 'code-block'
-  ];
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this blog post?')) {
@@ -243,32 +192,25 @@ const BlogPostsTab = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="excerpt">Excerpt</Label>
-                <ReactQuill
+                <Textarea 
+                  id="excerpt" 
+                  name="excerpt"
                   value={formData.excerpt}
-                  onChange={(content) => setFormData(prev => ({ ...prev, excerpt: content }))}
+                  onChange={handleInputChange}
                   placeholder="Write a brief summary of the post..."
-                  style={{ height: '120px', marginBottom: '50px' }}
-                  modules={{
-                    toolbar: [
-                      ['bold', 'italic', 'underline'],
-                      ['link']
-                    ]
-                  }}
-                  formats={['bold', 'italic', 'underline', 'link']}
-                  theme="snow"
+                  rows={4}
                 />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="content">Content</Label>
-                <ReactQuill
+                <Textarea 
+                  id="content" 
+                  name="content"
                   value={formData.content}
-                  onChange={handleContentChange}
+                  onChange={handleInputChange}
                   placeholder="Write your blog post content here..."
-                  style={{ height: '300px', marginBottom: '50px' }}
-                  modules={quillModules}
-                  formats={quillFormats}
-                  theme="snow"
+                  rows={15}
                 />
               </div>
               
