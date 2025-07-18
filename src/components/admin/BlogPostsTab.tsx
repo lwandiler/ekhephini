@@ -114,27 +114,34 @@ const BlogPostsTab = () => {
 
   // Quill modules configuration
   const quillModules = {
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        [{ 'font': [] }],
-        [{ 'size': ['small', false, 'large', 'huge'] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
-        [{ 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'direction': 'rtl' }],
-        [{ 'align': [] }],
-        ['link', 'image', 'video', 'formula'],
-        ['blockquote', 'code-block'],
-        ['clean']
-      ]
-    },
-    clipboard: {
-      matchVisual: false,
-    }
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      [{ 'font': [] }],
+      [{ 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }],
+      [{ 'align': [] }],
+      ['link', 'image', 'video'],
+      ['blockquote', 'code-block'],
+      ['clean']
+    ]
   };
+
+  // Quill formats configuration
+  const quillFormats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike',
+    'color', 'background',
+    'script',
+    'list', 'bullet', 'indent',
+    'direction', 'align',
+    'link', 'image', 'video',
+    'blockquote', 'code-block'
+  ];
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this blog post?')) {
@@ -233,6 +240,8 @@ const BlogPostsTab = () => {
                       ['link']
                     ]
                   }}
+                  formats={['bold', 'italic', 'underline', 'link']}
+                  theme="snow"
                 />
               </div>
               
@@ -244,6 +253,8 @@ const BlogPostsTab = () => {
                   placeholder="Write your blog post content here..."
                   style={{ height: '300px', marginBottom: '50px' }}
                   modules={quillModules}
+                  formats={quillFormats}
+                  theme="snow"
                 />
               </div>
               
