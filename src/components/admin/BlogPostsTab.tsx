@@ -186,26 +186,11 @@ const BlogPostsTab = () => {
   const handleEditedImageSave = async (editedImageFile: File) => {
     try {
       // Upload the edited image
-      const uploadResult = await handleMediaUpload(editedImageFile);
-      
-      // Wait for upload to complete and get the URL from the media upload hook
-      setTimeout(() => {
-        // Get the ReactQuill editor instance
-        const quillEditor = document.querySelector('.ql-editor')?.parentElement?.querySelector('.ql-editor');
-        if (quillEditor) {
-          const quill = (quillEditor as any).__quill;
-          if (quill) {
-            const range = quill.getSelection() || { index: 0 };
-            // Use a temporary URL that will be replaced with the actual URL once upload completes
-            const imageUrl = URL.createObjectURL(editedImageFile);
-            quill.insertEmbed(range.index, 'image', imageUrl);
-          }
-        }
-      }, 1000);
+      await handleMediaUpload(editedImageFile);
       
       toast({
         title: "Success",
-        description: "Image edited and inserted successfully"
+        description: "Image uploaded successfully"
       });
     } catch (error) {
       toast({
@@ -214,30 +199,22 @@ const BlogPostsTab = () => {
         variant: "destructive"
       });
     }
-    
-    setImageEditorOpen(false);
-    setCurrentImageFile(null);
   };
 
   // ReactQuill modules with custom image handler
   const quillModules = {
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],
-        [{ 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'direction': 'rtl' }],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'align': [] }],
-        ['link', 'image'],
-        ['clean']
-      ],
-      handlers: {
-        image: imageHandler
-      }
-    }
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      ['link', 'image'],
+      ['clean']
+    ]
   };
 
   return (
