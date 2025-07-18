@@ -12,7 +12,6 @@ import { useMediaUpload } from '@/hooks/useMediaUpload';
 import { Upload, Image } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { ImageEditor } from './ImageEditor';
 
 const BlogPostsTab = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -29,8 +28,6 @@ const BlogPostsTab = () => {
     featured_image: ''
   });
   const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
-  const [imageEditorOpen, setImageEditorOpen] = useState(false);
-  const [currentImageFile, setCurrentImageFile] = useState<File | null>(null);
   const { toast } = useToast();
   
   const { isUploading, handleMediaUpload } = useMediaUpload({
@@ -167,6 +164,8 @@ const BlogPostsTab = () => {
     });
   };
 
+  const [quillRef, setQuillRef] = useState<any>(null);
+
   // Custom image handler for ReactQuill
   const imageHandler = () => {
     const input = document.createElement('input');
@@ -174,47 +173,67 @@ const BlogPostsTab = () => {
     input.setAttribute('accept', 'image/*');
     input.click();
 
-    input.onchange = () => {
+    input.onchange = async () => {
       const file = input.files?.[0];
-      if (file) {
-        setCurrentImageFile(file);
-        setImageEditorOpen(true);
+      if (file && quillRef) {
+        try {
+          // Upload the image first
+          const formData = new FormData();
+          formData.append('file', file);
+          
+          // Create a temporary URL for immediate display
+          const tempUrl = URL.createObjectURL(file);
+          
+          // Get the current cursor position
+          const range = quillRef.getSelection();
+          const index = range ? range.index : 0;
+          
+          // Insert a resizable image with inline styles
+          const imageHtml = `<img src="${tempUrl}" style="max-width: 100%; height: auto; resize: both; overflow: auto; display: block; margin: 10px 0; border: 1px dashed #ccc;" alt="Uploaded image" />`;
+          
+          // Insert the image at cursor position
+          quillRef.clipboard.dangerouslyPasteHTML(index, imageHtml);
+          
+          // Move cursor after the image
+          quillRef.setSelection(index + 1);
+          
+          // Upload to server in background
+          await handleMediaUpload(file);
+          
+          toast({
+            title: "Success",
+            description: "Image inserted and uploaded successfully"
+          });
+        } catch (error) {
+          toast({
+            title: "Error",
+            description: "Failed to upload image",
+            variant: "destructive"
+          });
+        }
       }
     };
   };
 
-  const handleEditedImageSave = async (editedImageFile: File) => {
-    try {
-      // Upload the edited image
-      await handleMediaUpload(editedImageFile);
-      
-      toast({
-        title: "Success",
-        description: "Image uploaded successfully"
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to upload edited image",
-        variant: "destructive"
-      });
-    }
-  };
-
   // ReactQuill modules with custom image handler
   const quillModules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'script': 'sub'}, { 'script': 'super' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      [{ 'direction': 'rtl' }],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'align': [] }],
-      ['link', 'image'],
-      ['clean']
-    ]
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'align': [] }],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    }
   };
 
   return (
@@ -291,6 +310,7 @@ const BlogPostsTab = () => {
               <div className="space-y-2">
                 <Label htmlFor="content">Content</Label>
                 <ReactQuill
+                  ref={setQuillRef}
                   value={formData.content}
                   onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
                   placeholder="Write your blog post content here..."
@@ -426,19 +446,6 @@ const BlogPostsTab = () => {
             </tbody>
           </table>
         )
-      )}
-      
-      {/* Image Editor Modal */}
-      {currentImageFile && (
-        <ImageEditor
-          isOpen={imageEditorOpen}
-          onClose={() => {
-            setImageEditorOpen(false);
-            setCurrentImageFile(null);
-          }}
-          imageFile={currentImageFile}
-          onSave={handleEditedImageSave}
-        />
       )}
     </div>
   );
