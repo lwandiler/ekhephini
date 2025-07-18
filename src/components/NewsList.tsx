@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, User, Tag, ArrowRight } from 'lucide-react';
 
 interface NewsItem {
-  id: number;
+  id: string;
   title: string;
   excerpt: string;
   image: string;
@@ -21,7 +21,7 @@ interface NewsListProps {
 
 const mockNews: NewsItem[] = [
   {
-    id: 1,
+    id: "1",
     title: "Local Music Festival Announces Lineup",
     excerpt: "The annual City Sound Festival has revealed its star-studded lineup for this year's event, featuring both international stars and local talent.",
     image: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=400&q=80",
@@ -30,7 +30,7 @@ const mockNews: NewsItem[] = [
     category: "Events"
   },
   {
-    id: 2,
+    id: "2",
     title: "New Morning Show Host Joins Radio Wave Hub",
     excerpt: "We're excited to welcome Alex Johnson as our new morning show host starting next Monday. Alex brings 10 years of radio experience and a passion for great music.",
     image: "https://images.unsplash.com/photo-1593697821028-7cc59cfd7399?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=400&q=80",
@@ -39,7 +39,7 @@ const mockNews: NewsItem[] = [
     category: "Station News"
   },
   {
-    id: 3,
+    id: "3",
     title: "Interview: Rising Star Talks New Album",
     excerpt: "In an exclusive interview with Radio Wave Hub, emerging artist Maya Lee discusses her creative process and the inspirations behind her debut album.",
     image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=400&q=80",
@@ -48,7 +48,7 @@ const mockNews: NewsItem[] = [
     category: "Interviews"
   },
   {
-    id: 4,
+    id: "4",
     title: "Listeners' Choice Awards Voting Now Open",
     excerpt: "Cast your vote for your favorite shows, hosts, and music in our annual Listeners' Choice Awards. Winners will be announced during our special broadcast.",
     image: "https://images.unsplash.com/photo-1566981731417-d4c8ec28dccd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=400&q=80",

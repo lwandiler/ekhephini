@@ -92,6 +92,23 @@ export const blogService = {
     }
   },
 
+  // Get a single blog post by ID
+  async getPostById(id: string): Promise<BlogPost> {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('id', id)
+      .eq('published', true)
+      .single();
+
+    if (error) {
+      console.error('Error fetching blog post:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
   // Get posts by category
   async getPostsByCategory(category: string): Promise<BlogPost[]> {
     const { data, error } = await supabase

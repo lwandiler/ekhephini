@@ -10,8 +10,8 @@ import { blogService, BlogPost } from '@/services/api/blogService';
 
 // Transform blog posts to match NewsItem interface
 const transformBlogPostsToNews = (posts: BlogPost[]) => {
-  return posts.map((post, index) => ({
-    id: index + 1, // Use index as numeric ID for the NewsItem interface
+  return posts.map((post) => ({
+    id: post.id, // Use the actual blog post ID
     title: post.title,
     excerpt: post.excerpt || post.content.substring(0, 200) + '...',
     image: post.featured_image || "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=400&q=80",
