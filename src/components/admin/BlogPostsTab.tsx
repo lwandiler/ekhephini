@@ -10,6 +10,8 @@ import { blogService, BlogPost } from '@/services/api/blogService';
 import { useToast } from '@/hooks/use-toast';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
 import { Upload, Image } from 'lucide-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 const BlogPostsTab = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -204,13 +206,26 @@ const BlogPostsTab = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="content">Content</Label>
-                <Textarea 
-                  id="content" 
-                  name="content"
+                <ReactQuill
                   value={formData.content}
-                  onChange={handleInputChange}
+                  onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
                   placeholder="Write your blog post content here..."
-                  rows={15}
+                  theme="snow"
+                  style={{ height: '300px', marginBottom: '50px' }}
+                  modules={{
+                    toolbar: [
+                      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                      [{ 'script': 'sub'}, { 'script': 'super' }],
+                      [{ 'indent': '-1'}, { 'indent': '+1' }],
+                      [{ 'direction': 'rtl' }],
+                      [{ 'color': [] }, { 'background': [] }],
+                      [{ 'align': [] }],
+                      ['link', 'image'],
+                      ['clean']
+                    ]
+                  }}
                 />
               </div>
               
