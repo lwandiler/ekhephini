@@ -12,6 +12,7 @@ import { useMediaUpload } from '@/hooks/useMediaUpload';
 import { Upload, Image } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { ImageEditor } from './ImageEditor';
 
 const BlogPostsTab = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -28,6 +29,8 @@ const BlogPostsTab = () => {
     featured_image: ''
   });
   const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
+  const [imageEditorOpen, setImageEditorOpen] = useState(false);
+  const [currentImageFile, setCurrentImageFile] = useState<File | null>(null);
   const { toast } = useToast();
   
   const { isUploading, handleMediaUpload } = useMediaUpload({
@@ -164,6 +167,72 @@ const BlogPostsTab = () => {
     });
   };
 
+  // Custom image handler for ReactQuill
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = () => {
+      const file = input.files?.[0];
+      if (file) {
+        setCurrentImageFile(file);
+        setImageEditorOpen(true);
+      }
+    };
+  };
+
+  const handleEditedImageSave = async (editedImageFile: File) => {
+    try {
+      // Upload the edited image
+      await handleMediaUpload(editedImageFile);
+      
+      // Wait for upload to complete and get the URL
+      setTimeout(() => {
+        // Insert the image into ReactQuill
+        const quill = document.querySelector('.ql-editor') as any;
+        if (quill && quill.__quill) {
+          const range = quill.__quill.getSelection();
+          const imageUrl = URL.createObjectURL(editedImageFile);
+          quill.__quill.insertEmbed(range ? range.index : 0, 'image', imageUrl);
+        }
+      }, 1000);
+
+      toast({
+        title: "Success",
+        description: "Image uploaded and inserted successfully"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to upload edited image",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // ReactQuill modules with custom image handler
+  const quillModules = {
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'align': [] }],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -243,20 +312,7 @@ const BlogPostsTab = () => {
                   placeholder="Write your blog post content here..."
                   theme="snow"
                   style={{ height: '300px', marginBottom: '50px' }}
-                  modules={{
-                    toolbar: [
-                      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                      ['bold', 'italic', 'underline', 'strike'],
-                      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                      [{ 'script': 'sub'}, { 'script': 'super' }],
-                      [{ 'indent': '-1'}, { 'indent': '+1' }],
-                      [{ 'direction': 'rtl' }],
-                      [{ 'color': [] }, { 'background': [] }],
-                      [{ 'align': [] }],
-                      ['link', 'image'],
-                      ['clean']
-                    ]
-                  }}
+                  modules={quillModules}
                 />
               </div>
               
@@ -386,6 +442,19 @@ const BlogPostsTab = () => {
             </tbody>
           </table>
         )
+      )}
+      
+      {/* Image Editor Modal */}
+      {currentImageFile && (
+        <ImageEditor
+          isOpen={imageEditorOpen}
+          onClose={() => {
+            setImageEditorOpen(false);
+            setCurrentImageFile(null);
+          }}
+          imageFile={currentImageFile}
+          onSave={handleEditedImageSave}
+        />
       )}
     </div>
   );
