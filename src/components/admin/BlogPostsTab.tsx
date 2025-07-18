@@ -17,6 +17,7 @@ const BlogPostsTab = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -68,30 +69,58 @@ const BlogPostsTab = () => {
         finalFormData = { ...formData }; // Get updated form data with the image URL
       }
       
-      await blogService.createPost(finalFormData);
-      toast({
-        title: "Success",
-        description: `Blog post ${finalFormData.published ? 'published' : 'saved as draft'} successfully`
-      });
-      setFormData({
-        title: '',
-        content: '',
-        excerpt: '',
-        category: '',
-        author: '',
-        published: false,
-        featured_image: ''
-      });
-      setFeaturedImageFile(null);
-      setShowForm(false);
+      if (editingPost) {
+        await blogService.updatePost(editingPost.id, finalFormData);
+        toast({
+          title: "Success",
+          description: `Blog post updated successfully`
+        });
+      } else {
+        await blogService.createPost(finalFormData);
+        toast({
+          title: "Success",
+          description: `Blog post ${finalFormData.published ? 'published' : 'saved as draft'} successfully`
+        });
+      }
+      
+      resetForm();
       fetchPosts();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create blog post",
+        description: `Failed to ${editingPost ? 'update' : 'create'} blog post`,
         variant: "destructive"
       });
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      content: '',
+      excerpt: '',
+      category: '',
+      author: '',
+      published: false,
+      featured_image: ''
+    });
+    setFeaturedImageFile(null);
+    setEditingPost(null);
+    setShowForm(false);
+  };
+
+  const handleEdit = (post: BlogPost) => {
+    setEditingPost(post);
+    setFormData({
+      title: post.title,
+      content: post.content,
+      excerpt: post.excerpt || '',
+      category: post.category || '',
+      author: post.author,
+      published: post.published || false,
+      featured_image: post.featured_image || ''
+    });
+    setShowForm(true);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -140,7 +169,7 @@ const BlogPostsTab = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Manage Blog Posts</h2>
         <Button 
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => showForm ? resetForm() : setShowForm(true)}
           className="bg-radio-accent hover:bg-radio-accent/80"
         >
           {showForm ? "Cancel" : "Add New Post"}
@@ -150,8 +179,10 @@ const BlogPostsTab = () => {
       {showForm ? (
         <Card>
           <CardHeader>
-            <CardTitle>Add New Blog Post</CardTitle>
-            <CardDescription>Create a new blog post for your radio station.</CardDescription>
+            <CardTitle>{editingPost ? 'Edit Blog Post' : 'Add New Blog Post'}</CardTitle>
+            <CardDescription>
+              {editingPost ? 'Update your blog post details.' : 'Create a new blog post for your radio station.'}
+            </CardDescription>
           </CardHeader>
           <form onSubmit={handleFormSubmit}>
             <CardContent className="space-y-4">
@@ -284,9 +315,9 @@ const BlogPostsTab = () => {
             </CardContent>
             
             <CardFooter className="flex justify-end space-x-2">
-              <Button variant="outline" type="button" onClick={() => setShowForm(false)}>Cancel</Button>
+              <Button variant="outline" type="button" onClick={resetForm}>Cancel</Button>
               <Button type="submit" className="bg-radio-accent hover:bg-radio-accent/80" disabled={isUploading}>
-                {isUploading ? 'Uploading...' : formData.published ? 'Publish Post' : 'Save Draft'}
+                {isUploading ? 'Uploading...' : editingPost ? 'Update Post' : formData.published ? 'Publish Post' : 'Save Draft'}
               </Button>
             </CardFooter>
           </form>
@@ -332,7 +363,14 @@ const BlogPostsTab = () => {
                       {post.published_at ? formatDate(post.published_at) : formatDate(post.created_at!)}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <Button variant="ghost" size="sm" className="text-radio-blue mr-2">Edit</Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-radio-blue mr-2"
+                        onClick={() => handleEdit(post)}
+                      >
+                        Edit
+                      </Button>
                       <Button 
                         variant="ghost" 
                         size="sm" 
