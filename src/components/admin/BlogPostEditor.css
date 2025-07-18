@@ -11,17 +11,54 @@
 }
 
 .ql-toolbar button {
-  border: none;
+  border: none !important;
   border-radius: 3px;
   margin: 2px;
+  padding: 5px 7px;
+  cursor: pointer;
 }
 
 .ql-toolbar button:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 .ql-toolbar button.ql-active {
+  background-color: rgba(0, 123, 255, 0.2) !important;
+  color: #0066cc !important;
+}
+
+.ql-toolbar .ql-picker {
+  cursor: pointer;
+}
+
+.ql-toolbar .ql-picker-label {
+  cursor: pointer;
+  border: none !important;
+  padding: 2px 5px;
+}
+
+.ql-toolbar .ql-picker-label:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.ql-toolbar .ql-picker.ql-expanded .ql-picker-label {
   background-color: rgba(0, 123, 255, 0.2);
+}
+
+/* Ensure toolbar icons are visible */
+.ql-toolbar .ql-stroke {
+  stroke: #444 !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: #444 !important;
+}
+
+.ql-toolbar .ql-picker-options {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* Image and video embed support */
