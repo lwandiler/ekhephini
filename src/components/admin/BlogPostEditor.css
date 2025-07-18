@@ -5,6 +5,36 @@
   line-height: 1.5;
 }
 
+/* Enhanced toolbar functionality */
+.ql-toolbar .ql-formats {
+  margin-right: 15px;
+}
+
+.ql-toolbar button {
+  border: none;
+  border-radius: 3px;
+  margin: 2px;
+}
+
+.ql-toolbar button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.ql-toolbar button.ql-active {
+  background-color: rgba(0, 123, 255, 0.2);
+}
+
+/* Image and video embed support */
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+}
+
+.ql-editor video {
+  max-width: 100%;
+  height: auto;
+}
+
 .ql-toolbar {
   border-top: 1px solid #e5e7eb;
   border-left: 1px solid #e5e7eb;
