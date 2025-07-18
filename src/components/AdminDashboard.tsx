@@ -10,6 +10,7 @@ import { defaultStationSettings, extractSocialLinks, extractContactInfo } from '
 // Import tab components
 import ShowsTab from './admin/ShowsTab';
 import BlogPostsTab from './admin/BlogPostsTab';
+import PagesTab from './admin/PagesTab';
 import AnalyticsTab from './admin/AnalyticsTab';
 import AnnouncementsTab from './admin/AnnouncementsTab';
 import BannersTab from './admin/banners/BannersTab';
@@ -88,6 +89,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="podcasts" className="data-[state=active]:text-radio-accent">Podcasts</TabsTrigger>
               <TabsTrigger value="users" className="data-[state=active]:text-radio-accent">Users</TabsTrigger>
               <TabsTrigger value="blog" className="data-[state=active]:text-radio-accent">Blog</TabsTrigger>
+              <TabsTrigger value="pages" className="data-[state=active]:text-radio-accent">Pages</TabsTrigger>
               <TabsTrigger value="announcements" className="data-[state=active]:text-radio-accent">Announcements</TabsTrigger>
               <TabsTrigger value="banners" className="data-[state=active]:text-radio-accent">Banners</TabsTrigger>
               <TabsTrigger value="chat" className="data-[state=active]:text-radio-accent">Chat</TabsTrigger>
@@ -128,6 +130,10 @@ const AdminDashboard = () => {
               
               <TabsContent value="blog">
                 <BlogPostsTab />
+              </TabsContent>
+              
+              <TabsContent value="pages">
+                <PagesTab />
               </TabsContent>
               
               <TabsContent value="announcements">
