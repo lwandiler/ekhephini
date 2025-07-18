@@ -194,20 +194,20 @@ const ShowSchedule = () => {
       
       {/* Show Not Started Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-white border-2 border-green-600">
           <DialogHeader>
-            <DialogTitle className="text-center">Show Not Started</DialogTitle>
+            <DialogTitle className="text-center text-black">Show Not Started</DialogTitle>
           </DialogHeader>
           <div className="py-4 text-center">
-            <p className="text-gray-600 mb-4">
+            <p className="text-black mb-4">
               <strong>{selectedShow?.title}</strong> with {selectedShow?.host} hasn't started yet.
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-700">
               Come back {selectedShow ? getNextShowTime(selectedShow) : ''} to listen live!
             </p>
           </div>
           <div className="flex justify-center">
-            <Button onClick={() => setDialogOpen(false)} variant="outline">
+            <Button onClick={() => setDialogOpen(false)} className="bg-green-600 text-white hover:bg-green-700">
               Got it
             </Button>
           </div>
