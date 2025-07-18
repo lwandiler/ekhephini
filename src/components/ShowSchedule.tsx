@@ -141,7 +141,7 @@ const ShowSchedule = () => {
             <TabsTrigger 
               key={day.day} 
               value={day.day}
-              className="data-[state=active]:bg-green-800 data-[state=active]:text-white text-gray-600 hover:text-gray-900"
+              className="data-[state=active]:!bg-green-800 data-[state=active]:!text-white text-gray-600 hover:text-gray-900"
             >
               {day.day.substring(0, 3)}
             </TabsTrigger>
