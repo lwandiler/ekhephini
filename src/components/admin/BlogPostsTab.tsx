@@ -188,20 +188,9 @@ const BlogPostsTab = () => {
       // Upload the edited image
       await handleMediaUpload(editedImageFile);
       
-      // Wait for upload to complete and get the URL
-      setTimeout(() => {
-        // Insert the image into ReactQuill
-        const quill = document.querySelector('.ql-editor') as any;
-        if (quill && quill.__quill) {
-          const range = quill.__quill.getSelection();
-          const imageUrl = URL.createObjectURL(editedImageFile);
-          quill.__quill.insertEmbed(range ? range.index : 0, 'image', imageUrl);
-        }
-      }, 1000);
-
       toast({
         title: "Success",
-        description: "Image uploaded and inserted successfully"
+        description: "Image uploaded successfully"
       });
     } catch (error) {
       toast({
@@ -214,23 +203,18 @@ const BlogPostsTab = () => {
 
   // ReactQuill modules with custom image handler
   const quillModules = {
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],
-        [{ 'indent': '-1'}, { 'indent': '+1' }],
-        [{ 'direction': 'rtl' }],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'align': [] }],
-        ['link', 'image'],
-        ['clean']
-      ],
-      handlers: {
-        image: imageHandler
-      }
-    }
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      ['link', 'image'],
+      ['clean']
+    ]
   };
 
   return (
