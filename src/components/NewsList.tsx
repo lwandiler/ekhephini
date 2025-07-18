@@ -116,9 +116,12 @@ const NewsList = ({ news = mockNews, compact = false }: NewsListProps) => {
             </CardDescription>
           </CardHeader>
           
-          {!compact && (
+           {!compact && (
             <CardContent className="flex-1">
-              <p className="text-gray-300">{item.excerpt}</p>
+              <div 
+                className="text-gray-300 prose prose-sm prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: item.excerpt }}
+              />
             </CardContent>
           )}
           

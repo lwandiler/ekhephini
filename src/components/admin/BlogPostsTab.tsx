@@ -2,12 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { blogService, BlogPost } from '@/services/api/blogService';
 import { useToast } from '@/hooks/use-toast';
+import { useMediaUpload } from '@/hooks/useMediaUpload';
+import { Upload, Image } from 'lucide-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import './BlogPostEditor.css';
 
 const BlogPostsTab = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -22,7 +26,15 @@ const BlogPostsTab = () => {
     published: false,
     featured_image: ''
   });
+  const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
   const { toast } = useToast();
+  
+  const { isUploading, handleMediaUpload } = useMediaUpload({
+    mediaType: 'image',
+    onUploadSuccess: (url) => {
+      setFormData(prev => ({ ...prev, featured_image: url }));
+    }
+  });
 
   useEffect(() => {
     fetchPosts();
@@ -46,10 +58,20 @@ const BlogPostsTab = () => {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await blogService.createPost(formData);
+      let finalFormData = { ...formData };
+      
+      // Upload featured image if one is selected
+      if (featuredImageFile && !finalFormData.featured_image) {
+        await handleMediaUpload(featuredImageFile);
+        // Wait a moment for the upload to complete and set the URL
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        finalFormData = { ...formData }; // Get updated form data with the image URL
+      }
+      
+      await blogService.createPost(finalFormData);
       toast({
         title: "Success",
-        description: "Blog post created successfully"
+        description: `Blog post ${finalFormData.published ? 'published' : 'saved as draft'} successfully`
       });
       setFormData({
         title: '',
@@ -60,6 +82,7 @@ const BlogPostsTab = () => {
         published: false,
         featured_image: ''
       });
+      setFeaturedImageFile(null);
       setShowForm(false);
       fetchPosts();
     } catch (error) {
@@ -76,6 +99,33 @@ const BlogPostsTab = () => {
       ...prev,
       [e.target.name]: e.target.value
     }));
+  };
+
+  const handleContentChange = (content: string) => {
+    setFormData(prev => ({ ...prev, content }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFeaturedImageFile(file);
+    }
+  };
+
+  // Quill modules configuration
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+      ['link', 'image', 'video'],
+      ['clean']
+    ],
   };
 
   const handleDelete = async (id: string) => {
@@ -164,38 +214,64 @@ const BlogPostsTab = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="excerpt">Excerpt</Label>
-                <Textarea 
-                  id="excerpt" 
-                  name="excerpt"
+                <ReactQuill
                   value={formData.excerpt}
-                  onChange={handleInputChange}
-                  placeholder="Write a brief summary of the post..." 
-                  rows={3} 
+                  onChange={(content) => setFormData(prev => ({ ...prev, excerpt: content }))}
+                  placeholder="Write a brief summary of the post..."
+                  style={{ height: '120px', marginBottom: '50px' }}
+                  modules={{
+                    toolbar: [
+                      ['bold', 'italic', 'underline'],
+                      ['link']
+                    ]
+                  }}
                 />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="content">Content</Label>
-                <Textarea 
-                  id="content" 
-                  name="content"
+                <ReactQuill
                   value={formData.content}
-                  onChange={handleInputChange}
-                  placeholder="Write your blog post content here..." 
-                  rows={8} 
-                  required
+                  onChange={handleContentChange}
+                  placeholder="Write your blog post content here..."
+                  style={{ height: '300px', marginBottom: '50px' }}
+                  modules={quillModules}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="featured_image">Featured Image URL</Label>
-                <Input 
-                  id="featured_image" 
-                  name="featured_image"
-                  value={formData.featured_image}
-                  onChange={handleInputChange}
-                  placeholder="https://example.com/image.jpg" 
-                />
+                <Label>Featured Image</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <Input 
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
+                      />
+                    </div>
+                    {isUploading && (
+                      <div className="text-sm text-muted-foreground">
+                        Uploading...
+                      </div>
+                    )}
+                  </div>
+                  {(formData.featured_image || featuredImageFile) && (
+                    <div className="relative w-32 h-32 border rounded-lg overflow-hidden">
+                      <img 
+                        src={formData.featured_image || (featuredImageFile ? URL.createObjectURL(featuredImageFile) : '')}
+                        alt="Featured image preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <Input 
+                    placeholder="Or enter image URL directly"
+                    value={formData.featured_image}
+                    onChange={(e) => setFormData(prev => ({ ...prev, featured_image: e.target.value }))}
+                  />
+                </div>
               </div>
 
               <div className="flex items-center space-x-2">
@@ -204,13 +280,17 @@ const BlogPostsTab = () => {
                   checked={formData.published}
                   onCheckedChange={(checked) => setFormData(prev => ({ ...prev, published: checked }))}
                 />
-                <Label htmlFor="published">Publish immediately</Label>
+                <Label htmlFor="published" className="cursor-pointer">
+                  {formData.published ? 'Publish immediately' : 'Save as draft'}
+                </Label>
               </div>
             </CardContent>
             
             <CardFooter className="flex justify-end space-x-2">
               <Button variant="outline" type="button" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button type="submit" className="bg-radio-accent hover:bg-radio-accent/80">Publish Post</Button>
+              <Button type="submit" className="bg-radio-accent hover:bg-radio-accent/80" disabled={isUploading}>
+                {isUploading ? 'Uploading...' : formData.published ? 'Publish Post' : 'Save Draft'}
+              </Button>
             </CardFooter>
           </form>
         </Card>
