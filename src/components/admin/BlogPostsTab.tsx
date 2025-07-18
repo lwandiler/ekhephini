@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { blogService, BlogPost } from '@/services/api/blogService';
 import { useToast } from '@/hooks/use-toast';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
-import { Upload, Image } from 'lucide-react';
+import { Upload, Image, Code } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { ImageEditor } from './ImageEditor';
@@ -31,6 +31,7 @@ const BlogPostsTab = () => {
   const [featuredImageFile, setFeaturedImageFile] = useState<File | null>(null);
   const [imageEditorOpen, setImageEditorOpen] = useState(false);
   const [currentImageFile, setCurrentImageFile] = useState<File | null>(null);
+  const [isHtmlMode, setIsHtmlMode] = useState(false);
   const { toast } = useToast();
   
   const { isUploading, handleMediaUpload } = useMediaUpload({
@@ -203,19 +204,38 @@ const BlogPostsTab = () => {
 
   // ReactQuill modules with custom image handler
   const quillModules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'script': 'sub'}, { 'script': 'super' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
-      [{ 'direction': 'rtl' }],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'align': [] }],
-      ['link', 'image'],
-      ['clean']
-    ]
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],
+        [{ 'indent': '-1'}, { 'indent': '+1' }],
+        [{ 'direction': 'rtl' }],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'align': [] }],
+        ['link', 'image'],
+        ['clean'],
+        ['html-editor']
+      ],
+      handlers: {
+        'image': imageHandler,
+        'html-editor': () => setIsHtmlMode(!isHtmlMode)
+      }
+    }
   };
+
+  // Custom Quill toolbar registration
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const Quill = require('react-quill').Quill;
+      if (Quill && !Quill.imports['modules/toolbar'].DEFAULTS.handlers['html-editor']) {
+        // Register custom HTML editor button
+        const Toolbar = Quill.import('modules/toolbar');
+        Toolbar.DEFAULTS.handlers['html-editor'] = () => setIsHtmlMode(!isHtmlMode);
+      }
+    }
+  }, [isHtmlMode]);
 
   return (
     <div className="space-y-6">
@@ -290,14 +310,41 @@ const BlogPostsTab = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="content">Content</Label>
-                <ReactQuill
-                  value={formData.content}
-                  onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
-                  placeholder="Write your blog post content here..."
-                  theme="snow"
-                  style={{ height: '300px', marginBottom: '50px' }}
-                  modules={quillModules}
-                />
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">
+                      {isHtmlMode ? 'HTML Source Mode' : 'Visual Editor Mode'}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsHtmlMode(!isHtmlMode)}
+                      className="flex items-center gap-1"
+                    >
+                      <Code className="w-4 h-4" />
+                      {isHtmlMode ? 'Visual' : 'HTML'}
+                    </Button>
+                  </div>
+                  {isHtmlMode ? (
+                    <Textarea
+                      value={formData.content}
+                      onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                      placeholder="Enter HTML content here..."
+                      className="min-h-[300px] font-mono text-sm"
+                      style={{ fontFamily: 'monospace' }}
+                    />
+                  ) : (
+                    <ReactQuill
+                      value={formData.content}
+                      onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
+                      placeholder="Write your blog post content here..."
+                      theme="snow"
+                      style={{ height: '300px', marginBottom: '50px' }}
+                      modules={quillModules}
+                    />
+                  )}
+                </div>
               </div>
               
               <div className="space-y-2">
