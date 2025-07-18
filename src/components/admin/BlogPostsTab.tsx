@@ -223,7 +223,7 @@ const BlogPostsTab = () => {
                         type="file"
                         accept="image/*"
                         onChange={handleImageUpload}
-                        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-primary file:text-primary-foreground hover:file:bg-primary/80 mb-4"
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-primary file:text-primary-foreground hover:file:bg-primary/80 mb-6"
                       />
                     </div>
                     {isUploading && (
