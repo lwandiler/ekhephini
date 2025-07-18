@@ -135,7 +135,7 @@ const ShowSchedule = () => {
     <div className="bg-white rounded-lg shadow-md p-6 border">
       <h2 className="text-2xl font-bold mb-6 text-gray-900">Show Schedule</h2>
       
-      <Tabs defaultValue={currentDay} className="w-full">
+      <Tabs value={currentDay} onValueChange={setCurrentDay} className="w-full">
         <TabsList className="grid grid-cols-7 mb-6 overflow-x-auto bg-gray-100">
           {schedule.map((day) => (
             <TabsTrigger 
