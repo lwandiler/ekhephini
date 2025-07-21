@@ -6,8 +6,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { AudioPlayerContext } from '@/contexts/AudioPlayerContext';
 import { fetchShows, type DaySchedule, type ShowWithFormattedTime } from '@/services/api/showsService';
+import { hasShowPassed, getNextShowOccurrence } from '@/utils/scheduleUtils';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Play } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const ShowSchedule = () => {
   const { themeOptions } = useContext(ThemeContext);
@@ -20,6 +22,7 @@ const ShowSchedule = () => {
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedShow, setSelectedShow] = useState<ShowWithFormattedTime | null>(null);
+  const { toast } = useToast();
   
   const { togglePlayPause, isPlaying } = useContext(AudioPlayerContext);
 
@@ -73,6 +76,10 @@ const ShowSchedule = () => {
       if (!isPlaying) {
         togglePlayPause();
       }
+      toast({
+        title: "Now Playing",
+        description: `You're now listening to ${show.title} with ${show.host}`,
+      });
     } else {
       // Show is not live, show dialog
       setSelectedShow(show);
@@ -196,14 +203,20 @@ const ShowSchedule = () => {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-md bg-white border-2 border-green-600">
           <DialogHeader>
-            <DialogTitle className="text-center text-black">Show Not Started</DialogTitle>
+            <DialogTitle className="text-center text-black">
+              {selectedShow && hasShowPassed(selectedShow, schedule) ? 'Show Has Ended' : 'Show Not Started'}
+            </DialogTitle>
           </DialogHeader>
           <div className="py-4 text-center">
             <p className="text-black mb-4">
-              <strong>{selectedShow?.title}</strong> with {selectedShow?.host} hasn't started yet.
+              <strong>{selectedShow?.title}</strong> with {selectedShow?.host} 
+              {selectedShow && hasShowPassed(selectedShow, schedule) ? ' has already ended.' : " hasn't started yet."}
             </p>
             <p className="text-sm text-gray-700">
-              Come back {selectedShow ? getNextShowTime(selectedShow) : ''} to listen live!
+              {selectedShow && hasShowPassed(selectedShow, schedule) 
+                ? `Catch the next episode ${getNextShowOccurrence(selectedShow, schedule)}`
+                : `Come back ${selectedShow ? getNextShowOccurrence(selectedShow, schedule) : ''} to listen live!`
+              }
             </p>
           </div>
           <div className="flex justify-center">
