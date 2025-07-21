@@ -4,9 +4,33 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, Radio, Clock, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { hasShowPassed, getNextShowOccurrence } from '@/utils/scheduleUtils';
 
 export default function NowLive() {
   const { currentShow, loading } = useCurrentShow();
+  const { toast } = useToast();
+
+  const handleListen = () => {
+    if (currentShow && hasShowPassed(currentShow)) {
+      const nextOccurrence = getNextShowOccurrence(currentShow);
+      toast({
+        title: "Show Has Ended",
+        description: `${currentShow.title} will be back ${nextOccurrence === 'today' ? 'later today' : `on ${nextOccurrence}`} at ${currentShow.time}.`,
+      });
+      return;
+    }
+
+    const radioPlayer = document.querySelector('[data-radio-player]');
+    if (radioPlayer) {
+      const event = new CustomEvent('triggerPlay');
+      radioPlayer.dispatchEvent(event);
+    }
+    toast({
+      title: "Now Playing",
+      description: `Listening to ${currentShow?.title || 'live radio'}`,
+    });
+  };
 
   if (loading) {
     return (
@@ -46,13 +70,7 @@ export default function NowLive() {
                    <div className="absolute inset-0 bg-gradient-to-r from-green-900/20 to-transparent md:bg-gradient-to-t md:from-gray-900/80 md:via-gray-900/40 md:to-transparent"></div>
                    <Button 
                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white h-16 w-16 rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300"
-                     onClick={() => {
-                       const radioPlayer = document.querySelector('[data-radio-player]');
-                       if (radioPlayer) {
-                         const event = new CustomEvent('triggerPlay');
-                         radioPlayer.dispatchEvent(event);
-                       }
-                     }}
+                     onClick={handleListen}
                    >
                      <Play className="w-8 h-8" fill="currentColor" />
                   </Button>
@@ -90,16 +108,10 @@ export default function NowLive() {
                      <div className="flex space-x-2">
                        <Button 
                          className="bg-green-600 hover:bg-green-700 text-white"
-                         onClick={() => {
-                           const radioPlayer = document.querySelector('[data-radio-player]');
-                           if (radioPlayer) {
-                             const event = new CustomEvent('triggerPlay');
-                             radioPlayer.dispatchEvent(event);
-                           }
-                         }}
+                         onClick={handleListen}
                        >
                          <Radio className="mr-2 w-4 h-4" />
-                         Listen Live
+                         {currentShow && hasShowPassed(currentShow) ? 'Show Ended' : 'Listen Live'}
                       </Button>
                     </div>
                   </div>

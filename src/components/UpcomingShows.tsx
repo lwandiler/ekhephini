@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Clock, Calendar, User, Heart, Share2, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { hasShowPassed, getNextShowOccurrence } from '@/utils/scheduleUtils';
 
 export default function UpcomingShows() {
   const { upcomingShows, loading } = useUpcomingShows();
@@ -130,6 +131,15 @@ export default function UpcomingShows() {
                 <Button 
                   className="absolute top-4 right-4 bg-green-600 hover:bg-green-700 text-white h-8 w-8 rounded-full"
                   onClick={() => {
+                    if (hasShowPassed(show)) {
+                      const nextOccurrence = getNextShowOccurrence(show);
+                      toast({
+                        title: "Show Has Ended",
+                        description: `${show.title} will be back ${nextOccurrence === 'today' ? 'later today' : `on ${nextOccurrence}`} at ${show.time}.`,
+                      });
+                      return;
+                    }
+
                     const radioPlayer = document.querySelector('[data-radio-player]');
                     if (radioPlayer) {
                       const event = new CustomEvent('triggerPlay');
