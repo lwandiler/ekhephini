@@ -168,22 +168,22 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
   ];
 
   const renderPreview = () => (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm border border-green-200">
       {formData.featured_image && (
         <div className="mb-6">
           <img 
             src={formData.featured_image} 
             alt={formData.title}
-            className="w-full h-64 object-cover rounded-lg"
+            className="w-full h-64 object-cover rounded-lg border border-green-100"
           />
         </div>
       )}
-      <h1 className="text-3xl font-bold mb-4">{formData.title}</h1>
+      <h1 className="text-3xl font-bold mb-4 text-black">{formData.title}</h1>
       {formData.excerpt && (
         <p className="text-lg text-gray-600 mb-6">{formData.excerpt}</p>
       )}
       <div 
-        className="prose prose-lg max-w-none"
+        className="prose prose-lg max-w-none text-black"
         dangerouslySetInnerHTML={{ __html: formData.content }}
       />
     </div>
@@ -191,12 +191,12 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl h-[90vh] flex flex-col">
-        <DialogHeader className="flex-shrink-0">
+      <DialogContent className="max-w-7xl h-[90vh] flex flex-col bg-white border-2 border-green-600 shadow-2xl">
+        <DialogHeader className="flex-shrink-0 bg-green-600 text-white p-4 rounded-t-lg border-b-2 border-green-700">
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle>Page Builder - {formData.title}</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-white text-xl font-bold">Page Builder - {formData.title}</DialogTitle>
+              <DialogDescription className="text-green-100">
                 Edit your page content using the visual builder
               </DialogDescription>
             </div>
@@ -205,7 +205,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
                 variant="outline"
                 size="sm"
                 onClick={() => setPreviewMode(!previewMode)}
-                className="flex items-center gap-1"
+                className="flex items-center gap-1 bg-white text-green-600 border-white hover:bg-green-50 font-medium"
               >
                 <Eye className="w-4 h-4" />
                 {previewMode ? 'Edit' : 'Preview'}
@@ -213,65 +213,78 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
               <Button
                 onClick={handleSave}
                 disabled={isUploading}
-                className="flex items-center gap-1 bg-radio-accent hover:bg-radio-accent/80"
+                className="flex items-center gap-1 bg-black text-white hover:bg-gray-800 font-medium"
               >
                 <Save className="w-4 h-4" />
                 {isUploading ? 'Saving...' : 'Save Changes'}
               </Button>
-              <Button variant="outline" size="sm" onClick={onClose}>
+              <Button variant="outline" size="sm" onClick={onClose} className="bg-white text-gray-600 border-white hover:bg-gray-50">
                 <X className="w-4 h-4" />
               </Button>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden bg-white">
           {previewMode ? (
             <div className="h-full overflow-y-auto p-4 bg-gray-50">
               {renderPreview()}
             </div>
           ) : (
-            <Tabs defaultValue="content" className="h-full flex flex-col">
-              <TabsList className="flex-shrink-0">
-                <TabsTrigger value="content" className="flex items-center gap-1">
+            <Tabs defaultValue="content" className="h-full flex flex-col bg-white">
+              <TabsList className="flex-shrink-0 bg-green-100 border-b-2 border-green-200 rounded-none justify-start p-1">
+                <TabsTrigger 
+                  value="content" 
+                  className="flex items-center gap-1 data-[state=active]:bg-green-600 data-[state=active]:text-white bg-white text-green-600 border border-green-300 mr-1 font-medium"
+                >
                   <Type className="w-4 h-4" />
                   Content
                 </TabsTrigger>
-                <TabsTrigger value="layout" className="flex items-center gap-1">
+                <TabsTrigger 
+                  value="layout" 
+                  className="flex items-center gap-1 data-[state=active]:bg-green-600 data-[state=active]:text-white bg-white text-green-600 border border-green-300 mr-1 font-medium"
+                >
                   <Layout className="w-4 h-4" />
                   Layout
                 </TabsTrigger>
-                <TabsTrigger value="media" className="flex items-center gap-1">
+                <TabsTrigger 
+                  value="media" 
+                  className="flex items-center gap-1 data-[state=active]:bg-green-600 data-[state=active]:text-white bg-white text-green-600 border border-green-300 mr-1 font-medium"
+                >
                   <Image className="w-4 h-4" />
                   Media
                 </TabsTrigger>
-                <TabsTrigger value="settings" className="flex items-center gap-1">
+                <TabsTrigger 
+                  value="settings" 
+                  className="flex items-center gap-1 data-[state=active]:bg-green-600 data-[state=active]:text-white bg-white text-green-600 border border-green-300 font-medium"
+                >
                   <Settings className="w-4 h-4" />
                   Settings
                 </TabsTrigger>
               </TabsList>
 
-              <div className="flex-1 overflow-y-auto">
-                <TabsContent value="content" className="p-4 space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Page Content</CardTitle>
-                      <CardDescription>Edit your page content using the rich text editor</CardDescription>
+              <div className="flex-1 overflow-y-auto bg-white">
+                <TabsContent value="content" className="p-4 space-y-4 bg-white m-0">
+                  <Card className="bg-white border-2 border-green-200 shadow-sm">
+                    <CardHeader className="bg-green-50 border-b border-green-200">
+                      <CardTitle className="text-green-800 font-bold">Page Content</CardTitle>
+                      <CardDescription className="text-green-600">Edit your page content using the rich text editor</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 bg-white p-6">
                       <div className="space-y-2">
-                        <Label htmlFor="title">Page Title</Label>
+                        <Label htmlFor="title" className="text-black font-medium">Page Title</Label>
                         <Input 
                           id="title" 
                           name="title"
                           value={formData.title}
                           onChange={handleInputChange}
                           placeholder="Enter page title" 
+                          className="border-green-300 focus:border-green-500 focus:ring-green-500"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="excerpt">Page Excerpt</Label>
+                        <Label htmlFor="excerpt" className="text-black font-medium">Page Excerpt</Label>
                         <Textarea 
                           id="excerpt" 
                           name="excerpt"
@@ -279,18 +292,19 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
                           onChange={handleInputChange}
                           placeholder="Brief description of the page..."
                           rows={3}
+                          className="border-green-300 focus:border-green-500 focus:ring-green-500"
                         />
                       </div>
                       
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                          <Label>Content</Label>
+                          <Label className="text-black font-medium">Content</Label>
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
                             onClick={() => setIsHtmlMode(!isHtmlMode)}
-                            className="flex items-center gap-1"
+                            className="flex items-center gap-1 border-green-300 text-green-600 hover:bg-green-50"
                           >
                             <Code className="w-4 h-4" />
                             {isHtmlMode ? 'Visual' : 'HTML'}
@@ -301,43 +315,45 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
                             value={formData.content}
                             onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
                             placeholder="Enter HTML content here..."
-                            className="min-h-[400px] font-mono text-sm"
+                            className="min-h-[400px] font-mono text-sm border-green-300 focus:border-green-500 focus:ring-green-500 bg-gray-50"
                             style={{ fontFamily: 'monospace' }}
                           />
                         ) : (
-                          <ReactQuill
-                            value={formData.content}
-                            onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
-                            placeholder="Write your page content here..."
-                            theme="snow"
-                            style={{ height: '400px', marginBottom: '50px' }}
-                            modules={quillModules}
-                          />
+                          <div className="border-2 border-green-300 rounded-md overflow-hidden">
+                            <ReactQuill
+                              value={formData.content}
+                              onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
+                              placeholder="Write your page content here..."
+                              theme="snow"
+                              style={{ height: '400px', marginBottom: '50px' }}
+                              modules={quillModules}
+                            />
+                          </div>
                         )}
                       </div>
                     </CardContent>
                   </Card>
                 </TabsContent>
 
-                <TabsContent value="layout" className="p-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Page Layout</CardTitle>
-                      <CardDescription>Configure the layout and appearance of your page</CardDescription>
+                <TabsContent value="layout" className="p-4 m-0">
+                  <Card className="bg-white border-2 border-green-200 shadow-sm">
+                    <CardHeader className="bg-green-50 border-b border-green-200">
+                      <CardTitle className="text-green-800 font-bold">Page Layout</CardTitle>
+                      <CardDescription className="text-green-600">Configure the layout and appearance of your page</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 bg-white p-6">
                       <div className="space-y-2">
-                        <Label htmlFor="template">Template</Label>
+                        <Label htmlFor="template" className="text-black font-medium">Template</Label>
                         <Select 
                           value={formData.template} 
                           onValueChange={(value) => setFormData(prev => ({ ...prev, template: value }))}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="border-green-300 focus:border-green-500 focus:ring-green-500">
                             <SelectValue placeholder="Select template" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-white border-green-300">
                             {templates.map((template) => (
-                              <SelectItem key={template.value} value={template.value}>
+                              <SelectItem key={template.value} value={template.value} className="hover:bg-green-50">
                                 {template.label}
                               </SelectItem>
                             ))}
@@ -346,26 +362,27 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="slug">URL Slug</Label>
+                        <Label htmlFor="slug" className="text-black font-medium">URL Slug</Label>
                         <Input 
                           id="slug" 
                           name="slug"
                           value={formData.slug}
                           onChange={handleInputChange}
                           placeholder="page-url-slug" 
+                          className="border-green-300 focus:border-green-500 focus:ring-green-500"
                         />
                       </div>
                     </CardContent>
                   </Card>
                 </TabsContent>
 
-                <TabsContent value="media" className="p-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Featured Image</CardTitle>
-                      <CardDescription>Set a featured image for your page</CardDescription>
+                <TabsContent value="media" className="p-4 m-0">
+                  <Card className="bg-white border-2 border-green-200 shadow-sm">
+                    <CardHeader className="bg-green-50 border-b border-green-200">
+                      <CardTitle className="text-green-800 font-bold">Featured Image</CardTitle>
+                      <CardDescription className="text-green-600">Set a featured image for your page</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 bg-white p-6">
                       <div className="space-y-2">
                         <div className="flex items-center gap-4">
                           <div className="flex-1">
@@ -378,19 +395,19 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
                             />
                             <label 
                               htmlFor="featured-image-upload"
-                              className="cursor-pointer text-primary hover:text-primary/80 underline"
+                              className="cursor-pointer text-green-600 hover:text-green-800 underline font-medium"
                             >
                               Click here to upload image
                             </label>
                           </div>
                           {isUploading && (
-                            <div className="text-sm text-muted-foreground">
+                            <div className="text-sm text-green-600 font-medium">
                               Uploading...
                             </div>
                           )}
                         </div>
                         {(formData.featured_image || featuredImageFile) && (
-                          <div className="relative w-full max-w-md h-48 border rounded-lg overflow-hidden">
+                          <div className="relative w-full max-w-md h-48 border-2 border-green-300 rounded-lg overflow-hidden bg-gray-50">
                             <img 
                               src={formData.featured_image || (featuredImageFile ? URL.createObjectURL(featuredImageFile) : '')}
                               alt="Featured image preview"
@@ -402,32 +419,34 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
                           placeholder="Or enter image URL directly"
                           value={formData.featured_image}
                           onChange={(e) => setFormData(prev => ({ ...prev, featured_image: e.target.value }))}
+                          className="border-green-300 focus:border-green-500 focus:ring-green-500"
                         />
                       </div>
                     </CardContent>
                   </Card>
                 </TabsContent>
 
-                <TabsContent value="settings" className="p-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Page Settings</CardTitle>
-                      <CardDescription>Configure SEO and publication settings</CardDescription>
+                <TabsContent value="settings" className="p-4 m-0">
+                  <Card className="bg-white border-2 border-green-200 shadow-sm">
+                    <CardHeader className="bg-green-50 border-b border-green-200">
+                      <CardTitle className="text-green-800 font-bold">Page Settings</CardTitle>
+                      <CardDescription className="text-green-600">Configure SEO and publication settings</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 bg-white p-6">
                       <div className="space-y-2">
-                        <Label htmlFor="meta_title">Meta Title (SEO)</Label>
+                        <Label htmlFor="meta_title" className="text-black font-medium">Meta Title (SEO)</Label>
                         <Input 
                           id="meta_title" 
                           name="meta_title"
                           value={formData.meta_title}
                           onChange={handleInputChange}
                           placeholder="SEO title (optional)" 
+                          className="border-green-300 focus:border-green-500 focus:ring-green-500"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="meta_description">Meta Description (SEO)</Label>
+                        <Label htmlFor="meta_description" className="text-black font-medium">Meta Description (SEO)</Label>
                         <Textarea 
                           id="meta_description" 
                           name="meta_description"
@@ -435,16 +454,18 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ page, isOpen, onClose, onSave
                           onChange={handleInputChange}
                           placeholder="SEO description (optional)"
                           rows={3}
+                          className="border-green-300 focus:border-green-500 focus:ring-green-500"
                         />
                       </div>
 
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 p-4 border border-green-300 rounded-lg bg-green-50">
                         <Switch 
                           id="published" 
                           checked={formData.published}
                           onCheckedChange={(checked) => setFormData(prev => ({ ...prev, published: checked }))}
+                          className="data-[state=checked]:bg-green-600"
                         />
-                        <Label htmlFor="published" className="cursor-pointer">
+                        <Label htmlFor="published" className="cursor-pointer text-black font-medium">
                           {formData.published ? 'Page is published' : 'Save as draft'}
                         </Label>
                       </div>
