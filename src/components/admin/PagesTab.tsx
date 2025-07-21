@@ -9,16 +9,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { pagesService, Page } from '@/services/api/pagesService';
 import { useToast } from '@/hooks/use-toast';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
-import { Code } from 'lucide-react';
+import { Code, Edit } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { ImageEditor } from './ImageEditor';
+import PageBuilder from './PageBuilder';
 
 const PagesTab = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [pages, setPages] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingPage, setEditingPage] = useState<Page | null>(null);
+  const [builderOpen, setBuilderOpen] = useState(false);
+  const [selectedPageForBuilder, setSelectedPageForBuilder] = useState<Page | null>(null);
   const [isHtmlMode, setIsHtmlMode] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -131,6 +134,15 @@ const PagesTab = () => {
       featured_image: page.featured_image || ''
     });
     setShowForm(true);
+  };
+
+  const handleEditWithBuilder = (page: Page) => {
+    setSelectedPageForBuilder(page);
+    setBuilderOpen(true);
+  };
+
+  const handleBuilderSave = (updatedPage: Page) => {
+    setPages(prev => prev.map(p => p.id === updatedPage.id ? updatedPage : p));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -488,6 +500,15 @@ const PagesTab = () => {
                     </td>
                     <td className="py-3 px-4 text-right">
                       <Button 
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditWithBuilder(page)}
+                        className="mr-2 flex items-center gap-1"
+                      >
+                        <Edit className="w-3 h-3" />
+                        Builder
+                      </Button>
+                      <Button 
                         variant="ghost" 
                         size="sm" 
                         className="text-radio-blue mr-2"
@@ -522,6 +543,19 @@ const PagesTab = () => {
           }}
           imageFile={currentImageFile}
           onSave={handleEditedImageSave}
+        />
+      )}
+
+      {/* Page Builder Modal */}
+      {builderOpen && selectedPageForBuilder && (
+        <PageBuilder
+          page={selectedPageForBuilder}
+          isOpen={builderOpen}
+          onClose={() => {
+            setBuilderOpen(false);
+            setSelectedPageForBuilder(null);
+          }}
+          onSave={handleBuilderSave}
         />
       )}
     </div>
