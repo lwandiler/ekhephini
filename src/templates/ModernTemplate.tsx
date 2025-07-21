@@ -89,22 +89,34 @@ const ModernTemplate = ({
               <h2 className="text-4xl font-bold mt-2 text-gray-900">Popular Podcasts</h2>
             </div>
             
-            <div className="mb-12">
-              <PodcastCard podcast={featuredPodcasts[0]} variant="featured" />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featuredPodcasts.slice(1, 4).map(podcast => (
-                <PodcastCard key={podcast.id} podcast={podcast} />
-              ))}
-            </div>
-            
-            <div className="mt-12 text-center">
-              <Button variant="outline" size="lg" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-600 hover:text-white px-8">
-                <Headphones className="mr-2" />
-                Browse All Episodes
-              </Button>
-            </div>
+            {featuredPodcasts.length > 0 ? (
+              <>
+                <div className="mb-12">
+                  <PodcastCard podcast={featuredPodcasts[0]} variant="featured" />
+                </div>
+                
+                {featuredPodcasts.length > 1 && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {featuredPodcasts.slice(1, 4).map(podcast => (
+                      <PodcastCard key={podcast.id} podcast={podcast} />
+                    ))}
+                  </div>
+                )}
+                
+                <div className="mt-12 text-center">
+                  <Button variant="outline" size="lg" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-600 hover:text-white px-8">
+                    <Headphones className="mr-2" />
+                    Browse All Episodes
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <Headphones className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">No Podcasts Available</h3>
+                <p className="text-gray-500">Check back later for new podcast episodes.</p>
+              </div>
+            )}
           </div>
         </section>
         
@@ -168,9 +180,15 @@ const ModernTemplate = ({
                   </Button>
                 </div>
                 <div className="space-y-4">
-                  {featuredPodcasts.slice(0, 3).map(podcast => (
-                    <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
-                  ))}
+                  {featuredPodcasts.length > 0 ? (
+                    featuredPodcasts.slice(0, 3).map(podcast => (
+                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-400">No recent episodes available</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -102,14 +102,28 @@ const ClassicTemplate = ({
               as="h2"
               className="text-3xl font-bold text-purple-300 mb-8"
             />
-            <div className="mb-8">
-              <PodcastCard podcast={featuredPodcasts[0]} variant="featured" />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredPodcasts.slice(1, 4).map(podcast => (
-                <PodcastCard key={podcast.id} podcast={podcast} />
-              ))}
-            </div>
+            {featuredPodcasts.length > 0 ? (
+              <>
+                <div className="mb-8">
+                  <PodcastCard podcast={featuredPodcasts[0]} variant="featured" />
+                </div>
+                {featuredPodcasts.length > 1 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {featuredPodcasts.slice(1, 4).map(podcast => (
+                      <PodcastCard key={podcast.id} podcast={podcast} />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <div className="mx-auto h-16 w-16 text-gray-600 mb-4 flex items-center justify-center">
+                  🎧
+                </div>
+                <h3 className="text-xl font-semibold text-gray-300 mb-2">No Podcasts Available</h3>
+                <p className="text-gray-400">Check back later for new podcast episodes.</p>
+              </div>
+            )}
             <div className="text-center mt-8">
               <Button variant="outline" className="text-purple-300 border-purple-400 hover:bg-purple-800 hover:text-white">
                 View All Podcasts

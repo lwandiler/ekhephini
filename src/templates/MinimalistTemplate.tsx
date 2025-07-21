@@ -55,16 +55,32 @@ const MinimalistTemplate = ({
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold mb-12 text-white border-b border-gray-800 pb-4">Featured Podcasts</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
-              <PodcastCard podcast={featuredPodcasts[0]} />
-              <PodcastCard podcast={featuredPodcasts[1]} />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {featuredPodcasts.slice(2, 5).map(podcast => (
-                <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
-              ))}
-            </div>
+            {featuredPodcasts.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+                  <PodcastCard podcast={featuredPodcasts[0]} />
+                  {featuredPodcasts.length > 1 && (
+                    <PodcastCard podcast={featuredPodcasts[1]} />
+                  )}
+                </div>
+                
+                {featuredPodcasts.length > 2 && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {featuredPodcasts.slice(2, 5).map(podcast => (
+                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <div className="mx-auto h-16 w-16 text-gray-600 mb-4 flex items-center justify-center text-3xl">
+                  🎧
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">No Podcasts Available</h3>
+                <p className="text-gray-400">Check back later for new podcast episodes.</p>
+              </div>
+            )}
           </div>
         </section>
         
@@ -124,9 +140,15 @@ const MinimalistTemplate = ({
               <div className="md:w-1/3">
                 <h2 className="text-3xl font-bold mb-8 text-white border-b border-gray-800 pb-4">Recent Episodes</h2>
                 <div className="space-y-6">
-                  {featuredPodcasts.slice(0, 3).map(podcast => (
-                    <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
-                  ))}
+                  {featuredPodcasts.length > 0 ? (
+                    featuredPodcasts.slice(0, 3).map(podcast => (
+                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-400">No recent episodes available</p>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="mt-12">
