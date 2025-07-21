@@ -58,6 +58,25 @@ const ModernTemplate = ({
         {/* Now Live Section */}
         <NowLive />
         
+        {/* Weekly Schedule - White Background */}
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <span className="text-green-600 font-semibold tracking-wider uppercase text-sm">Plan Your Week</span>
+              <h2 className="text-4xl font-bold mt-2 text-gray-900">Weekly Schedule</h2>
+            </div>
+            <div className="rounded-xl overflow-hidden shadow-2xl border border-green-200">
+              <ShowSchedule />
+            </div>
+            <div className="mt-10 text-center">
+              <Button variant="outline" size="lg" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-600 hover:text-white px-8">
+                <Calendar className="mr-2" />
+                View Full Schedule
+              </Button>
+            </div>
+          </div>
+        </section>
+        
         {/* Featured Podcasts - White Background */}
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
@@ -123,26 +142,6 @@ const ModernTemplate = ({
             <AdBanner position="top" />
           </div>
         </section>
-        
-        {/* Weekly Schedule - White Background */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <span className="text-green-600 font-semibold tracking-wider uppercase text-sm">Plan Your Week</span>
-              <h2 className="text-4xl font-bold mt-2 text-gray-900">Weekly Schedule</h2>
-            </div>
-            <div className="rounded-xl overflow-hidden shadow-2xl border border-green-200">
-              <ShowSchedule />
-            </div>
-            <div className="mt-10 text-center">
-              <Button variant="outline" size="lg" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-600 hover:text-white px-8">
-                <Calendar className="mr-2" />
-                View Full Schedule
-              </Button>
-            </div>
-          </div>
-        </section>
-        
         {/* News & Podcasts Split - Modern Style */}
         <section className="py-20 bg-gray-950">
           <div className="container mx-auto px-4">
