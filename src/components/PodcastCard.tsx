@@ -121,7 +121,7 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
             <img 
               src={podcastImage} 
               alt={podcast.title} 
-              className="w-full h-64 md:h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-48 md:h-48 object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 to-transparent md:bg-gradient-to-t md:from-black/80 md:via-black/40 md:to-transparent"></div>
             <Button 
@@ -133,17 +133,17 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
               <Play size={30} fill="currentColor" />
             </Button>
           </div>
-          <div className="md:w-3/5 p-6">
-            <div className="flex items-center mb-4">
+          <div className="md:w-3/5 p-4">
+            <div className="flex items-center mb-3">
               <span className="text-xs font-medium bg-green-600 px-3 py-1 rounded-full text-white">
                 FEATURED EPISODE
               </span>
             </div>
-            <CardTitle className="text-2xl mb-2 text-white">{podcast.title}</CardTitle>
+            <CardTitle className="text-xl mb-2 text-white">{podcast.title}</CardTitle>
             <CardDescription className="text-green-300 mb-2">
               Hosted by {podcast.host} • Episode {podcast.episodeNumber}
             </CardDescription>
-            <p className="mb-4 text-gray-300">{podcast.description}</p>
+            <p className="mb-3 text-gray-300 text-sm line-clamp-2">{podcast.description}</p>
             <div className="flex items-center justify-between">
               <span className="text-gray-400">{podcast.duration} • {formatDate(podcast.publishDate)}</span>
               <div className="flex space-x-2">
