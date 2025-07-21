@@ -3,7 +3,7 @@ import { useUpcomingShows } from '@/hooks/useUpcomingShows';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Calendar, User, Heart, Share2 } from 'lucide-react';
+import { Clock, Calendar, User, Heart, Share2, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function UpcomingShows() {
@@ -122,10 +122,26 @@ export default function UpcomingShows() {
                   {index === 0 ? 'UP NEXT' : `${index + 1}${index === 1 ? 'nd' : 'rd'} UP`}
                 </Badge>
                 <Button 
-                  className="absolute top-4 right-4 bg-green-600 hover:bg-green-700 text-white h-8 w-8 rounded-full"
+                  className="absolute top-4 right-12 bg-gray-600 hover:bg-gray-700 text-white h-8 w-8 rounded-full"
                   onClick={() => handleShare(show)}
                 >
                   <Share2 className="w-4 h-4" />
+                </Button>
+                <Button 
+                  className="absolute top-4 right-4 bg-green-600 hover:bg-green-700 text-white h-8 w-8 rounded-full"
+                  onClick={() => {
+                    const radioPlayer = document.querySelector('[data-radio-player]');
+                    if (radioPlayer) {
+                      const event = new CustomEvent('triggerPlay');
+                      radioPlayer.dispatchEvent(event);
+                    }
+                    toast({
+                      title: "Live Stream",
+                      description: `Tuning into live radio. ${show.title} starts on ${show.day_of_week} at ${show.time}.`,
+                    });
+                  }}
+                >
+                  <Play className="w-4 h-4" fill="currentColor" />
                 </Button>
               </div>
 
