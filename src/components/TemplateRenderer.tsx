@@ -12,6 +12,7 @@ interface TemplateRendererProps {
   featuredPodcasts: Podcast[];
   themeOptions: ThemeOptions;
   onListenLiveClick?: () => void;
+  onPlayPodcast?: (podcast: Podcast) => void;
 }
 
 const TemplateRenderer: React.FC<TemplateRendererProps> = ({
@@ -19,7 +20,8 @@ const TemplateRenderer: React.FC<TemplateRendererProps> = ({
   featuredNews,
   featuredPodcasts,
   themeOptions,
-  onListenLiveClick
+  onListenLiveClick,
+  onPlayPodcast
 }) => {
   switch (themeOptions.type) {
     case 'modern':
@@ -30,6 +32,7 @@ const TemplateRenderer: React.FC<TemplateRendererProps> = ({
           featuredPodcasts={featuredPodcasts}
           themeOptions={themeOptions}
           onListenLiveClick={onListenLiveClick}
+          onPlayPodcast={onPlayPodcast}
         />
       );
     case 'minimalist':
@@ -40,6 +43,7 @@ const TemplateRenderer: React.FC<TemplateRendererProps> = ({
           featuredPodcasts={featuredPodcasts}
           themeOptions={themeOptions}
           onListenLiveClick={onListenLiveClick}
+          onPlayPodcast={onPlayPodcast}
         />
       );
     default:
@@ -49,6 +53,7 @@ const TemplateRenderer: React.FC<TemplateRendererProps> = ({
           featuredNews={featuredNews}
           featuredPodcasts={featuredPodcasts}
           onListenLiveClick={onListenLiveClick}
+          onPlayPodcast={onPlayPodcast}
         />
       );
   }

@@ -16,6 +16,7 @@ interface ModernTemplateProps {
   featuredPodcasts: Podcast[];
   themeOptions?: any;
   onListenLiveClick?: () => void;
+  onPlayPodcast?: (podcast: Podcast) => void;
 }
 
 const ModernTemplate = ({ 
@@ -23,7 +24,8 @@ const ModernTemplate = ({
   featuredNews,
   featuredPodcasts,
   themeOptions,
-  onListenLiveClick
+  onListenLiveClick,
+  onPlayPodcast
 }: ModernTemplateProps) => {
   return (
     <>
@@ -92,13 +94,13 @@ const ModernTemplate = ({
             {featuredPodcasts.length > 0 ? (
               <>
                 <div className="mb-12">
-                  <PodcastCard podcast={featuredPodcasts[0]} variant="featured" />
+                  <PodcastCard podcast={featuredPodcasts[0]} variant="featured" onPlay={onPlayPodcast} />
                 </div>
                 
                 {featuredPodcasts.length > 1 && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {featuredPodcasts.slice(1, 4).map(podcast => (
-                      <PodcastCard key={podcast.id} podcast={podcast} />
+                      <PodcastCard key={podcast.id} podcast={podcast} onPlay={onPlayPodcast} />
                     ))}
                   </div>
                 )}
@@ -182,7 +184,7 @@ const ModernTemplate = ({
                 <div className="space-y-4">
                   {featuredPodcasts.length > 0 ? (
                     featuredPodcasts.slice(0, 3).map(podcast => (
-                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
+                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" onPlay={onPlayPodcast} />
                     ))
                   ) : (
                     <div className="text-center py-8">

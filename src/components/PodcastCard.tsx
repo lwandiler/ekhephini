@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Headphones, Download, Share2, Bookmark, Play, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export interface Podcast {
   id: number;
@@ -25,6 +26,7 @@ interface PodcastCardProps {
 const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps) => {
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const { toast } = useToast();
   
   // Check if podcast is liked on component mount
   useEffect(() => {
@@ -45,19 +47,59 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
   const handlePlayClick = () => {
     if (onPlay) {
       onPlay(podcast);
+      toast({
+        title: "Now Playing",
+        description: `Playing: ${podcast.title}`,
+      });
     } else if (podcast.listenUrl && podcast.listenUrl !== '#') {
       window.open(podcast.listenUrl, '_blank');
+      toast({
+        title: "Opening Podcast",
+        description: `${podcast.title} will open in a new tab`,
+      });
+    } else {
+      toast({
+        title: "Podcast Unavailable",
+        description: "This podcast is not available for streaming",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDownloadClick = () => {
     if (podcast.listenUrl && podcast.listenUrl !== '#') {
-      const link = document.createElement('a');
-      link.href = podcast.listenUrl;
-      link.download = `${podcast.title}.mp3`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        // Check if it's a valid URL
+        const url = new URL(podcast.listenUrl);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = podcast.listenUrl;
+        link.download = `${podcast.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.mp3`;
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'noopener noreferrer');
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        toast({
+          title: "Download Started",
+          description: `Downloading: ${podcast.title}`,
+        });
+      } catch (error) {
+        toast({
+          title: "Download Failed",
+          description: "Invalid podcast URL. Unable to download.",
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "Download Unavailable",
+        description: "This podcast is not available for download",
+        variant: "destructive",
+      });
     }
   };
 
@@ -121,16 +163,16 @@ const PodcastCard = ({ podcast, variant = 'default', onPlay }: PodcastCardProps)
             <img 
               src={podcastImage} 
               alt={podcast.title} 
-              className="w-full h-48 md:h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-48 md:h-48 object-cover object-center transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-green-900/80 to-transparent md:bg-gradient-to-t md:from-black/80 md:via-black/40 md:to-transparent"></div>
             <Button 
               variant="default" 
               size="icon"
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white h-16 w-16 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white h-14 w-14 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg"
               onClick={handlePlayClick}
             >
-              <Play size={30} fill="currentColor" />
+              <Play size={24} fill="currentColor" />
             </Button>
           </div>
           <div className="md:w-3/5 p-4">

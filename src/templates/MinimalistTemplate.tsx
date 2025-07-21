@@ -12,6 +12,7 @@ interface MinimalistTemplateProps {
   featuredPodcasts: Podcast[];
   themeOptions?: any;
   onListenLiveClick?: () => void;
+  onPlayPodcast?: (podcast: Podcast) => void;
 }
 
 const MinimalistTemplate = ({ 
@@ -19,7 +20,8 @@ const MinimalistTemplate = ({
   featuredNews,
   featuredPodcasts,
   themeOptions,
-  onListenLiveClick
+  onListenLiveClick,
+  onPlayPodcast
 }: MinimalistTemplateProps) => {
   return (
     <>
@@ -58,16 +60,16 @@ const MinimalistTemplate = ({
             {featuredPodcasts.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
-                  <PodcastCard podcast={featuredPodcasts[0]} />
+                  <PodcastCard podcast={featuredPodcasts[0]} onPlay={onPlayPodcast} />
                   {featuredPodcasts.length > 1 && (
-                    <PodcastCard podcast={featuredPodcasts[1]} />
+                    <PodcastCard podcast={featuredPodcasts[1]} onPlay={onPlayPodcast} />
                   )}
                 </div>
                 
                 {featuredPodcasts.length > 2 && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {featuredPodcasts.slice(2, 5).map(podcast => (
-                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
+                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" onPlay={onPlayPodcast} />
                     ))}
                   </div>
                 )}
@@ -142,7 +144,7 @@ const MinimalistTemplate = ({
                 <div className="space-y-6">
                   {featuredPodcasts.length > 0 ? (
                     featuredPodcasts.slice(0, 3).map(podcast => (
-                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" />
+                      <PodcastCard key={podcast.id} podcast={podcast} variant="compact" onPlay={onPlayPodcast} />
                     ))
                   ) : (
                     <div className="text-center py-8">

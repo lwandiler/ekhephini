@@ -14,13 +14,15 @@ interface ClassicTemplateProps {
   featuredNews: any[];
   featuredPodcasts: Podcast[];
   onListenLiveClick?: () => void;
+  onPlayPodcast?: (podcast: Podcast) => void;
 }
 
 const ClassicTemplate = ({ 
   featuredShows, 
   featuredNews,
   featuredPodcasts,
-  onListenLiveClick
+  onListenLiveClick,
+  onPlayPodcast
 }: ClassicTemplateProps) => {
   return (
     <>
@@ -105,12 +107,12 @@ const ClassicTemplate = ({
             {featuredPodcasts.length > 0 ? (
               <>
                 <div className="mb-8">
-                  <PodcastCard podcast={featuredPodcasts[0]} variant="featured" />
+                  <PodcastCard podcast={featuredPodcasts[0]} variant="featured" onPlay={onPlayPodcast} />
                 </div>
                 {featuredPodcasts.length > 1 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {featuredPodcasts.slice(1, 4).map(podcast => (
-                      <PodcastCard key={podcast.id} podcast={podcast} />
+                      <PodcastCard key={podcast.id} podcast={podcast} onPlay={onPlayPodcast} />
                     ))}
                   </div>
                 )}

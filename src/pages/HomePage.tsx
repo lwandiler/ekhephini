@@ -7,6 +7,7 @@ import ChatBot from '@/components/ChatBot';
 import SocialChat from '@/components/SocialChat';
 import HeroBannerCarousel from '@/components/HeroBannerCarousel';
 import EditModeToggle from '@/components/EditModeToggle';
+import PodcastPlayer from '@/components/PodcastPlayer';
 import { useAuth } from '@/contexts/AuthContext';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { InlineEditProvider } from '@/contexts/InlineEditContext';
@@ -14,6 +15,7 @@ import TemplateRenderer from '@/components/TemplateRenderer';
 import { useHomeTheme } from '@/hooks/useHomeTheme';
 import { featuredShowsData, featuredNewsData } from '@/data/mockData';
 import { podcastsService } from '@/services/api/podcastsService';
+import { Podcast } from '@/components/PodcastCard';
 import { Toaster } from 'sonner';
 import { useRadioModal } from '@/hooks/useRadioModal';
 
@@ -23,7 +25,8 @@ const HomePage = () => {
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [featuredShows, setFeaturedShows] = useState(featuredShowsData);
-  const [featuredPodcasts, setFeaturedPodcasts] = useState([]);
+  const [featuredPodcasts, setFeaturedPodcasts] = useState<Podcast[]>([]);
+  const [currentPodcast, setCurrentPodcast] = useState<Podcast | null>(null);
   const { setModalOpen } = useRadioModal();
   
   // Check if the user is an admin
@@ -76,6 +79,14 @@ const HomePage = () => {
     }
   };
 
+  const handlePlayPodcast = (podcast: Podcast) => {
+    setCurrentPodcast(podcast);
+  };
+
+  const handleClosePodcastPlayer = () => {
+    setCurrentPodcast(null);
+  };
+
   return (
     <InlineEditProvider>
       <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} dark`}>
@@ -91,11 +102,16 @@ const HomePage = () => {
             featuredPodcasts={featuredPodcasts}
             themeOptions={themeOptions}
             onListenLiveClick={handleListenLiveClick}
+            onPlayPodcast={handlePlayPodcast}
           />
         </main>
         
         <Footer />
         <RadioPlayer />
+        <PodcastPlayer 
+          currentPodcast={currentPodcast}
+          onClose={handleClosePodcastPlayer}
+        />
         <ChatBot />
         <SocialChat />
         <EditModeToggle />
