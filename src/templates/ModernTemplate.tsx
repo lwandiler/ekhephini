@@ -5,6 +5,7 @@ import NewsList from '@/components/NewsList';
 import AdBanner from '@/components/AdBanner';
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import NowLive from '@/components/NowLive';
+import UpcomingShows from '@/components/UpcomingShows';
 import { Button } from '@/components/ui/button';
 import { Play, Radio, Music, Headphones, Calendar, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -57,6 +58,9 @@ const ModernTemplate = ({
         
         {/* Now Live Section */}
         <NowLive />
+        
+        {/* Upcoming Shows */}
+        <UpcomingShows />
         
         {/* Weekly Schedule - White Background */}
         <section className="py-20 bg-white">
