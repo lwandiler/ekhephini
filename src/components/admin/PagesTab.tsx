@@ -133,6 +133,16 @@ const PagesTab = () => {
     setShowForm(true);
   };
 
+  const handleInlineEdit = (page: Page) => {
+    // Store the page to edit in sessionStorage and redirect to the page with edit mode
+    sessionStorage.setItem('inlineEditPage', JSON.stringify(page));
+    sessionStorage.setItem('inlineEditMode', 'true');
+    
+    // Navigate to the actual page
+    const pageUrl = page.slug === 'home' ? '/' : `/${page.slug}`;
+    window.location.href = pageUrl;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -493,7 +503,15 @@ const PagesTab = () => {
                         className="text-radio-blue mr-2"
                         onClick={() => handleEdit(page)}
                       >
-                        Edit
+                        Edit Form
+                      </Button>
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="mr-2 bg-green-600 hover:bg-green-700"
+                        onClick={() => handleInlineEdit(page)}
+                      >
+                        Edit Inline
                       </Button>
                       <Button 
                         variant="ghost" 
