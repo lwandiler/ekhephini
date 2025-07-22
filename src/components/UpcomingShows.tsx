@@ -92,7 +92,7 @@ export default function UpcomingShows() {
   }
 
   return (
-    <section className="pt-8 pb-20 bg-white">
+    <section className="pt-6 pb-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <span className="text-green-600 font-semibold tracking-wider uppercase text-sm">Coming Up Next</span>
