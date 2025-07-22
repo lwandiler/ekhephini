@@ -114,17 +114,23 @@ const BlogPostsTab = () => {
   };
 
   const handleEdit = (post: BlogPost) => {
-    setEditingPost(post);
-    setFormData({
-      title: post.title,
-      content: post.content,
-      excerpt: post.excerpt || '',
-      category: post.category || '',
-      author: post.author,
-      published: post.published || false,
-      featured_image: post.featured_image || ''
-    });
-    setShowForm(true);
+    console.log('Edit button clicked for post:', post);
+    try {
+      setEditingPost(post);
+      setFormData({
+        title: post.title,
+        content: post.content,
+        excerpt: post.excerpt || '',
+        category: post.category || '',
+        author: post.author,
+        published: post.published || false,
+        featured_image: post.featured_image || ''
+      });
+      setShowForm(true);
+      console.log('Edit form should now be visible');
+    } catch (error) {
+      console.error('Error in handleEdit:', error);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
