@@ -15,6 +15,7 @@ import 'react-quill/dist/quill.snow.css';
 import { ImageEditor } from './ImageEditor';
 
 const BlogPostsTab = () => {
+  console.log('BlogPostsTab component is rendering...');
   const [showForm, setShowForm] = useState<boolean>(false);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,9 +48,12 @@ const BlogPostsTab = () => {
 
   const fetchPosts = async () => {
     try {
+      console.log('Starting to fetch blog posts...');
       const data = await blogService.getAllPosts();
+      console.log('Fetched blog posts:', data);
       setPosts(data);
     } catch (error) {
+      console.error('Error fetching blog posts:', error);
       toast({
         title: "Error",
         description: "Failed to fetch blog posts",
