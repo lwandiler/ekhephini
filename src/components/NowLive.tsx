@@ -149,21 +149,6 @@ export default function NowLive() {
                     <div className="flex items-center space-x-4 text-muted-foreground">
                       <span className="text-sm">Next show starts soon</span>
                     </div>
-                     <div className="flex space-x-2">
-                       <Button 
-                         variant="outline"
-                         onClick={() => {
-                           const radioPlayer = document.querySelector('[data-radio-player]');
-                           if (radioPlayer) {
-                             const event = new CustomEvent('triggerPlay');
-                             radioPlayer.dispatchEvent(event);
-                           }
-                         }}
-                       >
-                         <Radio className="mr-2 w-4 h-4" />
-                         View Schedule
-                      </Button>
-                    </div>
                   </div>
                 </div>
               </div>
