@@ -100,9 +100,11 @@ const ModernTemplate = ({
                 )}
                 
                 <div className="mt-12 text-center">
-                  <Button variant="outline" size="lg" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-600 hover:text-white px-8">
-                    <Headphones className="mr-2" />
-                    Browse All Episodes
+                  <Button variant="outline" size="lg" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-600 hover:text-white px-8" asChild>
+                    <Link to="/podcasts">
+                      <Headphones className="mr-2" />
+                      Browse All Episodes
+                    </Link>
                   </Button>
                 </div>
               </>
