@@ -235,16 +235,9 @@ const BlogPostsTab = () => {
     }
   };
 
-  // Custom Quill toolbar registration
+  // Custom Quill toolbar registration - removed problematic code
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const Quill = require('react-quill').Quill;
-      if (Quill && !Quill.imports['modules/toolbar'].DEFAULTS.handlers['html-editor']) {
-        // Register custom HTML editor button
-        const Toolbar = Quill.import('modules/toolbar');
-        Toolbar.DEFAULTS.handlers['html-editor'] = () => setIsHtmlMode(!isHtmlMode);
-      }
-    }
+    console.log('Quill effect running, isHtmlMode:', isHtmlMode);
   }, [isHtmlMode]);
 
   return (
