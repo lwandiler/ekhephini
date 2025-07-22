@@ -74,12 +74,6 @@ const ModernTemplate = ({
             <div className="rounded-xl overflow-hidden shadow-2xl border border-green-200">
               <ShowSchedule />
             </div>
-            <div className="mt-10 text-center">
-              <Button variant="outline" size="lg" className="rounded-full border-2 border-green-500 text-green-600 hover:bg-green-600 hover:text-white px-8">
-                <Calendar className="mr-2" />
-                View Full Schedule
-              </Button>
-            </div>
           </div>
         </section>
         
