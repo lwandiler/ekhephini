@@ -10,12 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { advertisementData } from '@/data/mockData';
 import ThemeToggle from '@/components/theme/ThemeToggle';
-import { useContext } from 'react';
-import { ThemeContext } from '@/contexts/ThemeContext';
 
 const Shows = () => {
-  const { isDarkMode } = useContext(ThemeContext);
-  console.log("IsDarkMode", isDarkMode);
   const showsList = [
     {
       id: 1,
@@ -74,7 +70,7 @@ const Shows = () => {
   ];
 
   return (
-    <div className={`flex flex-col min-h-screen ${isDarkMode ? 'dark' : ''}`}>
+    <div className="flex flex-col min-h-screen">
       <Header />
       
       <main className="flex-1">
@@ -107,17 +103,17 @@ const Shows = () => {
         <AdBanner position="top" />
         
         {/* Weekly Schedule */}
-        <section className={`py-12 ${isDarkMode ? 'bg-black text-white' : 'bg-white'}`}>
+        <section className="py-12 bg-white">
           <div className="container mx-auto px-4">
-            <h2 className={`text-3xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-green-800'}`}>Weekly Schedule</h2>
+            <h2 className="text-3xl font-bold mb-8 text-green-800">Weekly Schedule</h2>
             <ShowSchedule />
           </div>
         </section>
         
         {/* All Shows */}
-        <section className={`py-12 ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
+        <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4">
-            <h2 className={`text-3xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-green-800'}`}>All Shows</h2>
+            <h2 className="text-3xl font-bold mb-8 text-green-800">All Shows</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {showsList.map(show => (
                 <ShowCard
@@ -136,7 +132,7 @@ const Shows = () => {
         </section>
         
         {/* DJ Spotlight */}
-        <section className={`py-12 ${isDarkMode ? 'bg-black text-white' : 'bg-white'}`}>
+        <section className="py-12 bg-white">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="md:w-1/3">
@@ -147,13 +143,13 @@ const Shows = () => {
                 />
               </div>
               <div className="md:w-2/3">
-                <h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-green-800'}`}>DJ Spotlight</h2>
-                <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>Sarah Johnson</h3>
-                <p className={`text-lg mb-4 ${isDarkMode ? 'text-gray-300' : 'text-green-600'}`}>Host of "Morning Brew"</p>
-                <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                <h2 className="text-3xl font-bold mb-4 text-green-800">DJ Spotlight</h2>
+                <h3 className="text-2xl font-semibold mb-2 text-black">Sarah Johnson</h3>
+                <p className="text-lg mb-4 text-green-600">Host of "Morning Brew"</p>
+                <p className="mb-6 text-gray-700">
                   Sarah Johnson has been a beloved voice on Radio Wave Hub for over 5 years. With her energetic personality and exceptional music taste, she helps thousands of listeners start their day on the right note with her popular morning show.
                 </p>
-                <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                <p className="text-gray-700">
                   When she's not in the studio, Sarah enjoys hiking, photography, and discovering new indie artists to feature on her show. Her infectious laugh and genuine conversations with guests have made "Morning Brew" the most listened-to morning show in the region.
                 </p>
               </div>
@@ -162,7 +158,7 @@ const Shows = () => {
         </section>
         
         {/* Side by side ads */}
-        <section className={`py-6 ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
+        <section className="py-6 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AdBanner position="sidebar" />
