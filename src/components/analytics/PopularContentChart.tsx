@@ -10,44 +10,60 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// Sample data for popular content
-const data = [
-  { name: 'Evening Vibes', listeners: 8932, hours: 12450 },
-  { name: 'Morning Brew', listeners: 7845, hours: 9856 },
-  { name: 'Midday Mix', listeners: 6721, hours: 7890 },
-  { name: 'Jazz Club', listeners: 5932, hours: 8750 },
-  { name: 'Tech Talk', listeners: 4852, hours: 5430 },
-  { name: 'Sports Hour', listeners: 4123, hours: 4980 },
-  { name: 'Late Night', listeners: 3689, hours: 6540 },
-];
-
-// Reverse data to show highest values at the top
-const sortedData = [...data].sort((a, b) => a.listeners - b.listeners);
+interface PopularContentChartProps {
+  data: Array<{ show_name: string; total_listeners: number; total_listening_time: number }>;
+  isLoading: boolean;
+}
 
 const config = {
-  listeners: {
+  total_listeners: {
     label: 'Total Listeners',
     theme: {
       light: '#8b5cf6',
       dark: '#a78bfa',
     },
   },
-  hours: {
-    label: 'Listening Hours',
-    theme: {
-      light: '#f59e0b',
-      dark: '#fbbf24',
-    },
-  },
 };
 
-const PopularContentChart = () => {
+const PopularContentChart = ({ data, isLoading }: PopularContentChartProps) => {
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+      </div>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        <div className="text-center">
+          <p className="text-lg font-medium">No show data available</p>
+          <p className="text-sm">Start tracking show listening data to see popular content</p>
+        </div>
+      </div>
+    );
+  }
+
+  const chartData = data
+    .sort((a, b) => a.total_listeners - b.total_listeners)
+    .slice(0, 7)
+    .map(item => ({
+      name: item.show_name,
+      listeners: item.total_listeners
+    }));
+
   return (
     <ChartContainer config={config}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          data={sortedData}
+          data={chartData}
           layout="vertical"
           margin={{
             top: 5,
@@ -66,7 +82,11 @@ const PopularContentChart = () => {
           />
           <Tooltip content={<ChartTooltipContent />} />
           <Legend />
-          <Bar dataKey="listeners" fill="var(--color-listeners, #8b5cf6)" />
+          <Bar 
+            dataKey="listeners" 
+            fill="var(--color-total_listeners, #8b5cf6)" 
+            name="Listeners"
+          />
         </BarChart>
       </ResponsiveContainer>
     </ChartContainer>

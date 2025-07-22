@@ -44,6 +44,189 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_daily_stats: {
+        Row: {
+          average_session_duration: number | null
+          bounce_rate: number | null
+          created_at: string
+          date: string
+          id: string
+          peak_concurrent_listeners: number | null
+          total_listening_time: number | null
+          total_page_views: number | null
+          total_sessions: number | null
+          total_unique_visitors: number | null
+          updated_at: string
+        }
+        Insert: {
+          average_session_duration?: number | null
+          bounce_rate?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          peak_concurrent_listeners?: number | null
+          total_listening_time?: number | null
+          total_page_views?: number | null
+          total_sessions?: number | null
+          total_unique_visitors?: number | null
+          updated_at?: string
+        }
+        Update: {
+          average_session_duration?: number | null
+          bounce_rate?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          peak_concurrent_listeners?: number | null
+          total_listening_time?: number | null
+          total_page_views?: number | null
+          total_sessions?: number | null
+          total_unique_visitors?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      analytics_listening_events: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string
+          device_type: string | null
+          duration_before_event: number | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          session_id: string
+          show_name: string | null
+          station_name: string | null
+          timestamp: string
+          user_agent: string | null
+          volume_level: number | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          duration_before_event?: number | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          session_id: string
+          show_name?: string | null
+          station_name?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          volume_level?: number | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          duration_before_event?: number | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          session_id?: string
+          show_name?: string | null
+          station_name?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          volume_level?: number | null
+        }
+        Relationships: []
+      }
+      analytics_sessions: {
+        Row: {
+          browser: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          device_type: string | null
+          duration_seconds: number | null
+          ended_at: string | null
+          id: string
+          ip_address: unknown | null
+          os: string | null
+          page_url: string
+          referrer: string | null
+          session_id: string
+          started_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          os?: string | null
+          page_url: string
+          referrer?: string | null
+          session_id: string
+          started_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          os?: string | null
+          page_url?: string
+          referrer?: string | null
+          session_id?: string
+          started_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      analytics_show_stats: {
+        Row: {
+          average_session_duration: number | null
+          created_at: string
+          date: string
+          id: string
+          peak_concurrent_listeners: number | null
+          show_name: string
+          total_listeners: number | null
+          total_listening_time: number | null
+          updated_at: string
+        }
+        Insert: {
+          average_session_duration?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          peak_concurrent_listeners?: number | null
+          show_name: string
+          total_listeners?: number | null
+          total_listening_time?: number | null
+          updated_at?: string
+        }
+        Update: {
+          average_session_duration?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          peak_concurrent_listeners?: number | null
+          show_name?: string
+          total_listeners?: number | null
+          total_listening_time?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           active: boolean | null

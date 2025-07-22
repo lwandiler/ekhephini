@@ -2,15 +2,44 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import ListenerStatsChart from './ListenerStatsChart';
 import DemographicsChart from './DemographicsChart';
 import PopularContentChart from './PopularContentChart';
 import GeographicMap from './GeographicMap';
 import DeviceUsageChart from './DeviceUsageChart';
 import ListeningHoursChart from './ListeningHoursChart';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AnalyticsDashboard = () => {
-  const [timeframe, setTimeframe] = useState('week');
+  const [timeframe, setTimeframe] = useState(30);
+  const analytics = useAnalytics(timeframe);
+  
+  const formatDuration = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+  };
+
+  if (analytics.error) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center text-red-500">
+              <p>Error loading analytics: {analytics.error}</p>
+              <p className="text-sm text-gray-500 mt-2">
+                Please check your database connection and ensure analytics tables are set up correctly.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-6">
@@ -18,14 +47,21 @@ const AnalyticsDashboard = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">Total Listeners</CardTitle>
-            <CardDescription>Active users in selected period</CardDescription>
+            <CardDescription>Active users in last {timeframe} days</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">24,892</div>
-            <p className="text-sm text-green-500 flex items-center mt-2">
-              <span>↑ 8.2%</span>
-              <span className="text-gray-500 ml-1">vs previous period</span>
-            </p>
+            {analytics.isLoading ? (
+              <Skeleton className="h-8 w-24 mb-2" />
+            ) : (
+              <div className="text-3xl font-bold">{analytics.totalListeners.toLocaleString()}</div>
+            )}
+            {analytics.isLoading ? (
+              <Skeleton className="h-4 w-32" />
+            ) : (
+              <p className="text-sm text-gray-500 mt-2">
+                {analytics.totalListeners === 0 ? 'No data available yet' : 'Unique sessions recorded'}
+              </p>
+            )}
           </CardContent>
         </Card>
         
@@ -35,11 +71,20 @@ const AnalyticsDashboard = () => {
             <CardDescription>Time spent per session</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">1h 24m</div>
-            <p className="text-sm text-green-500 flex items-center mt-2">
-              <span>↑ 12.5%</span>
-              <span className="text-gray-500 ml-1">vs previous period</span>
-            </p>
+            {analytics.isLoading ? (
+              <Skeleton className="h-8 w-20 mb-2" />
+            ) : (
+              <div className="text-3xl font-bold">
+                {analytics.avgListeningTime > 0 ? formatDuration(analytics.avgListeningTime) : '0m'}
+              </div>
+            )}
+            {analytics.isLoading ? (
+              <Skeleton className="h-4 w-32" />
+            ) : (
+              <p className="text-sm text-gray-500 mt-2">
+                {analytics.avgListeningTime === 0 ? 'No listening data yet' : 'Average session duration'}
+              </p>
+            )}
           </CardContent>
         </Card>
         
@@ -49,8 +94,24 @@ const AnalyticsDashboard = () => {
             <CardDescription>Based on listening data</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-semibold">Evening Vibes</div>
-            <p className="text-sm text-gray-500 mt-1">8,932 listeners this week</p>
+            {analytics.isLoading ? (
+              <>
+                <Skeleton className="h-6 w-32 mb-1" />
+                <Skeleton className="h-4 w-24" />
+              </>
+            ) : (
+              <>
+                <div className="text-xl font-semibold">
+                  {analytics.mostPopularShow || 'No data'}
+                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  {analytics.mostPopularShowListeners > 0 
+                    ? `${analytics.mostPopularShowListeners} listeners this week`
+                    : 'No show data available yet'
+                  }
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -63,7 +124,7 @@ const AnalyticsDashboard = () => {
           </CardHeader>
           <CardContent className="pt-2">
             <div className="h-80">
-              <ListenerStatsChart />
+              <ListenerStatsChart data={analytics.listenerGrowth} isLoading={analytics.isLoading} />
             </div>
           </CardContent>
         </Card>
@@ -75,7 +136,7 @@ const AnalyticsDashboard = () => {
           </CardHeader>
           <CardContent className="pt-2">
             <div className="h-80">
-              <GeographicMap />
+              <GeographicMap data={analytics.geographicData} isLoading={analytics.isLoading} />
             </div>
           </CardContent>
         </Card>
@@ -89,7 +150,7 @@ const AnalyticsDashboard = () => {
           </CardHeader>
           <CardContent className="pt-2">
             <div className="h-80">
-              <DemographicsChart />
+              <DemographicsChart isLoading={analytics.isLoading} />
             </div>
           </CardContent>
         </Card>
@@ -101,7 +162,7 @@ const AnalyticsDashboard = () => {
           </CardHeader>
           <CardContent className="pt-2">
             <div className="h-80">
-              <PopularContentChart />
+              <PopularContentChart data={analytics.showStats} isLoading={analytics.isLoading} />
             </div>
           </CardContent>
         </Card>
@@ -115,7 +176,7 @@ const AnalyticsDashboard = () => {
           </CardHeader>
           <CardContent className="pt-2">
             <div className="h-80">
-              <DeviceUsageChart />
+              <DeviceUsageChart data={analytics.deviceStats} isLoading={analytics.isLoading} />
             </div>
           </CardContent>
         </Card>
@@ -127,7 +188,7 @@ const AnalyticsDashboard = () => {
           </CardHeader>
           <CardContent className="pt-2">
             <div className="h-80">
-              <ListeningHoursChart />
+              <ListeningHoursChart data={analytics.listeningHours} isLoading={analytics.isLoading} />
             </div>
           </CardContent>
         </Card>

@@ -10,46 +10,57 @@ import {
   Legend,
 } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// Sample listening hours data (24-hour format)
-const data = [
-  { hour: '00:00', listeners: 1200, weekday: 850, weekend: 1600 },
-  { hour: '02:00', listeners: 880, weekday: 600, weekend: 1200 },
-  { hour: '04:00', listeners: 520, weekday: 480, weekend: 560 },
-  { hour: '06:00', listeners: 950, weekday: 1100, weekend: 800 },
-  { hour: '08:00', listeners: 2450, weekday: 3200, weekend: 1700 },
-  { hour: '10:00', listeners: 3850, weekday: 4500, weekend: 3200 },
-  { hour: '12:00', listeners: 4120, weekday: 4800, weekend: 3450 },
-  { hour: '14:00', listeners: 3670, weekday: 4200, weekend: 3150 },
-  { hour: '16:00', listeners: 4320, weekday: 4950, weekend: 3700 },
-  { hour: '18:00', listeners: 5420, weekday: 5800, weekend: 5050 },
-  { hour: '20:00', listeners: 4850, weekday: 4500, weekend: 5200 },
-  { hour: '22:00', listeners: 2970, weekday: 2400, weekend: 3550 },
-];
+interface ListeningHoursChartProps {
+  data: Array<{ hour: number; listeners: number }>;
+  isLoading: boolean;
+}
 
 const config = {
-  weekday: {
-    label: 'Weekday',
+  listeners: {
+    label: 'Listeners',
     theme: {
       light: '#8b5cf6',
       dark: '#a78bfa',
     },
   },
-  weekend: {
-    label: 'Weekend',
-    theme: {
-      light: '#ec4899',
-      dark: '#f472b6',
-    },
-  },
 };
 
-const ListeningHoursChart = () => {
+const ListeningHoursChart = ({ data, isLoading }: ListeningHoursChartProps) => {
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+      </div>
+    );
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-500">
+        <div className="text-center">
+          <p className="text-lg font-medium">No listening hours data available</p>
+          <p className="text-sm">Start tracking listening events to see hourly patterns</p>
+        </div>
+      </div>
+    );
+  }
+
+  const chartData = data.map(item => ({
+    hour: `${item.hour.toString().padStart(2, '0')}:00`,
+    listeners: item.listeners
+  }));
+
   return (
     <ChartContainer config={config}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
-          data={data}
+          data={chartData}
           margin={{
             top: 10,
             right: 30,
@@ -64,17 +75,10 @@ const ListeningHoursChart = () => {
           <Legend />
           <Area
             type="monotone"
-            dataKey="weekday"
-            stackId="1"
-            stroke="var(--color-weekday, #8b5cf6)"
-            fill="var(--color-weekday, rgba(139, 92, 246, 0.6))"
-          />
-          <Area
-            type="monotone"
-            dataKey="weekend"
-            stackId="2"
-            stroke="var(--color-weekend, #ec4899)"
-            fill="var(--color-weekend, rgba(236, 72, 153, 0.6))"
+            dataKey="listeners"
+            stroke="var(--color-listeners, #8b5cf6)"
+            fill="var(--color-listeners, rgba(139, 92, 246, 0.6))"
+            name="Listeners"
           />
         </AreaChart>
       </ResponsiveContainer>
