@@ -79,7 +79,7 @@ const Shows = () => {
       
       <main className="flex-1">
         {/* Page Header */}
-        <section className="bg-radio-blue text-white py-12">
+        <section className="bg-green-800 text-white py-12">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl font-bold mb-4">Our Shows</h1>
             <p className="text-xl max-w-2xl mx-auto">
@@ -89,7 +89,7 @@ const Shows = () => {
               <Button 
                 variant="default" 
                 size="lg" 
-                className="bg-white text-radio-blue hover:bg-gray-100 font-medium"
+                className="bg-white text-green-800 hover:bg-gray-100 font-medium"
               >
                 <span className="block">Explore Shows</span>
               </Button>
@@ -107,17 +107,17 @@ const Shows = () => {
         <AdBanner position="top" />
         
         {/* Weekly Schedule */}
-        <section className={`py-12 ${isDarkMode ? 'bg-gray-900 text-white' : ''}`}>
+        <section className={`py-12 ${isDarkMode ? 'bg-black text-white' : 'bg-white'}`}>
           <div className="container mx-auto px-4">
-            <h2 className={`text-3xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-radio-blue'}`}>Weekly Schedule</h2>
+            <h2 className={`text-3xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-green-800'}`}>Weekly Schedule</h2>
             <ShowSchedule />
           </div>
         </section>
         
         {/* All Shows */}
-        <section className={`py-12 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <section className={`py-12 ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
           <div className="container mx-auto px-4">
-            <h2 className={`text-3xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-radio-blue'}`}>All Shows</h2>
+            <h2 className={`text-3xl font-bold mb-8 ${isDarkMode ? 'text-white' : 'text-green-800'}`}>All Shows</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {showsList.map(show => (
                 <ShowCard
@@ -136,7 +136,7 @@ const Shows = () => {
         </section>
         
         {/* DJ Spotlight */}
-        <section className={`py-12 ${isDarkMode ? 'bg-gray-900 text-white' : ''}`}>
+        <section className={`py-12 ${isDarkMode ? 'bg-black text-white' : 'bg-white'}`}>
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="md:w-1/3">
@@ -147,9 +147,9 @@ const Shows = () => {
                 />
               </div>
               <div className="md:w-2/3">
-                <h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-radio-blue'}`}>DJ Spotlight</h2>
-                <h3 className="text-2xl font-semibold mb-2">Sarah Johnson</h3>
-                <p className={`text-lg mb-4 ${isDarkMode ? 'text-gray-300' : 'text-radio-muted'}`}>Host of "Morning Brew"</p>
+                <h2 className={`text-3xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-green-800'}`}>DJ Spotlight</h2>
+                <h3 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>Sarah Johnson</h3>
+                <p className={`text-lg mb-4 ${isDarkMode ? 'text-gray-300' : 'text-green-600'}`}>Host of "Morning Brew"</p>
                 <p className={`mb-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                   Sarah Johnson has been a beloved voice on Radio Wave Hub for over 5 years. With her energetic personality and exceptional music taste, she helps thousands of listeners start their day on the right note with her popular morning show.
                 </p>
@@ -162,7 +162,7 @@ const Shows = () => {
         </section>
         
         {/* Side by side ads */}
-        <section className={`py-6 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+        <section className={`py-6 ${isDarkMode ? 'bg-black' : 'bg-gray-50'}`}>
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AdBanner position="sidebar" />
@@ -172,13 +172,13 @@ const Shows = () => {
         </section>
         
         {/* Become a Guest */}
-        <section className="bg-radio-blue text-white py-12">
+        <section className="bg-green-800 text-white py-12">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-4">Want to Be a Guest on Our Shows?</h2>
-            <p className="text-xl text-radio-muted mb-6 max-w-2xl mx-auto">
+            <p className="text-xl text-white/80 mb-6 max-w-2xl mx-auto">
               We're always looking for interesting guests to feature on our shows. If you have a story to tell, music to share, or expertise to offer, we'd love to hear from you.
             </p>
-            <button className="bg-radio-accent hover:bg-radio-accent/80 text-white px-6 py-3 rounded-md font-medium">
+            <button className="bg-white text-green-800 hover:bg-gray-100 px-6 py-3 rounded-md font-medium">
               Apply to Be a Guest
             </button>
           </div>
