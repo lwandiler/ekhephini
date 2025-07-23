@@ -4,7 +4,7 @@ import NewsList from '@/components/NewsList';
 import AdBanner from '@/components/AdBanner';
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import { Button } from '@/components/ui/button';
-import { NewsletterForm } from '@/components/NewsletterForm';
+import NewsletterForm from '@/components/NewsletterForm';
 import { Play, Radio, Headphones } from 'lucide-react';
 
 interface MinimalistTemplateProps {

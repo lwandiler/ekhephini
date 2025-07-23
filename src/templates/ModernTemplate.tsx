@@ -8,7 +8,7 @@ import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import NowLive from '@/components/NowLive';
 import UpcomingShows from '@/components/UpcomingShows';
 import { Button } from '@/components/ui/button';
-import { NewsletterForm } from '@/components/NewsletterForm';
+import NewsletterForm from '@/components/NewsletterForm';
 import { Play, Radio, Music, Headphones, Calendar, Mail } from 'lucide-react';
 
 interface ModernTemplateProps {

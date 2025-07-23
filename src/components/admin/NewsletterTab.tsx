@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Trash2, UserMinus, Mail, Users } from 'lucide-react';
-import { newsletterService, NewsletterSubscriber } from '@/services/api/newsletterService';
+import { newsletterService, type NewsletterSubscriber } from '@/services/api/newsletterService';
 import { useToast } from '@/hooks/use-toast';
 
 export const NewsletterTab = () => {

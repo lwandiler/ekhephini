@@ -8,7 +8,7 @@ import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import EditableText from '@/components/EditableText';
 import EditableImage from '@/components/EditableImage';
 import { Button } from '@/components/ui/button';
-import { NewsletterForm } from '@/components/NewsletterForm';
+import NewsletterForm from '@/components/NewsletterForm';
 import { Radio } from 'lucide-react';
 
 interface ClassicTemplateProps {

@@ -10,7 +10,7 @@ interface NewsletterFormProps {
   className?: string;
 }
 
-export const NewsletterForm = ({ variant = 'modern', className = '' }: NewsletterFormProps) => {
+const NewsletterForm = ({ variant = 'modern', className = '' }: NewsletterFormProps) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -126,3 +126,5 @@ export const NewsletterForm = ({ variant = 'modern', className = '' }: Newslette
     </form>
   );
 };
+
+export default NewsletterForm;

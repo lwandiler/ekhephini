@@ -5,7 +5,7 @@ import RadioPlayer from '@/components/RadioPlayer';
 import ChatBot from '@/components/ChatBot';
 import NewsList from '@/components/NewsList';
 import AdBanner from '@/components/AdBanner';
-import { NewsletterForm } from '@/components/NewsletterForm';
+import NewsletterForm from '@/components/NewsletterForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { blogService, BlogPost } from '@/services/api/blogService';
 
