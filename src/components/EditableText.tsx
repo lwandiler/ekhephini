@@ -8,7 +8,7 @@ interface EditableTextProps {
   contentKey: string;
   defaultValue: string;
   className?: string;
-  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
   placeholder?: string;
 }
 
@@ -27,7 +27,7 @@ const EditableText = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const currentValue = pageContent[contentKey] || defaultValue;
-  const isMultiline = Component === 'p';
+  const isMultiline = Component === 'p' || Component === 'div';
 
   useEffect(() => {
     setValue(currentValue);
@@ -45,7 +45,12 @@ const EditableText = ({
   }, [isEditing]);
 
   const handleEdit = () => {
-    if (!isEditMode || !isAdmin) return;
+    console.log('EditableText handleEdit called', { isAdmin, isEditMode });
+    if (!isEditMode || !isAdmin) {
+      console.log('Edit conditions not met', { isAdmin, isEditMode });
+      return;
+    }
+    console.log('Setting editing to true');
     setIsEditing(true);
   };
 
@@ -70,6 +75,9 @@ const EditableText = ({
   };
 
   if (!isAdmin) {
+    if (Component === 'div' && (currentValue || defaultValue).includes('<')) {
+      return <Component className={className} dangerouslySetInnerHTML={{ __html: currentValue || defaultValue }} />;
+    }
     return <Component className={className}>{currentValue || defaultValue}</Component>;
   }
 
@@ -116,8 +124,15 @@ const EditableText = ({
           <Component 
             className={`${className} ${isEditMode ? 'hover:bg-blue-50 hover:outline hover:outline-2 hover:outline-blue-300 rounded transition-all' : ''}`}
             onClick={handleEdit}
+            {...(Component === 'div' && (currentValue || defaultValue).includes('<') 
+              ? { dangerouslySetInnerHTML: { __html: currentValue || defaultValue || placeholder } }
+              : {}
+            )}
           >
-            {currentValue || defaultValue || placeholder}
+            {Component === 'div' && (currentValue || defaultValue).includes('<') 
+              ? undefined 
+              : (currentValue || defaultValue || placeholder)
+            }
           </Component>
           
           {isEditMode && isHovered && (
