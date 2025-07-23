@@ -10,6 +10,11 @@ interface InlineEditContextType {
   isAdmin: boolean;
   updatePageContent: (key: string, value: string) => Promise<void>;
   pageContent: Record<string, string>;
+  selectedElement: HTMLElement | null;
+  setSelectedElement: (element: HTMLElement | null) => void;
+  isPreviewMode: boolean;
+  setIsPreviewMode: (preview: boolean) => void;
+  saveChanges: () => Promise<void>;
 }
 
 const InlineEditContext = createContext<InlineEditContextType | undefined>(undefined);
@@ -17,6 +22,8 @@ const InlineEditContext = createContext<InlineEditContextType | undefined>(undef
 export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [pageContent, setPageContent] = useState<Record<string, string>>({});
+  const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const { user } = useAuth();
   
   // Check if user is admin
@@ -56,15 +63,26 @@ export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
       const updatedContent = { ...pageContent, [key]: value };
       setPageContent(updatedContent);
       
-      // Save to database
-      await stationService.updateStationSettings({
-        page_content: updatedContent
-      });
-      
-      toast.success('Content updated successfully');
+      // Auto-save is handled by saveChanges function
+      toast.success('Content updated');
     } catch (error) {
       console.error('Failed to update content:', error);
       toast.error('Failed to update content');
+    }
+  };
+
+  const saveChanges = async () => {
+    try {
+      // Save to database
+      await stationService.updateStationSettings({
+        page_content: pageContent
+      });
+      
+      toast.success('All changes saved successfully');
+    } catch (error) {
+      console.error('Failed to save changes:', error);
+      toast.error('Failed to save changes');
+      throw error;
     }
   };
 
@@ -74,7 +92,12 @@ export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
       toggleEditMode,
       isAdmin: !!isAdmin,
       updatePageContent,
-      pageContent
+      pageContent,
+      selectedElement,
+      setSelectedElement,
+      isPreviewMode,
+      setIsPreviewMode,
+      saveChanges
     }}>
       {children}
     </InlineEditContext.Provider>

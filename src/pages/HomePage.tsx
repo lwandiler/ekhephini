@@ -7,6 +7,7 @@ import ChatBot from '@/components/ChatBot';
 import SocialChat from '@/components/SocialChat';
 import HeroBannerCarousel from '@/components/HeroBannerCarousel';
 import EditModeToggle from '@/components/EditModeToggle';
+import VisualEditingWrapper from '@/components/visual-editor/VisualEditingWrapper';
 import PodcastPlayer from '@/components/PodcastPlayer';
 import { useAuth } from '@/contexts/AuthContext';
 import { ThemeContext } from '@/contexts/ThemeContext';
@@ -90,23 +91,26 @@ const HomePage = () => {
   return (
     <InlineEditProvider>
       <div className={`flex flex-col min-h-screen font-${themeOptions.fontFamily} text-size-${themeOptions.fontSize} dark`}>
-        <Header />
+        <VisualEditingWrapper>
+          <Header />
+          
+          <main className="flex-1 bg-gray-900">
+            <div className="w-full">
+              <HeroBannerCarousel />
+            </div>
+            <TemplateRenderer 
+              featuredShows={featuredShows} 
+              featuredNews={featuredNewsData}
+              featuredPodcasts={featuredPodcasts}
+              themeOptions={themeOptions}
+              onListenLiveClick={handleListenLiveClick}
+              onPlayPodcast={handlePlayPodcast}
+            />
+          </main>
+          
+          <Footer />
+        </VisualEditingWrapper>
         
-        <main className="flex-1 bg-gray-900">
-          <div className="w-full">
-            <HeroBannerCarousel />
-          </div>
-          <TemplateRenderer 
-            featuredShows={featuredShows} 
-            featuredNews={featuredNewsData} 
-            featuredPodcasts={featuredPodcasts}
-            themeOptions={themeOptions}
-            onListenLiveClick={handleListenLiveClick}
-            onPlayPodcast={handlePlayPodcast}
-          />
-        </main>
-        
-        <Footer />
         <RadioPlayer />
         <PodcastPlayer 
           currentPodcast={currentPodcast}
