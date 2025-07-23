@@ -64,6 +64,23 @@ const AdsTab = () => {
     setSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
+    
+    // Convert duration to seconds based on unit
+    const durationValue = parseInt(formData.get('duration_value') as string) || 30;
+    const durationUnit = formData.get('duration_unit') as string || 'seconds';
+    let durationInSeconds = durationValue;
+    
+    switch (durationUnit) {
+      case 'minutes':
+        durationInSeconds = durationValue * 60;
+        break;
+      case 'hours':
+        durationInSeconds = durationValue * 3600;
+        break;
+      default:
+        durationInSeconds = durationValue;
+    }
+
     const adData = {
       title: formData.get('title') as string,
       description: formData.get('description') as string,
@@ -74,6 +91,7 @@ const AdsTab = () => {
       active: formData.get('active') === 'on',
       start_date: formData.get('start_date') as string || null,
       end_date: formData.get('end_date') as string || null,
+      display_duration_seconds: durationInSeconds,
     };
 
     try {
@@ -115,6 +133,19 @@ const AdsTab = () => {
       });
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // Helper function to get duration values for editing
+  const getDurationDisplay = (seconds: number | null) => {
+    if (!seconds) return { value: 30, unit: 'seconds' };
+    
+    if (seconds >= 3600 && seconds % 3600 === 0) {
+      return { value: seconds / 3600, unit: 'hours' };
+    } else if (seconds >= 60 && seconds % 60 === 0) {
+      return { value: seconds / 60, unit: 'minutes' };
+    } else {
+      return { value: seconds, unit: 'seconds' };
     }
   };
 
@@ -360,6 +391,34 @@ const AdsTab = () => {
                 </div>
               </div>
 
+              <div>
+                <Label>Display Duration</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="duration_value"
+                    name="duration_value"
+                    type="number"
+                    min="1"
+                    defaultValue={editingAd ? getDurationDisplay(editingAd.display_duration_seconds).value : 30}
+                    placeholder="30"
+                    className="flex-1"
+                  />
+                  <Select name="duration_unit" defaultValue={editingAd ? getDurationDisplay(editingAd.display_duration_seconds).unit : 'seconds'}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="seconds">Seconds</SelectItem>
+                      <SelectItem value="minutes">Minutes</SelectItem>
+                      <SelectItem value="hours">Hours</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  How long this ad should be displayed before rotating to the next ad
+                </p>
+              </div>
+
               <div className="flex gap-2">
                 <Button type="submit" disabled={submitting}>
                   {submitting ? 'Saving...' : (editingAd ? 'Update Ad' : 'Create Ad')}
@@ -404,6 +463,7 @@ const AdsTab = () => {
                   <TableHead>Title</TableHead>
                   <TableHead>Position</TableHead>
                   <TableHead>Priority</TableHead>
+                  <TableHead>Duration</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Start Date</TableHead>
                   <TableHead>End Date</TableHead>
@@ -416,6 +476,12 @@ const AdsTab = () => {
                     <TableCell className="font-medium">{ad.title}</TableCell>
                     <TableCell className="capitalize">{ad.position}</TableCell>
                     <TableCell>{ad.priority}</TableCell>
+                    <TableCell>
+                      {(() => {
+                        const duration = getDurationDisplay(ad.display_duration_seconds);
+                        return `${duration.value} ${duration.unit}`;
+                      })()}
+                    </TableCell>
                     <TableCell>
                       <Switch
                         checked={ad.active}

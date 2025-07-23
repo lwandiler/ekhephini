@@ -50,9 +50,11 @@ export type Database = {
           click_url: string | null
           created_at: string | null
           description: string | null
+          display_duration_seconds: number | null
           end_date: string | null
           id: string
           image_url: string | null
+          last_rotation_time: string | null
           position: string
           priority: number | null
           start_date: string | null
@@ -64,9 +66,11 @@ export type Database = {
           click_url?: string | null
           created_at?: string | null
           description?: string | null
+          display_duration_seconds?: number | null
           end_date?: string | null
           id?: string
           image_url?: string | null
+          last_rotation_time?: string | null
           position?: string
           priority?: number | null
           start_date?: string | null
@@ -78,9 +82,11 @@ export type Database = {
           click_url?: string | null
           created_at?: string | null
           description?: string | null
+          display_duration_seconds?: number | null
           end_date?: string | null
           id?: string
           image_url?: string | null
+          last_rotation_time?: string | null
           position?: string
           priority?: number | null
           start_date?: string | null

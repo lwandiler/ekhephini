@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -11,6 +11,14 @@ interface AdBannerProps {
   isDismissable?: boolean;
 }
 
+interface AdData {
+  id: string;
+  title: string;
+  imageUrl: string;
+  link: string;
+  duration: number;
+}
+
 const AdBanner = ({
   imageUrl,
   link,
@@ -19,69 +27,105 @@ const AdBanner = ({
   isDismissable = true
 }: AdBannerProps) => {
   const [isVisible, setIsVisible] = useState(true);
-  const [adData, setAdData] = useState<{
-    title: string;
-    imageUrl: string;
-    link: string;
-  } | null>(null);
+  const [adData, setAdData] = useState<AdData | null>(null);
+  const [allAds, setAllAds] = useState<any[]>([]);
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
   
   // Fetch active ads from database for the specified position
-  useEffect(() => {
-    const fetchAds = async () => {
-      try {
-        console.log('Fetching ads for position:', position);
-        const today = new Date().toISOString().split('T')[0];
-        
-        let query = supabase
-          .from('ads')
-          .select('*')
-          .eq('active', true);
+  const fetchAds = useCallback(async () => {
+    try {
+      console.log('Fetching ads for position:', position);
+      const today = new Date().toISOString().split('T')[0];
+      
+      let query = supabase
+        .from('ads')
+        .select('*')
+        .eq('active', true);
 
-        // Only filter by position if specified and not 'top' (which can show any position)
-        if (position !== 'top') {
-          query = query.eq('position', position);
-        }
+      // Only filter by position if specified and not 'top' (which can show any position)
+      if (position !== 'top') {
+        query = query.eq('position', position);
+      }
 
-        const { data: ads, error } = await query
-          .or(`start_date.is.null,start_date.lte.${today}`)
-          .or(`end_date.is.null,end_date.gte.${today}`)
-          .order('priority', { ascending: false });
+      const { data: ads, error } = await query
+        .or(`start_date.is.null,start_date.lte.${today}`)
+        .or(`end_date.is.null,end_date.gte.${today}`)
+        .order('priority', { ascending: false });
 
-        if (error) {
-          console.error('Supabase error fetching ads:', error);
-          throw error;
-        }
+      if (error) {
+        console.error('Supabase error fetching ads:', error);
+        throw error;
+      }
 
-        console.log('Fetched ads:', ads);
+      console.log('Fetched ads:', ads);
 
-        if (ads && ads.length > 0) {
-          const randomAd = ads[Math.floor(Math.random() * ads.length)];
-          console.log('Selected ad:', randomAd);
-          setAdData({
-            title: title || randomAd.title,
-            imageUrl: imageUrl || randomAd.image_url || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            link: link || randomAd.click_url || "#"
-          });
-        } else {
-          console.log('No ads found, using fallback');
-          setAdData({
-            title: title || "Advertisement",
-            imageUrl: imageUrl || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            link: link || "#"
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching ads:', error);
+      if (ads && ads.length > 0) {
+        setAllAds(ads);
+        // Start with the first ad or override with provided props
+        const firstAd = ads[0];
         setAdData({
+          id: firstAd.id,
+          title: title || firstAd.title,
+          imageUrl: imageUrl || firstAd.image_url || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          link: link || firstAd.click_url || "#",
+          duration: firstAd.display_duration_seconds || 30
+        });
+      } else {
+        console.log('No ads found, using fallback');
+        setAdData({
+          id: 'fallback',
           title: title || "Advertisement",
           imageUrl: imageUrl || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-          link: link || "#"
+          link: link || "#",
+          duration: 30
         });
+        setAllAds([]);
       }
-    };
-
-    fetchAds();
+    } catch (error) {
+      console.error('Error fetching ads:', error);
+      setAdData({
+        id: 'error',
+        title: title || "Advertisement",
+        imageUrl: imageUrl || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        link: link || "#",
+        duration: 30
+      });
+      setAllAds([]);
+    }
   }, [imageUrl, link, position, title]);
+
+  // Rotate to next ad
+  const rotateToNextAd = useCallback(() => {
+    if (allAds.length <= 1) return;
+    
+    const nextIndex = (currentAdIndex + 1) % allAds.length;
+    const nextAd = allAds[nextIndex];
+    
+    setCurrentAdIndex(nextIndex);
+    setAdData({
+      id: nextAd.id,
+      title: title || nextAd.title,
+      imageUrl: imageUrl || nextAd.image_url || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      link: link || nextAd.click_url || "#",
+      duration: nextAd.display_duration_seconds || 30
+    });
+  }, [allAds, currentAdIndex, title, imageUrl, link]);
+
+  // Set up rotation timer
+  useEffect(() => {
+    if (!adData || allAds.length <= 1) return;
+
+    const timer = setTimeout(() => {
+      rotateToNextAd();
+    }, adData.duration * 1000);
+
+    return () => clearTimeout(timer);
+  }, [adData, allAds.length, rotateToNextAd]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchAds();
+  }, [fetchAds]);
   
   if (!isVisible || !adData) return null;
   
