@@ -70,31 +70,6 @@ const ClassicTemplate = ({
         {/* Ad Banner */}
         <AdBanner position="top" />
         
-        {/* Featured Shows */}
-        <section className="py-12 bg-gray-800">
-          <div className="container mx-auto px-4">
-            <EditableText 
-              contentKey="featured_shows_title"
-              defaultValue="Featured Shows"
-              as="h2"
-              className="text-3xl font-bold text-purple-300 mb-8"
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredShows.map(show => (
-                <ShowCard
-                  key={show.id}
-                  id={show.id}
-                  title={show.title}
-                  host={show.host}
-                  time={show.time}
-                  description={show.description}
-                  image={show.image}
-                  isLive={show.isLive}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
         
         {/* Featured Podcasts */}
         <section className="py-12 bg-gray-900">

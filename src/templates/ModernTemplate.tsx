@@ -118,37 +118,6 @@ const ModernTemplate = ({
           </div>
         </section>
         
-        {/* Featured Shows - White Background */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between mb-12">
-              <div>
-                <span className="text-green-600 font-semibold tracking-wider uppercase text-sm">What's Playing</span>
-                <h2 className="text-4xl font-bold mt-2 text-gray-900">Featured Shows</h2>
-              </div>
-              <Button variant="link" className="text-green-600 hover:text-green-700 mt-4 md:mt-0" asChild>
-                <Link to="/shows">View All Shows →</Link>
-              </Button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {featuredShows.map(show => (
-                <ShowCard
-                  key={show.id}
-                  id={show.id}
-                  title={show.title}
-                  host={show.host}
-                  time={show.time}
-                  description={show.description}
-                  image={show.image === "/placeholder.svg" ? 
-                    `https://images.unsplash.com/photo-${1500000000000 + show.id * 1111}?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80` : 
-                    show.image}
-                  isLive={show.isLive}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
         
         {/* Ad Banner - Modern Style */}
         <section className="py-12 bg-black">
