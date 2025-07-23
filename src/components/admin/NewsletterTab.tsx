@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Trash2, UserMinus, Mail, Users } from 'lucide-react';
+import { Trash2, UserMinus, Mail, Users, Download } from 'lucide-react';
 import { newsletterService, type NewsletterSubscriber } from '@/services/api/newsletterService';
 import { useToast } from '@/hooks/use-toast';
 
@@ -70,6 +70,50 @@ export const NewsletterTab = () => {
   const activeSubscribers = subscribers.filter(sub => sub.active);
   const inactiveSubscribers = subscribers.filter(sub => !sub.active);
 
+  const downloadCSV = () => {
+    if (subscribers.length === 0) {
+      toast({
+        title: "No Data",
+        description: "No subscribers to download",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create CSV headers
+    const headers = ['Email', 'Name', 'Status', 'Subscribed Date', 'Created At', 'Updated At'];
+    
+    // Create CSV rows
+    const csvRows = [
+      headers.join(','),
+      ...subscribers.map(subscriber => [
+        `"${subscriber.email}"`,
+        `"${subscriber.name || ''}"`,
+        `"${subscriber.active ? 'Active' : 'Unsubscribed'}"`,
+        `"${new Date(subscriber.subscribed_at).toLocaleDateString()}"`,
+        `"${new Date(subscriber.created_at).toLocaleDateString()}"`,
+        `"${new Date(subscriber.updated_at).toLocaleDateString()}"`
+      ].join(','))
+    ];
+
+    // Create and download the file
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `newsletter-subscribers-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Success",
+      description: `Downloaded ${subscribers.length} subscribers to CSV`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
@@ -108,7 +152,18 @@ export const NewsletterTab = () => {
       {/* Subscribers Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Newsletter Subscribers</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>Newsletter Subscribers</CardTitle>
+            <Button 
+              onClick={downloadCSV} 
+              variant="outline" 
+              size="sm"
+              disabled={subscribers.length === 0}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download CSV
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (
