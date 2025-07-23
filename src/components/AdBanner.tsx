@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { advertisementData } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdBannerProps {
   imageUrl?: string;
@@ -25,23 +25,46 @@ const AdBanner = ({
     link: string;
   } | null>(null);
   
-  // Get a random ad for the specified position
+  // Fetch active ads from database for the specified position
   useEffect(() => {
-    const positionAds = advertisementData.filter(ad => ad.position === position);
-    if (positionAds.length > 0) {
-      const randomAd = positionAds[Math.floor(Math.random() * positionAds.length)];
-      setAdData({
-        title: title || randomAd.title,
-        imageUrl: imageUrl || randomAd.imageUrl,
-        link: link || randomAd.link
-      });
-    } else {
-      setAdData({
-        title: title || "Advertisement",
-        imageUrl: imageUrl || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-        link: link || "#"
-      });
-    }
+    const fetchAds = async () => {
+      try {
+        const { data: ads, error } = await supabase
+          .from('ads')
+          .select('*')
+          .eq('active', true)
+          .eq('position', position)
+          .or(`start_date.is.null,start_date.lte.${new Date().toISOString().split('T')[0]}`)
+          .or(`end_date.is.null,end_date.gte.${new Date().toISOString().split('T')[0]}`)
+          .order('priority', { ascending: false });
+
+        if (error) throw error;
+
+        if (ads && ads.length > 0) {
+          const randomAd = ads[Math.floor(Math.random() * ads.length)];
+          setAdData({
+            title: title || randomAd.title,
+            imageUrl: imageUrl || randomAd.image_url || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            link: link || randomAd.click_url || "#"
+          });
+        } else {
+          setAdData({
+            title: title || "Advertisement",
+            imageUrl: imageUrl || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            link: link || "#"
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching ads:', error);
+        setAdData({
+          title: title || "Advertisement",
+          imageUrl: imageUrl || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          link: link || "#"
+        });
+      }
+    };
+
+    fetchAds();
   }, [imageUrl, link, position, title]);
   
   if (!isVisible || !adData) return null;
