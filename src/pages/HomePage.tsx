@@ -13,8 +13,9 @@ import { ThemeContext } from '@/contexts/ThemeContext';
 import { InlineEditProvider } from '@/contexts/InlineEditContext';
 import TemplateRenderer from '@/components/TemplateRenderer';
 import { useHomeTheme } from '@/hooks/useHomeTheme';
-import { featuredShowsData, featuredNewsData } from '@/data/mockData';
+import { featuredShowsData } from '@/data/mockData';
 import { podcastsService } from '@/services/api/podcastsService';
+import { blogService, BlogPost } from '@/services/api/blogService';
 import { Podcast } from '@/components/PodcastCard';
 import { Toaster } from 'sonner';
 import { useRadioModal } from '@/hooks/useRadioModal';
@@ -25,6 +26,7 @@ const HomePage = () => {
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [featuredShows, setFeaturedShows] = useState(featuredShowsData);
+  const [featuredNews, setFeaturedNews] = useState<any[]>([]);
   const [featuredPodcasts, setFeaturedPodcasts] = useState<Podcast[]>([]);
   const [currentPodcast, setCurrentPodcast] = useState<Podcast | null>(null);
   const { setModalOpen } = useRadioModal();
@@ -35,14 +37,14 @@ const HomePage = () => {
     setIsAdmin(!!isAdminUser);
   }, [user]);
 
-  // Fetch real podcasts from database
+  // Fetch real news and podcasts from database
   useEffect(() => {
-    const fetchPodcasts = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch podcasts
         const podcasts = await podcastsService.getAllPodcasts();
-        // Transform database podcasts to match the component interface
         const transformedPodcasts = podcasts.map((podcast, index) => ({
-          id: index + 1, // Use index as number ID for component compatibility
+          id: index + 1,
           title: podcast.title,
           host: podcast.host,
           description: podcast.description || '',
@@ -53,13 +55,25 @@ const HomePage = () => {
           listenUrl: podcast.listen_url || '#'
         }));
         setFeaturedPodcasts(transformedPodcasts);
+
+        // Fetch blog posts for news
+        const blogPosts = await blogService.getPublishedPosts();
+        const transformedNews = blogPosts.map((post) => ({
+          id: post.id,
+          title: post.title,
+          excerpt: post.excerpt || post.content.substring(0, 200) + '...',
+          image: post.featured_image || "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&h=400&q=80",
+          date: post.published_at || post.created_at!,
+          author: post.author,
+          category: post.category || "News"
+        }));
+        setFeaturedNews(transformedNews);
       } catch (error) {
-        console.error('Error fetching podcasts:', error);
-        // Keep empty array on error
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchPodcasts();
+    fetchData();
   }, []);
 
   // Force dark mode
@@ -98,7 +112,7 @@ const HomePage = () => {
           </div>
           <TemplateRenderer 
             featuredShows={featuredShows} 
-            featuredNews={featuredNewsData} 
+            featuredNews={featuredNews} 
             featuredPodcasts={featuredPodcasts}
             themeOptions={themeOptions}
             onListenLiveClick={handleListenLiveClick}
