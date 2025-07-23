@@ -241,15 +241,15 @@ const AnnouncementsTab = () => {
                 <div>
                   <Label htmlFor="category">Category</Label>
                   <Select name="category" defaultValue={editingAnnouncement?.category || ''}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white border-gray-300 text-black">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Technical">Technical</SelectItem>
-                      <SelectItem value="Programming">Programming</SelectItem>
-                      <SelectItem value="Community">Community</SelectItem>
-                      <SelectItem value="Events">Events</SelectItem>
-                      <SelectItem value="General">General</SelectItem>
+                    <SelectContent className="bg-white border border-gray-300 shadow-lg z-50">
+                      <SelectItem value="Technical" className="text-black hover:bg-gray-100">Technical</SelectItem>
+                      <SelectItem value="Programming" className="text-black hover:bg-gray-100">Programming</SelectItem>
+                      <SelectItem value="Community" className="text-black hover:bg-gray-100">Community</SelectItem>
+                      <SelectItem value="Events" className="text-black hover:bg-gray-100">Events</SelectItem>
+                      <SelectItem value="General" className="text-black hover:bg-gray-100">General</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
