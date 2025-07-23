@@ -184,3 +184,4 @@
   button:not(.admin-form button) * {
     @apply text-white !important;
   }
+}
