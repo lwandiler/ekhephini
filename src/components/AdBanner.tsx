@@ -29,25 +29,41 @@ const AdBanner = ({
   useEffect(() => {
     const fetchAds = async () => {
       try {
-        const { data: ads, error } = await supabase
+        console.log('Fetching ads for position:', position);
+        const today = new Date().toISOString().split('T')[0];
+        
+        let query = supabase
           .from('ads')
           .select('*')
-          .eq('active', true)
-          .eq('position', position)
-          .or(`start_date.is.null,start_date.lte.${new Date().toISOString().split('T')[0]}`)
-          .or(`end_date.is.null,end_date.gte.${new Date().toISOString().split('T')[0]}`)
+          .eq('active', true);
+
+        // Only filter by position if specified and not 'top' (which can show any position)
+        if (position !== 'top') {
+          query = query.eq('position', position);
+        }
+
+        const { data: ads, error } = await query
+          .or(`start_date.is.null,start_date.lte.${today}`)
+          .or(`end_date.is.null,end_date.gte.${today}`)
           .order('priority', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error fetching ads:', error);
+          throw error;
+        }
+
+        console.log('Fetched ads:', ads);
 
         if (ads && ads.length > 0) {
           const randomAd = ads[Math.floor(Math.random() * ads.length)];
+          console.log('Selected ad:', randomAd);
           setAdData({
             title: title || randomAd.title,
             imageUrl: imageUrl || randomAd.image_url || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             link: link || randomAd.click_url || "#"
           });
         } else {
+          console.log('No ads found, using fallback');
           setAdData({
             title: title || "Advertisement",
             imageUrl: imageUrl || "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
