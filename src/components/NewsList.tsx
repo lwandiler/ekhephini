@@ -58,14 +58,20 @@ const mockNews: NewsItem[] = [
   }
 ];
 
-const NewsList = ({ news = mockNews, compact = false }: NewsListProps) => {
+const NewsList = ({ news = [], compact = false }: NewsListProps) => {
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Use the provided news items or the mock ones if not provided
-  const displayNews = news.length > 0 ? news : mockNews;
+  // Only show published news from database, no fallback to mock data
+  if (news.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500">No news articles published yet.</p>
+      </div>
+    );
+  }
 
   // Map category to colors
   const getCategoryColor = (category: string) => {
@@ -81,7 +87,7 @@ const NewsList = ({ news = mockNews, compact = false }: NewsListProps) => {
 
   return (
     <div className={`grid ${compact ? 'grid-cols-1 gap-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'}`}>
-      {displayNews.map((item) => (
+      {news.map((item) => (
         <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gray-900 border-gray-800 text-white group h-full flex flex-col">
           {!compact && (
             <div className="relative">
