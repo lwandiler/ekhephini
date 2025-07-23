@@ -45,7 +45,12 @@ const EditableText = ({
   }, [isEditing]);
 
   const handleEdit = () => {
-    if (!isEditMode || !isAdmin) return;
+    console.log('EditableText handleEdit called', { isAdmin, isEditMode });
+    if (!isEditMode || !isAdmin) {
+      console.log('Edit conditions not met', { isAdmin, isEditMode });
+      return;
+    }
+    console.log('Setting editing to true');
     setIsEditing(true);
   };
 

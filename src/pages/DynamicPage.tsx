@@ -6,7 +6,7 @@ import RadioPlayer from '@/components/RadioPlayer';
 import ChatBot from '@/components/ChatBot';
 import SocialChat from '@/components/SocialChat';
 import EditModeToggle from '@/components/EditModeToggle';
-import VisualEditor from '@/components/visual-editor/VisualEditor';
+import SimpleVisualEditor from '@/components/visual-editor/SimpleVisualEditor';
 import EditableText from '@/components/EditableText';
 import EditableImage from '@/components/EditableImage';
 import { InlineEditProvider } from '@/contexts/InlineEditContext';
@@ -111,7 +111,7 @@ const DynamicPage = () => {
   return (
     <InlineEditProvider>
       <div className="flex flex-col min-h-screen dark">
-        <VisualEditor>
+        <SimpleVisualEditor>
           <Header />
           
           <main className="flex-1 bg-gray-900">
@@ -168,7 +168,7 @@ const DynamicPage = () => {
           </main>
           
           <Footer />
-        </VisualEditor>
+        </SimpleVisualEditor>
         
         <RadioPlayer />
         <ChatBot />

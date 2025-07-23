@@ -28,10 +28,15 @@ export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
   // Check if user is admin
   const isAdmin = user && sessionStorage.getItem('radioAdminLoggedIn') === 'true';
 
-  // Auto-enable edit mode if URL contains edit=true parameter
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    console.log('InlineEditContext: checking URL params', { 
+      editParam: urlParams.get('edit'),
+      isAdmin,
+      currentUrl: window.location.href
+    });
     if (urlParams.get('edit') === 'true' && isAdmin) {
+      console.log('Enabling edit mode from URL');
       setIsEditMode(true);
       toast.success('Visual editing mode enabled', {
         description: 'Click on elements to edit them directly'
