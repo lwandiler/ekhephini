@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDrag } from 'react-dnd';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -40,25 +41,42 @@ const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
     { id: 'contact-info', name: 'Contact Info', icon: MapPin, description: 'Add contact information' }
   ];
 
+  const DraggableComponent = ({ component }: { component: any }) => {
+    const [{ isDragging }, drag] = useDrag({
+      type: 'COMPONENT',
+      item: { type: component.id },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging()
+      })
+    });
+
+    return (
+      <Button
+        ref={drag}
+        key={component.id}
+        variant="ghost"
+        className={`justify-start h-auto p-3 border border-gray-200 hover:border-blue-300 cursor-move ${
+          isDragging ? 'opacity-50' : ''
+        }`}
+        onClick={() => onAddComponent(component.id)}
+      >
+        <div className="flex items-start gap-3">
+          <component.icon size={20} className="text-gray-600 mt-0.5" />
+          <div className="text-left">
+            <div className="font-medium text-sm">{component.name}</div>
+            <div className="text-xs text-gray-500">{component.description}</div>
+          </div>
+        </div>
+      </Button>
+    );
+  };
+
   const renderComponentSection = (title: string, components: any[]) => (
     <div className="mb-6">
       <h3 className="text-sm font-semibold text-gray-700 mb-3">{title}</h3>
       <div className="grid grid-cols-1 gap-2">
         {components.map((component) => (
-          <Button
-            key={component.id}
-            variant="ghost"
-            className="justify-start h-auto p-3 border border-gray-200 hover:border-blue-300"
-            onClick={() => onAddComponent(component.id)}
-          >
-            <div className="flex items-start gap-3">
-              <component.icon size={20} className="text-gray-600 mt-0.5" />
-              <div className="text-left">
-                <div className="font-medium text-sm">{component.name}</div>
-                <div className="text-xs text-gray-500">{component.description}</div>
-              </div>
-            </div>
-          </Button>
+          <DraggableComponent key={component.id} component={component} />
         ))}
       </div>
     </div>
@@ -75,7 +93,7 @@ const ComponentLibrary: React.FC<ComponentLibraryProps> = ({
             </Button>
           </div>
           <p className="text-sm text-gray-600">
-            Drag and drop components to add them to your page
+            Click or drag components to add them to your page
           </p>
         </CardHeader>
         
