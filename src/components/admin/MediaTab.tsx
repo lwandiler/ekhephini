@@ -167,10 +167,37 @@ const MediaTab = () => {
     if (mimetype.startsWith('image/')) return 'Image';
     if (mimetype.startsWith('video/')) return 'Video';
     if (mimetype.startsWith('audio/')) return 'Audio';
-    return 'Document';
+    if (mimetype.includes('pdf')) return 'PDF';
+    if (mimetype.includes('word') || mimetype.includes('document')) return 'Document';
+    if (mimetype.includes('sheet') || mimetype.includes('excel')) return 'Spreadsheet';
+    if (mimetype.includes('presentation') || mimetype.includes('powerpoint')) return 'Presentation';
+    if (mimetype.includes('text/')) return 'Text';
+    if (mimetype.includes('zip') || mimetype.includes('rar') || mimetype.includes('7z')) return 'Archive';
+    return 'File';
+  };
+
+  const getFileIcon = (mimetype?: string) => {
+    const type = getFileType(mimetype);
+    switch (type) {
+      case 'Image': return '🖼️';
+      case 'Video': return '🎥';
+      case 'Audio': return '🎵';
+      case 'PDF': return '📄';
+      case 'Document': return '📝';
+      case 'Spreadsheet': return '📊';
+      case 'Presentation': return '📋';
+      case 'Text': return '📄';
+      case 'Archive': return '🗜️';
+      default: return '📁';
+    }
+  };
+
+  const getFileExtension = (filename: string) => {
+    return filename.split('.').pop()?.toUpperCase() || '';
   };
 
   const isImage = (mimetype?: string) => mimetype?.startsWith('image/') || false;
+  const isVideo = (mimetype?: string) => mimetype?.startsWith('video/') || false;
 
   const filteredFiles = mediaFiles.filter(file =>
     file.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -238,13 +265,29 @@ const MediaTab = () => {
                           }
                         }}
                       />
+                    ) : isVideo(file.metadata?.mimetype) ? (
+                      <video
+                        src={file.publicUrl}
+                        className="w-full h-full object-cover"
+                        controls
+                        preload="metadata"
+                        onError={(e) => {
+                          (e.target as HTMLVideoElement).style.display = 'none';
+                          const parent = (e.target as HTMLElement).parentElement;
+                          if (parent) {
+                            parent.innerHTML = '<div class="text-muted-foreground">Video preview unavailable</div>';
+                          }
+                        }}
+                      />
                     ) : (
                       <div className="text-center text-muted-foreground">
-                        <div className="text-4xl mb-2">
-                          {getFileType(file.metadata?.mimetype) === 'Video' ? '🎥' : 
-                           getFileType(file.metadata?.mimetype) === 'Audio' ? '🎵' : '📄'}
+                        <div className="text-6xl mb-2">
+                          {getFileIcon(file.metadata?.mimetype)}
                         </div>
-                        <div className="text-sm">{getFileType(file.metadata?.mimetype)}</div>
+                        <div className="text-sm font-medium">{getFileType(file.metadata?.mimetype)}</div>
+                        <div className="text-xs mt-1 px-2 py-1 bg-background rounded">
+                          {getFileExtension(file.name)}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -252,11 +295,14 @@ const MediaTab = () => {
                     <div className="space-y-3">
                       <div>
                         <h3 className="font-medium text-sm truncate" title={file.name}>
-                          {file.name}
+                          {file.name.split('/').pop()} {/* Show just filename, not full path */}
                         </h3>
-                        <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="secondary" className="text-xs">
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          <Badge variant="secondary" className="text-xs">
                             {getFileType(file.metadata?.mimetype)}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {getFileExtension(file.name)}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
                             {formatFileSize(file.metadata?.size || 0)}
