@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { stationService } from '@/services/api/stationService';
@@ -9,11 +10,6 @@ interface InlineEditContextType {
   isAdmin: boolean;
   updatePageContent: (key: string, value: string) => Promise<void>;
   pageContent: Record<string, string>;
-  selectedElement: HTMLElement | null;
-  setSelectedElement: (element: HTMLElement | null) => void;
-  isPreviewMode: boolean;
-  setIsPreviewMode: (preview: boolean) => void;
-  saveChanges: () => Promise<void>;
 }
 
 const InlineEditContext = createContext<InlineEditContextType | undefined>(undefined);
@@ -21,28 +17,10 @@ const InlineEditContext = createContext<InlineEditContextType | undefined>(undef
 export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [pageContent, setPageContent] = useState<Record<string, string>>({});
-  const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const { user } = useAuth();
   
   // Check if user is admin
   const isAdmin = user && sessionStorage.getItem('radioAdminLoggedIn') === 'true';
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    console.log('InlineEditContext: checking URL params', { 
-      editParam: urlParams.get('edit'),
-      isAdmin,
-      currentUrl: window.location.href
-    });
-    if (urlParams.get('edit') === 'true' && isAdmin) {
-      console.log('Enabling edit mode from URL');
-      setIsEditMode(true);
-      toast.success('Visual editing mode enabled', {
-        description: 'Click on elements to edit them directly'
-      });
-    }
-  }, [isAdmin]);
 
   useEffect(() => {
     // Load existing page content from station settings
@@ -78,26 +56,15 @@ export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
       const updatedContent = { ...pageContent, [key]: value };
       setPageContent(updatedContent);
       
-      // Auto-save is handled by saveChanges function
-      toast.success('Content updated');
+      // Save to database
+      await stationService.updateStationSettings({
+        page_content: updatedContent
+      });
+      
+      toast.success('Content updated successfully');
     } catch (error) {
       console.error('Failed to update content:', error);
       toast.error('Failed to update content');
-    }
-  };
-
-  const saveChanges = async () => {
-    try {
-      // Save to database
-      await stationService.updateStationSettings({
-        page_content: pageContent
-      });
-      
-      toast.success('All changes saved successfully');
-    } catch (error) {
-      console.error('Failed to save changes:', error);
-      toast.error('Failed to save changes');
-      throw error;
     }
   };
 
@@ -107,12 +74,7 @@ export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
       toggleEditMode,
       isAdmin: !!isAdmin,
       updatePageContent,
-      pageContent,
-      selectedElement,
-      setSelectedElement,
-      isPreviewMode,
-      setIsPreviewMode,
-      saveChanges
+      pageContent
     }}>
       {children}
     </InlineEditContext.Provider>
