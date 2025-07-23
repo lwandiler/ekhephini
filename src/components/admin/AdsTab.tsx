@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Trash2, Edit, Plus } from 'lucide-react';
+import { useMediaUpload } from '@/hooks/useMediaUpload';
+import { Trash2, Edit, Plus, Upload, Link } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 
 type Ad = Tables<'ads'>;
@@ -21,6 +22,16 @@ const AdsTab = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingAd, setEditingAd] = useState<Ad | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+  const [useUrlInput, setUseUrlInput] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { isUploading, handleMediaUpload } = useMediaUpload({
+    mediaType: 'image',
+    onUploadSuccess: (url) => {
+      setImageUrl(url);
+    }
+  });
 
   useEffect(() => {
     loadAds();
@@ -56,7 +67,7 @@ const AdsTab = () => {
     const adData = {
       title: formData.get('title') as string,
       description: formData.get('description') as string,
-      image_url: formData.get('image_url') as string,
+      image_url: imageUrl,
       click_url: formData.get('click_url') as string,
       position: formData.get('position') as string,
       priority: parseInt(formData.get('priority') as string) || 0,
@@ -91,6 +102,8 @@ const AdsTab = () => {
 
       setShowForm(false);
       setEditingAd(null);
+      setImageUrl('');
+      setUseUrlInput(true);
       loadAds();
       (e.target as HTMLFormElement).reset();
     } catch (error) {
@@ -107,6 +120,7 @@ const AdsTab = () => {
 
   const handleEdit = (ad: Ad) => {
     setEditingAd(ad);
+    setImageUrl(ad.image_url || '');
     setShowForm(true);
   };
 
@@ -168,6 +182,8 @@ const AdsTab = () => {
           onClick={() => {
             setShowForm(!showForm);
             setEditingAd(null);
+            setImageUrl('');
+            setUseUrlInput(true);
           }}
           className="flex items-center gap-2"
         >
@@ -242,14 +258,74 @@ const AdsTab = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="image_url">Image URL</Label>
-                  <Input
-                    id="image_url"
-                    name="image_url"
-                    type="url"
-                    defaultValue={editingAd?.image_url || ''}
-                    placeholder="https://example.com/image.jpg"
-                  />
+                  <Label htmlFor="image_url">Ad Image</Label>
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <Button 
+                        type="button"
+                        variant={useUrlInput ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setUseUrlInput(true)}
+                      >
+                        <Link className="h-4 w-4 mr-1" />
+                        URL
+                      </Button>
+                      <Button 
+                        type="button"
+                        variant={!useUrlInput ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setUseUrlInput(false)}
+                      >
+                        <Upload className="h-4 w-4 mr-1" />
+                        Upload
+                      </Button>
+                    </div>
+                    
+                    {useUrlInput ? (
+                      <Input
+                        id="image_url"
+                        name="image_url"
+                        type="url"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    ) : (
+                      <div>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              await handleMediaUpload(file);
+                            }
+                          }}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={isUploading}
+                          className="w-full"
+                        >
+                          {isUploading ? 'Uploading...' : 'Choose Image File'}
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {imageUrl && (
+                      <div className="mt-2">
+                        <img 
+                          src={imageUrl} 
+                          alt="Preview" 
+                          className="w-full h-32 object-cover rounded border"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="click_url">Click URL</Label>
@@ -294,6 +370,8 @@ const AdsTab = () => {
                   onClick={() => {
                     setShowForm(false);
                     setEditingAd(null);
+                    setImageUrl('');
+                    setUseUrlInput(true);
                   }}
                 >
                   Cancel
