@@ -19,6 +19,7 @@ import UsersTab from './admin/UsersTab';
 import ChatMessagesTab from './admin/ChatMessagesTab';
 import SiteCustomizationTab from './admin/SiteCustomizationTab';
 import PodcastsTab from './admin/PodcastsTab';
+import AdsTab from './admin/AdsTab';
 
 const AdminDashboard = () => {
   // Get settings context
@@ -92,6 +93,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="pages" className="data-[state=active]:text-radio-accent">Pages</TabsTrigger>
               <TabsTrigger value="announcements" className="data-[state=active]:text-radio-accent">Announcements</TabsTrigger>
               <TabsTrigger value="banners" className="data-[state=active]:text-radio-accent">Banners</TabsTrigger>
+              <TabsTrigger value="ads" className="data-[state=active]:text-radio-accent">Ads</TabsTrigger>
               <TabsTrigger value="chat" className="data-[state=active]:text-radio-accent">Chat</TabsTrigger>
               <TabsTrigger value="settings" className="data-[state=active]:text-radio-accent">Settings</TabsTrigger>
             </TabsList>
@@ -142,6 +144,10 @@ const AdminDashboard = () => {
               
               <TabsContent value="banners">
                 <BannersTab />
+              </TabsContent>
+              
+              <TabsContent value="ads">
+                <AdsTab />
               </TabsContent>
               
               <TabsContent value="chat">
