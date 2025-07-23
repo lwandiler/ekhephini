@@ -15,6 +15,7 @@ const ShowsTab = () => {
   const [shows, setShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [editingShow, setEditingShow] = useState<Show | null>(null);
   
   useEffect(() => {
     loadShows();
@@ -55,22 +56,40 @@ const ShowsTab = () => {
     };
 
     try {
-      const { error } = await supabase
-        .from('shows')
-        .insert([showData]);
+      if (editingShow) {
+        // Update existing show
+        const { error } = await supabase
+          .from('shows')
+          .update(showData)
+          .eq('id', editingShow.id);
 
-      if (error) throw error;
+        if (error) throw error;
+        toast.success('Show updated successfully!');
+      } else {
+        // Create new show
+        const { error } = await supabase
+          .from('shows')
+          .insert([showData]);
 
-      toast.success('Show created successfully!');
+        if (error) throw error;
+        toast.success('Show created successfully!');
+      }
+
       setShowForm(false);
+      setEditingShow(null);
       loadShows(); // Reload the shows list
       (e.target as HTMLFormElement).reset();
     } catch (error) {
-      console.error('Error creating show:', error);
-      toast.error('Failed to create show');
+      console.error('Error saving show:', error);
+      toast.error('Failed to save show');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleEdit = (show: Show) => {
+    setEditingShow(show);
+    setShowForm(true);
   };
 
   const handleDelete = async (id: string) => {
@@ -109,7 +128,12 @@ const ShowsTab = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Manage Shows</h2>
         <Button 
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setShowForm(!showForm);
+            if (showForm) {
+              setEditingShow(null);
+            }
+          }}
           className="bg-radio-accent hover:bg-radio-accent/80"
         >
           {showForm ? "Cancel" : "Add New Show"}
@@ -119,26 +143,26 @@ const ShowsTab = () => {
       {showForm ? (
         <Card>
           <CardHeader>
-            <CardTitle>Add New Show</CardTitle>
-            <CardDescription>Create a new show for your radio station.</CardDescription>
+            <CardTitle>{editingShow ? 'Edit Show' : 'Add New Show'}</CardTitle>
+            <CardDescription>{editingShow ? 'Update the show details.' : 'Create a new show for your radio station.'}</CardDescription>
           </CardHeader>
           <form onSubmit={handleFormSubmit}>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="show-title">Show Title</Label>
-                  <Input id="show-title" name="show-title" placeholder="Enter show title" required />
+                  <Input id="show-title" name="show-title" placeholder="Enter show title" defaultValue={editingShow?.title || ''} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="show-host">Host</Label>
-                  <Input id="show-host" name="show-host" placeholder="Enter host name" required />
+                  <Input id="show-host" name="show-host" placeholder="Enter host name" defaultValue={editingShow?.host || ''} required />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="show-day">Day</Label>
-                  <select id="show-day" name="show-day" className="w-full border border-gray-300 rounded-md h-10 px-3" required>
+                  <select id="show-day" name="show-day" className="w-full border border-gray-300 rounded-md h-10 px-3" defaultValue={editingShow?.day_of_week || ''} required>
                     <option value="">Select day</option>
                     <option value="Monday">Monday</option>
                     <option value="Tuesday">Tuesday</option>
@@ -154,24 +178,27 @@ const ShowsTab = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="show-start-time">Start Time</Label>
-                  <Input id="show-start-time" name="show-start-time" type="time" required />
+                  <Input id="show-start-time" name="show-start-time" type="time" defaultValue={editingShow?.start_time || ''} required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="show-end-time">End Time</Label>
-                  <Input id="show-end-time" name="show-end-time" type="time" required />
+                  <Input id="show-end-time" name="show-end-time" type="time" defaultValue={editingShow?.end_time || ''} required />
                 </div>
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="show-description">Description</Label>
-                <Textarea id="show-description" name="show-description" placeholder="Enter show description" rows={4} />
+                <Textarea id="show-description" name="show-description" placeholder="Enter show description" defaultValue={editingShow?.description || ''} rows={4} />
               </div>
             </CardContent>
             
             <CardFooter className="flex justify-end space-x-2">
-              <Button variant="outline" type="button" onClick={() => setShowForm(false)}>Cancel</Button>
+              <Button variant="outline" type="button" onClick={() => {
+                setShowForm(false);
+                setEditingShow(null);
+              }}>Cancel</Button>
               <Button type="submit" disabled={submitting} className="bg-radio-accent hover:bg-radio-accent/80">
-                {submitting ? 'Saving...' : 'Save Show'}
+                {submitting ? 'Saving...' : (editingShow ? 'Update Show' : 'Save Show')}
               </Button>
             </CardFooter>
           </form>
@@ -207,7 +234,14 @@ const ShowsTab = () => {
                     <td className="py-3 px-4">{show.day_of_week}</td>
                     <td className="py-3 px-4">{formatTimeRange(show.start_time, show.end_time)}</td>
                     <td className="py-3 px-4 text-right">
-                      <Button variant="ghost" size="sm" className="text-radio-blue mr-2">Edit</Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-radio-blue mr-2"
+                        onClick={() => handleEdit(show)}
+                      >
+                        Edit
+                      </Button>
                       <Button 
                         variant="ghost" 
                         size="sm" 
