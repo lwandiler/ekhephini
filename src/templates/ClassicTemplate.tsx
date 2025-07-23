@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 import ShowSchedule from '@/components/ShowSchedule';
 import ShowCard from '@/components/ShowCard';
 import NewsList from '@/components/NewsList';
@@ -127,8 +128,8 @@ const ClassicTemplate = ({
               </div>
             )}
             <div className="text-center mt-8">
-              <Button variant="outline" className="text-purple-300 border-purple-400 hover:bg-purple-800 hover:text-white">
-                View All Podcasts
+              <Button variant="outline" className="text-purple-300 border-purple-400 hover:bg-purple-800 hover:text-white" asChild>
+                <Link to="/podcasts">View All Podcasts</Link>
               </Button>
             </div>
           </div>

@@ -1,4 +1,5 @@
 
+import { Link } from 'react-router-dom';
 import ShowCard from '@/components/ShowCard';
 import ShowSchedule from '@/components/ShowSchedule';
 import NewsList from '@/components/NewsList';
@@ -8,7 +9,6 @@ import NowLive from '@/components/NowLive';
 import UpcomingShows from '@/components/UpcomingShows';
 import { Button } from '@/components/ui/button';
 import { Play, Radio, Music, Headphones, Calendar, Mail } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 interface ModernTemplateProps {
   featuredShows: any[];
@@ -126,8 +126,8 @@ const ModernTemplate = ({
                 <span className="text-green-600 font-semibold tracking-wider uppercase text-sm">What's Playing</span>
                 <h2 className="text-4xl font-bold mt-2 text-gray-900">Featured Shows</h2>
               </div>
-              <Button variant="link" className="text-green-600 hover:text-green-700 mt-4 md:mt-0">
-                View All Shows →
+              <Button variant="link" className="text-green-600 hover:text-green-700 mt-4 md:mt-0" asChild>
+                <Link to="/shows">View All Shows →</Link>
               </Button>
             </div>
             
@@ -163,8 +163,8 @@ const ModernTemplate = ({
               <div>
                 <div className="flex items-center justify-between mb-8">
                   <h2 className="text-3xl font-bold text-white">Latest News</h2>
-                  <Button variant="link" className="text-purple-400 hover:text-purple-300">
-                    More News →
+                  <Button variant="link" className="text-purple-400 hover:text-purple-300" asChild>
+                    <Link to="/news">More News →</Link>
                   </Button>
                 </div>
                 <NewsList news={featuredNews} compact />
@@ -173,8 +173,8 @@ const ModernTemplate = ({
               <div>
                 <div className="flex items-center justify-between mb-8">
                   <h2 className="text-3xl font-bold text-white">Recent Podcasts</h2>
-                  <Button variant="link" className="text-purple-400 hover:text-purple-300">
-                    More Episodes →
+                  <Button variant="link" className="text-purple-400 hover:text-purple-300" asChild>
+                    <Link to="/podcasts">More Episodes →</Link>
                   </Button>
                 </div>
                 <div className="space-y-4">
