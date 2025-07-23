@@ -178,9 +178,9 @@ export const MediaPickerModal = ({
 
         <Tabs defaultValue="library" className="flex-1 flex flex-col overflow-hidden bg-white">
           <TabsList className="grid w-full grid-cols-3 bg-gray-100 text-black">
-            <TabsTrigger value="library" className="data-[state=active]:bg-green-500 data-[state=active]:text-white text-black">Media Library</TabsTrigger>
-            <TabsTrigger value="upload" className="data-[state=active]:bg-green-500 data-[state=active]:text-white text-black">Upload New</TabsTrigger>
-            <TabsTrigger value="url" className="data-[state=active]:bg-green-500 data-[state=active]:text-white text-black">URL</TabsTrigger>
+            <TabsTrigger value="library" className="data-[state=active]:bg-green-700 data-[state=active]:text-white text-black hover:bg-green-100">Media Library</TabsTrigger>
+            <TabsTrigger value="upload" className="data-[state=active]:bg-green-700 data-[state=active]:text-white text-black hover:bg-green-100">Upload New</TabsTrigger>
+            <TabsTrigger value="url" className="data-[state=active]:bg-green-700 data-[state=active]:text-white text-black hover:bg-green-100">URL</TabsTrigger>
           </TabsList>
 
           <TabsContent value="library" className="flex-1 flex flex-col overflow-hidden mt-4 bg-white text-black">
