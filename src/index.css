@@ -4,6 +4,51 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 142 71% 45%;
+    --radius: 0.5rem;
+  }
+  
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 142 71% 45%;
+  }
+
   * {
     @apply border-border;
   }
@@ -51,138 +96,91 @@
   }
 }
 
-/* Global button styling - Green background with white text */
+/* Admin Dashboard Form Styling - Green, White, and Black Theme */
 @layer components {
-  button {
+  /* Card components for admin forms */
+  .admin-card {
+    @apply bg-white border border-gray-200 shadow-sm rounded-lg;
+  }
+  
+  .admin-card-header {
+    @apply border-b border-gray-200 bg-gray-50 px-6 py-4;
+  }
+  
+  .admin-card-title {
+    @apply text-lg font-semibold text-gray-900;
+  }
+  
+  .admin-card-description {
+    @apply text-sm text-gray-600 mt-1;
+  }
+  
+  .admin-card-content {
+    @apply px-6 py-4;
+  }
+  
+  .admin-card-footer {
+    @apply border-t border-gray-200 bg-gray-50 px-6 py-4;
+  }
+  
+  /* Form buttons - Green primary theme */
+  .admin-btn-primary {
+    @apply bg-green-600 text-white hover:bg-green-700 border border-green-600 hover:border-green-700 px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .admin-btn-secondary {
+    @apply bg-white text-gray-700 hover:bg-gray-50 border border-gray-300 hover:border-gray-400 px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .admin-btn-destructive {
+    @apply bg-red-600 text-white hover:bg-red-700 border border-red-600 hover:border-red-700 px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  /* Form inputs */
+  .admin-input {
+    @apply bg-white border border-gray-300 rounded-md px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:ring-1 focus:ring-green-500;
+  }
+  
+  .admin-textarea {
+    @apply bg-white border border-gray-300 rounded-md px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-green-500 focus:ring-1 focus:ring-green-500;
+  }
+  
+  .admin-select {
+    @apply bg-white border border-gray-300 rounded-md px-3 py-2 text-gray-900 focus:border-green-500 focus:ring-1 focus:ring-green-500;
+  }
+  
+  /* Table styling for admin */
+  .admin-table {
+    @apply bg-white shadow-sm rounded-lg overflow-hidden;
+  }
+  
+  .admin-table-header {
+    @apply bg-gray-50 border-b border-gray-200;
+  }
+  
+  .admin-table-row {
+    @apply border-b border-gray-200 hover:bg-gray-50;
+  }
+  
+  /* Override default button styling for admin forms */
+  .admin-form button {
+    @apply bg-green-600 text-white hover:bg-green-700 border border-green-600 hover:border-green-700 !important;
+  }
+  
+  .admin-form button.secondary {
+    @apply bg-white text-gray-700 hover:bg-gray-50 border border-gray-300 hover:border-gray-400 !important;
+  }
+  
+  .admin-form button.destructive {
+    @apply bg-red-600 text-white hover:bg-red-700 border border-red-600 hover:border-red-700 !important;
+  }
+  
+  /* Global button styling - Green background with white text */
+  button:not(.admin-form button) {
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
   
   /* Ensure all button text and child elements are white */
-  button * {
+  button:not(.admin-form button) * {
     @apply text-white !important;
   }
-  
-  /* Specific Listen Button targeting with green gradient */
-  button:has-text("Listen"), 
-  [data-testid*="listen"], 
-  .listen-button,
-  button[class*="listen"],
-  button:contains("Listen") {
-    background: linear-gradient(to right, #16a34a, #15803d) !important;
-    color: white !important;
-    border: none !important;
-  }
-  
-  button:has-text("Listen") *,
-  [data-testid*="listen"] *,
-  .listen-button *,
-  button[class*="listen"] *,
-  button:contains("Listen") * {
-    color: white !important;
-  }
-  
-  /* Listen button hover state */
-  button:has-text("Listen"):hover,
-  [data-testid*="listen"]:hover,
-  .listen-button:hover,
-  button[class*="listen"]:hover,
-  button:contains("Listen"):hover {
-    background: linear-gradient(to right, #15803d, #166534) !important;
-    color: white !important;
-  }
-  
-  /* Badge/tag styling - Green background with white text */
-  .badge, [class*="badge"] {
-    @apply bg-green-600 text-white !important;
-  }
-  
-  /* Override any specific button variants */
-  .btn, [class*="btn"] {
-    @apply bg-green-600 text-white hover:bg-green-700 !important;
-  }
-  
-  .btn *, [class*="btn"] * {
-    @apply text-white !important;
-  }
-  
-  /* Ensure buttons in specific components use green */
-  .ui-button, [role="button"] {
-    @apply bg-green-600 text-white hover:bg-green-700 !important;
-  }
-  
-  .ui-button *, [role="button"] * {
-    @apply text-white !important;
-  }
-  
-  /* Form buttons */
-  input[type="submit"], input[type="button"] {
-    @apply bg-green-600 text-white hover:bg-green-700 !important;
-  }
-  
-  /* Change all purple borders to green */
-  .border-purple-500, .border-purple-600, .border-purple-700 {
-    @apply border-green-600 !important;
-  }
-  
-  /* Change all purple text to green */
-  .text-purple-500, .text-purple-600, .text-purple-700 {
-    @apply text-green-600 !important;
-  }
-  
-  /* Change all purple backgrounds to green with white text */
-  .bg-purple-500, .bg-purple-600, .bg-purple-700, .bg-purple-800, .bg-purple-900 {
-    @apply bg-green-600 text-white !important;
-  }
-  
-  .bg-purple-500 *, .bg-purple-600 *, .bg-purple-700 *, .bg-purple-800 *, .bg-purple-900 * {
-    @apply text-white !important;
-  }
-  
-  /* Change purple hover states to green */
-  .hover\:bg-purple-500:hover, .hover\:bg-purple-600:hover, .hover\:bg-purple-700:hover, .hover\:bg-purple-800:hover {
-    @apply bg-green-700 text-white !important;
-  }
-  
-  /* Ensure Listen button has green background with white text and icon */
-  .listen-button, [data-testid="listen-button"] {
-    background: linear-gradient(to right, #16a34a, #15803d) !important;
-    color: white !important;
-    border: none !important;
-  }
-  
-  .listen-button:hover, [data-testid="listen-button"]:hover {
-    background: linear-gradient(to right, #15803d, #166534) !important;
-    color: white !important;
-  }
-  
-  .listen-button *, [data-testid="listen-button"] * {
-    @apply text-white !important;
-  }
-  
-  .listen-button svg, [data-testid="listen-button"] svg {
-    @apply text-white !important;
-  }
-  
-  /* Ensure any button with green background classes has white text */
-  .bg-green-500, .bg-green-600, .bg-green-700, .bg-green-800 {
-    @apply text-white !important;
-  }
-  
-  .bg-green-500 *, .bg-green-600 *, .bg-green-700 *, .bg-green-800 * {
-    @apply text-white !important;
-  }
-  
-  /* Target buttons with "Listen" text content more specifically */
-  button[class*="gradient"]:has-text("Listen"),
-  button[style*="gradient"]:has-text("Listen") {
-    background: linear-gradient(to right, #16a34a, #15803d) !important;
-    color: white !important;
-  }
-  
-  /* Override any inline styles on Listen buttons */
-  button[style*="purple"]:has-text("Listen"),
-  button[style*="blue"]:has-text("Listen") {
-    background: linear-gradient(to right, #16a34a, #15803d) !important;
-    color: white !important;
-  }
-}
