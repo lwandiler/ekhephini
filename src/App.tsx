@@ -18,6 +18,7 @@ import Charts from '@/pages/Charts';
 import Announcements from '@/pages/Announcements';
 import Admin from '@/pages/Admin';
 import Auth from '@/pages/Auth';
+import DynamicPage from '@/pages/DynamicPage';
 import NotFound from '@/pages/NotFound';
 
 import './App.css';
@@ -44,6 +45,7 @@ function App() {
                     <Route path="/announcements" element={<Announcements />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/page/:slug" element={<DynamicPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </div>

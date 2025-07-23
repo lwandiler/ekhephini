@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +16,7 @@ import 'react-quill/dist/quill.snow.css';
 import { ImageEditor } from './ImageEditor';
 
 const PagesTab = () => {
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState<boolean>(false);
   const [pages, setPages] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,6 +133,11 @@ const PagesTab = () => {
       featured_image: page.featured_image || ''
     });
     setShowForm(true);
+  };
+
+  const handleVisualEdit = (page: Page) => {
+    // Navigate to the page with admin mode enabled
+    navigate(`/page/${page.slug}?edit=true`);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -487,22 +494,34 @@ const PagesTab = () => {
                       {page.published_at ? formatDate(page.published_at) : formatDate(page.created_at!)}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-radio-blue mr-2"
-                        onClick={() => handleEdit(page)}
-                      >
-                        Edit
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-red-500"
-                        onClick={() => handleDelete(page.id)}
-                      >
-                        Delete
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-blue-500 hover:text-blue-600"
+                          onClick={() => handleVisualEdit(page)}
+                          title="Visual Editor"
+                        >
+                          Visual Edit
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-radio-blue"
+                          onClick={() => handleEdit(page)}
+                          title="Form Editor"
+                        >
+                          Form Edit
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-red-500"
+                          onClick={() => handleDelete(page.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))

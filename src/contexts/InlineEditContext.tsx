@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { stationService } from '@/services/api/stationService';
@@ -28,6 +27,17 @@ export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
   
   // Check if user is admin
   const isAdmin = user && sessionStorage.getItem('radioAdminLoggedIn') === 'true';
+
+  // Auto-enable edit mode if URL contains edit=true parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('edit') === 'true' && isAdmin) {
+      setIsEditMode(true);
+      toast.success('Visual editing mode enabled', {
+        description: 'Click on elements to edit them directly'
+      });
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     // Load existing page content from station settings
