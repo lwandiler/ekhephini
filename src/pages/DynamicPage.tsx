@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
 import ChatBot from '@/components/ChatBot';
 import SocialChat from '@/components/SocialChat';
+import EditModeToggle from '@/components/EditModeToggle';
+import VisualEditingWrapper from '@/components/visual-editor/VisualEditingWrapper';
+import EditableText from '@/components/EditableText';
+import EditableImage from '@/components/EditableImage';
+import { InlineEditProvider } from '@/contexts/InlineEditContext';
 import { pagesService, Page } from '@/services/api/pagesService';
 import { useAuth } from '@/contexts/AuthContext';
 import { Toaster } from 'sonner';
@@ -12,6 +17,7 @@ import { Toaster } from 'sonner';
 const DynamicPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [page, setPage] = useState<Page | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -103,59 +109,72 @@ const DynamicPage = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen dark">
-      <Header />
-      
-      <main className="flex-1 bg-gray-900">
-        <div className="container mx-auto px-4 py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            {page.featured_image && (
-              <div className="mb-6">
-                <img
-                  src={page.featured_image}
-                  alt={page.title}
-                  className="w-full h-64 object-cover rounded-lg"
+    <InlineEditProvider>
+      <div className="flex flex-col min-h-screen dark">
+        <VisualEditingWrapper>
+          <Header />
+          
+          <main className="flex-1 bg-gray-900">
+            <div className="container mx-auto px-4 py-8">
+              {/* Page Header */}
+              <div className="mb-8">
+                {page.featured_image && (
+                  <div className="mb-6">
+                    <EditableImage
+                      contentKey={`page-${page.id}-featured-image`}
+                      defaultSrc={page.featured_image}
+                      alt={page.title}
+                      className="w-full h-64 object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+                
+                <EditableText
+                  contentKey={`page-${page.id}-title`}
+                  defaultValue={page.title}
+                  as="h1"
+                  className="text-4xl font-bold text-white mb-4"
+                />
+                
+                {page.excerpt && (
+                  <EditableText
+                    contentKey={`page-${page.id}-excerpt`}
+                    defaultValue={page.excerpt}
+                    as="p"
+                    className="text-xl text-gray-300 mb-6"
+                  />
+                )}
+              </div>
+
+              {/* Page Content */}
+              <div className="prose prose-invert max-w-none">
+                <div
+                  className="text-white"
+                  dangerouslySetInnerHTML={{ __html: page.content }}
                 />
               </div>
-            )}
-            
-            <h1 className="text-4xl font-bold text-white mb-4">
-              {page.title}
-            </h1>
-            
-            {page.excerpt && (
-              <p className="text-xl text-gray-300 mb-6">
-                {page.excerpt}
-              </p>
-            )}
-          </div>
 
-          {/* Page Content */}
-          <div className="prose prose-invert max-w-none">
-            <div
-              className="text-white"
-              dangerouslySetInnerHTML={{ __html: page.content }}
-            />
-          </div>
-
-          {/* Admin Status Indicator */}
-          {isAdmin && !page.published && (
-            <div className="mt-8 p-4 bg-yellow-900 border border-yellow-700 rounded-lg">
-              <p className="text-yellow-200">
-                <strong>Draft:</strong> This page is not published and is only visible to administrators.
-              </p>
+              {/* Admin Status Indicator */}
+              {isAdmin && !page.published && (
+                <div className="mt-8 p-4 bg-yellow-900 border border-yellow-700 rounded-lg">
+                  <p className="text-yellow-200">
+                    <strong>Draft:</strong> This page is not published and is only visible to administrators.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </main>
-      
-      <Footer />
-      <RadioPlayer />
-      <ChatBot />
-      <SocialChat />
-      <Toaster position="top-center" richColors />
-    </div>
+          </main>
+          
+          <Footer />
+        </VisualEditingWrapper>
+        
+        <RadioPlayer />
+        <ChatBot />
+        <SocialChat />
+        <EditModeToggle />
+        <Toaster position="top-center" richColors />
+      </div>
+    </InlineEditProvider>
   );
 };
 

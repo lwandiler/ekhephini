@@ -136,8 +136,8 @@ const PagesTab = () => {
   };
 
   const handleVisualEdit = (page: Page) => {
-    // Navigate to the page - visual editing will be added back once basic functionality works
-    navigate(`/page/${page.slug}`);
+    // Navigate to the page with edit mode enabled
+    navigate(`/page/${page.slug}?edit=true`);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
