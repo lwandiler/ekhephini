@@ -8,6 +8,7 @@ import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import NowLive from '@/components/NowLive';
 import UpcomingShows from '@/components/UpcomingShows';
 import { Button } from '@/components/ui/button';
+import { NewsletterForm } from '@/components/NewsletterForm';
 import { Play, Radio, Music, Headphones, Calendar, Mail } from 'lucide-react';
 
 interface ModernTemplateProps {
@@ -170,17 +171,7 @@ const ModernTemplate = ({
               <p className="text-xl text-white/80 mb-8">
                 Subscribe to our newsletter for exclusive content, special offers, and updates on your favorite shows and podcasts.
               </p>
-              <div className="flex flex-col sm:flex-row items-center gap-4 max-w-lg mx-auto">
-                <input 
-                  type="email" 
-                  placeholder="Your email address" 
-                  className="w-full px-6 py-4 rounded-full flex-1 bg-white/10 border border-green-400/30 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent"
-                />
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-full px-8 py-4">
-                  <Mail className="mr-2" />
-                  Subscribe
-                </Button>
-              </div>
+              <NewsletterForm variant="modern" />
             </div>
           </div>
         </section>

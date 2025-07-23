@@ -5,6 +5,7 @@ import RadioPlayer from '@/components/RadioPlayer';
 import ChatBot from '@/components/ChatBot';
 import NewsList from '@/components/NewsList';
 import AdBanner from '@/components/AdBanner';
+import { NewsletterForm } from '@/components/NewsletterForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { blogService, BlogPost } from '@/services/api/blogService';
 
@@ -118,16 +119,7 @@ const News = () => {
             <p className="text-gray-600 mb-6">
               Get the latest news, show updates, and exclusive content delivered directly to your inbox.
             </p>
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="px-4 py-2 border rounded-md flex-1"
-              />
-              <button className="bg-radio-accent hover:bg-radio-accent/80 text-white px-6 py-2 rounded-md font-medium">
-                Subscribe
-              </button>
-            </div>
+            <NewsletterForm variant="news" />
           </div>
         </section>
       </main>

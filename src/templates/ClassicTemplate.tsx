@@ -8,6 +8,7 @@ import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import EditableText from '@/components/EditableText';
 import EditableImage from '@/components/EditableImage';
 import { Button } from '@/components/ui/button';
+import { NewsletterForm } from '@/components/NewsletterForm';
 import { Radio } from 'lucide-react';
 
 interface ClassicTemplateProps {
@@ -164,16 +165,7 @@ const ClassicTemplate = ({
               defaultValue="Stay updated with our latest shows, events, and exclusive content by subscribing to our newsletter."
               className="text-xl text-purple-200 mb-6 max-w-2xl mx-auto"
             />
-            <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-2 max-w-md mx-auto">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="px-4 py-3 rounded-md flex-1 text-gray-800 bg-gray-100 border border-purple-400"
-              />
-              <Button className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white px-6 py-3 rounded-md font-medium">
-                Subscribe
-              </Button>
-            </div>
+            <NewsletterForm variant="classic" />
           </div>
         </section>
       </main>

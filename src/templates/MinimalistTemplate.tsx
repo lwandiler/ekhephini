@@ -4,6 +4,7 @@ import NewsList from '@/components/NewsList';
 import AdBanner from '@/components/AdBanner';
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import { Button } from '@/components/ui/button';
+import { NewsletterForm } from '@/components/NewsletterForm';
 import { Play, Radio, Headphones } from 'lucide-react';
 
 interface MinimalistTemplateProps {
@@ -147,17 +148,7 @@ const MinimalistTemplate = ({
               <p className="mb-8 text-gray-400">
                 Get weekly updates about new shows, podcasts, and special events directly to your inbox.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <input 
-                  type="email" 
-                  placeholder="Your email address" 
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 text-white placeholder-gray-500 rounded-none flex-1 focus:outline-none focus:ring-1 focus:ring-white"
-                />
-                <Button className="bg-white text-black hover:bg-gray-300 rounded-none px-8">
-                  <Headphones size={18} className="mr-2" />
-                  Subscribe
-                </Button>
-              </div>
+              <NewsletterForm variant="classic" />
             </div>
           </div>
         </section>
