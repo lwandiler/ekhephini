@@ -148,9 +148,11 @@ const DynamicPage = () => {
 
               {/* Page Content */}
               <div className="prose prose-invert max-w-none">
-                <div
+                <EditableText
+                  contentKey={`page-${page.id}-content`}
+                  defaultValue={page.content}
+                  as="div"
                   className="text-white"
-                  dangerouslySetInnerHTML={{ __html: page.content }}
                 />
               </div>
 
