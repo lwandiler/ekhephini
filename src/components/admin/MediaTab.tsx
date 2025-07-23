@@ -31,18 +31,49 @@ const MediaTab = () => {
   const loadMediaFiles = async () => {
     try {
       setLoading(true);
-      const { data: files, error } = await supabase
-        .storage
-        .from('media')
-        .list('', {
-          limit: 1000,
-          sortBy: { column: 'created_at', order: 'desc' }
-        });
+      console.log('MediaTab: Starting to load media files...');
+      
+      // First, try to list all files recursively
+      const listAllFiles = async (path = '', allFiles: any[] = []): Promise<any[]> => {
+        const { data: items, error } = await supabase
+          .storage
+          .from('media')
+          .list(path, {
+            limit: 1000
+          });
 
-      if (error) throw error;
+        if (error) {
+          console.error('MediaTab: Storage error for path', path, ':', error);
+          throw error;
+        }
+
+        console.log('MediaTab: Items found in path', path, ':', items);
+
+        for (const item of items || []) {
+          const fullPath = path ? `${path}/${item.name}` : item.name;
+          
+          if (item.metadata === null) {
+            // This is a folder, recursively list its contents
+            console.log('MediaTab: Found folder:', fullPath);
+            await listAllFiles(fullPath, allFiles);
+          } else {
+            // This is a file
+            console.log('MediaTab: Found file:', fullPath, item);
+            allFiles.push({
+              ...item,
+              name: fullPath // Use full path as name
+            });
+          }
+        }
+
+        return allFiles;
+      };
+
+      const files = await listAllFiles();
+      console.log('MediaTab: All files found:', files);
 
       // Get public URLs for all files
-      const filesWithUrls = files?.map(file => {
+      const filesWithUrls = files.map(file => {
         const { data: { publicUrl } } = supabase
           .storage
           .from('media')
@@ -52,7 +83,10 @@ const MediaTab = () => {
           ...file,
           publicUrl
         };
-      }) || [];
+      });
+
+      console.log('MediaTab: Files with URLs:', filesWithUrls);
+      console.log('MediaTab: Total files found:', filesWithUrls.length);
 
       setMediaFiles(filesWithUrls);
     } catch (error) {
