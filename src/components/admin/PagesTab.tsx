@@ -136,8 +136,8 @@ const PagesTab = () => {
   };
 
   const handleVisualEdit = (page: Page) => {
-    // Navigate to the page with admin mode enabled
-    navigate(`/page/${page.slug}?edit=true`);
+    // Navigate to the page - visual editing will be added back once basic functionality works
+    navigate(`/page/${page.slug}`);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
