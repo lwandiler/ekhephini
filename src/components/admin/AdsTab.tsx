@@ -11,7 +11,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
-import { Trash2, Edit, Plus, Upload, Link } from 'lucide-react';
+import { MediaPickerModal } from './MediaPickerModal';
+import { Trash2, Edit, Plus, Upload, Link, Image } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 
 type Ad = Tables<'ads'>;
@@ -23,7 +24,7 @@ const AdsTab = () => {
   const [editingAd, setEditingAd] = useState<Ad | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
-  const [useUrlInput, setUseUrlInput] = useState(true);
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { isUploading, handleMediaUpload } = useMediaUpload({
@@ -121,7 +122,7 @@ const AdsTab = () => {
       setShowForm(false);
       setEditingAd(null);
       setImageUrl('');
-      setUseUrlInput(true);
+      setShowMediaPicker(false);
       loadAds();
       (e.target as HTMLFormElement).reset();
     } catch (error) {
@@ -214,7 +215,7 @@ const AdsTab = () => {
             setShowForm(!showForm);
             setEditingAd(null);
             setImageUrl('');
-            setUseUrlInput(true);
+            setShowMediaPicker(false);
           }}
           className="flex items-center gap-2"
         >
@@ -291,61 +292,15 @@ const AdsTab = () => {
                 <div>
                   <Label htmlFor="image_url">Ad Image</Label>
                   <div className="space-y-3">
-                    <div className="flex gap-2">
-                      <Button 
-                        type="button"
-                        variant={useUrlInput ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setUseUrlInput(true)}
-                      >
-                        <Link className="h-4 w-4 mr-1" />
-                        URL
-                      </Button>
-                      <Button 
-                        type="button"
-                        variant={!useUrlInput ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setUseUrlInput(false)}
-                      >
-                        <Upload className="h-4 w-4 mr-1" />
-                        Upload
-                      </Button>
-                    </div>
-                    
-                    {useUrlInput ? (
-                      <Input
-                        id="image_url"
-                        name="image_url"
-                        type="url"
-                        value={imageUrl}
-                        onChange={(e) => setImageUrl(e.target.value)}
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    ) : (
-                      <div>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              await handleMediaUpload(file);
-                            }
-                          }}
-                          className="hidden"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={isUploading}
-                          className="w-full"
-                        >
-                          {isUploading ? 'Uploading...' : 'Choose Image File'}
-                        </Button>
-                      </div>
-                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowMediaPicker(true)}
+                      className="w-full"
+                    >
+                      <Image className="h-4 w-4 mr-2" />
+                      {imageUrl ? 'Change Image' : 'Select Image'}
+                    </Button>
                     
                     {imageUrl && (
                       <div className="mt-2">
@@ -354,6 +309,15 @@ const AdsTab = () => {
                           alt="Preview" 
                           className="w-full h-32 object-cover rounded border"
                         />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setImageUrl('')}
+                          className="mt-1"
+                        >
+                          Remove Image
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -430,7 +394,7 @@ const AdsTab = () => {
                     setShowForm(false);
                     setEditingAd(null);
                     setImageUrl('');
-                    setUseUrlInput(true);
+                    setShowMediaPicker(false);
                   }}
                 >
                   Cancel
@@ -515,6 +479,14 @@ const AdsTab = () => {
           )}
         </CardContent>
       </Card>
+
+      <MediaPickerModal
+        open={showMediaPicker}
+        onOpenChange={setShowMediaPicker}
+        onSelect={(url) => setImageUrl(url)}
+        mediaType="image"
+        title="Select Ad Image"
+      />
     </div>
   );
 };
