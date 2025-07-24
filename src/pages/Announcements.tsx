@@ -136,19 +136,6 @@ const Announcements = () => {
             )}
           </div>
         </section>
-        
-        {/* Submit Announcement */}
-        <section className="py-12 bg-gray-50">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <h2 className="text-2xl font-bold text-radio-blue mb-4">Have an Announcement?</h2>
-            <p className="text-gray-600 mb-6">
-              If you're a community organization or local business with news to share, submit your announcement for consideration.
-            </p>
-            <button className="bg-radio-blue hover:bg-radio-light-blue text-white px-6 py-3 rounded-md font-medium">
-              Submit an Announcement
-            </button>
-          </div>
-        </section>
       </main>
       
       <Footer />
