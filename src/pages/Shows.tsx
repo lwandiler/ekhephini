@@ -81,23 +81,8 @@ const Shows = () => {
             <p className="text-xl max-w-2xl mx-auto">
               Discover our lineup of shows and hosts, bringing you the best in music, talk, and entertainment.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
-              <Button 
-                variant="default" 
-                size="lg" 
-                className="bg-white text-green-800 hover:bg-gray-100 font-medium"
-              >
-                <span className="block">Explore Shows</span>
-              </Button>
-              <ThemeToggle variant="full" />
-            </div>
           </div>
         </section>
-        
-        {/* Theme Toggle in Floating Button */}
-        <div className="fixed top-4 right-4 z-50">
-          <ThemeToggle />
-        </div>
         
         {/* Ad Banner */}
         <AdBanner position="top" />
