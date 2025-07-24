@@ -22,7 +22,6 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
     phone: '',
     website_url: '',
     ad_type: '',
-    budget_range: '',
     preferred_duration: '',
     message: ''
   });
@@ -59,7 +58,6 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
         phone: '',
         website_url: '',
         ad_type: '',
-        budget_range: '',
         preferred_duration: '',
         message: ''
       });
@@ -155,39 +153,20 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="ad_type">Ad Type *</Label>
-              <select
-                id="ad_type"
-                name="ad_type"
-                value={formData.ad_type}
-                onChange={handleInputChange}
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:cursor-not-allowed disabled:opacity-50"
-                required
-              >
-                <option value="">Select ad type</option>
-                <option value="banner">Banner</option>
-                <option value="audio">Audio Spot</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="budget_range">Budget Range</Label>
-              <select
-                id="budget_range"
-                name="budget_range"
-                value={formData.budget_range}
-                onChange={handleInputChange}
-                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="">Select budget range</option>
-                <option value="under-500">Under $500</option>
-                <option value="500-1000">$500 - $1,000</option>
-                <option value="1000-2500">$1,000 - $2,500</option>
-                <option value="2500-5000">$2,500 - $5,000</option>
-                <option value="over-5000">Over $5,000</option>
-              </select>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="ad_type">Ad Type *</Label>
+            <select
+              id="ad_type"
+              name="ad_type"
+              value={formData.ad_type}
+              onChange={handleInputChange}
+              className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:cursor-not-allowed disabled:opacity-50"
+              required
+            >
+              <option value="">Select ad type</option>
+              <option value="banner">Banner</option>
+              <option value="audio">Audio Spot</option>
+            </select>
           </div>
 
           <div className="space-y-2">
