@@ -5,13 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 interface AdRequestModalProps {
   children: React.ReactNode;
 }
 
 const AdRequestModal = ({ children }: AdRequestModalProps) => {
+  const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,7 +37,6 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log('Submitting ad request...');
 
     try {
       const { error } = await supabase
@@ -45,9 +45,9 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
 
       if (error) throw error;
 
-      console.log('Ad request submitted successfully');
-      toast.success("Success!", {
-        description: "Your ad request has been submitted. We'll get back to you soon!"
+      toast({
+        title: "Success!",
+        description: "Your ad request has been submitted. We'll get back to you soon!",
       });
 
       // Reset form and close modal
@@ -64,8 +64,10 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
       setIsOpen(false);
     } catch (error) {
       console.error('Error submitting ad request:', error);
-      toast.error("Error", {
-        description: "Failed to submit ad request. Please try again."
+      toast({
+        title: "Error",
+        description: "Failed to submit ad request. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
