@@ -23,6 +23,7 @@ import AdsTab from './admin/AdsTab';
 import AdRequestsTab from './admin/AdRequestsTab';
 import MediaTab from './admin/MediaTab';
 import { NewsletterTab } from './admin/NewsletterTab';
+import SocialMediaApiTab from './admin/SocialMediaApiTab';
 
 const AdminDashboard = () => {
   // Get settings context
@@ -99,6 +100,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="ads" className="data-[state=active]:text-radio-accent">Ads</TabsTrigger>
               <TabsTrigger value="ad-requests" className="data-[state=active]:text-radio-accent">Ad Requests</TabsTrigger>
               <TabsTrigger value="media" className="data-[state=active]:text-radio-accent">Media</TabsTrigger>
+              <TabsTrigger value="social-api" className="data-[state=active]:text-radio-accent">Social Media API</TabsTrigger>
               <TabsTrigger value="newsletter" className="data-[state=active]:text-radio-accent">Newsletter</TabsTrigger>
               
               <TabsTrigger value="settings" className="data-[state=active]:text-radio-accent">Settings</TabsTrigger>
@@ -162,6 +164,10 @@ const AdminDashboard = () => {
               
               <TabsContent value="media">
                 <MediaTab />
+              </TabsContent>
+              
+              <TabsContent value="social-api">
+                <SocialMediaApiTab />
               </TabsContent>
               
               <TabsContent value="newsletter">
