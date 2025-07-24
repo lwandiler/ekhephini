@@ -167,9 +167,7 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
                 required
               >
                 <option value="">Select ad type</option>
-                <option value="banner">Banner Ad</option>
-                <option value="sidebar">Sidebar Ad</option>
-                <option value="sponsored">Sponsored Content</option>
+                <option value="banner">Banner</option>
                 <option value="audio">Audio Spot</option>
               </select>
             </div>
