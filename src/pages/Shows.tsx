@@ -95,33 +95,6 @@ const Shows = () => {
           </div>
         </section>
         
-        
-        {/* DJ Spotlight */}
-        <section className="py-12 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="md:w-1/3">
-                <img 
-                  src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                  alt="Sarah Johnson"
-                  className="rounded-lg shadow-lg w-full"
-                />
-              </div>
-              <div className="md:w-2/3">
-                <h2 className="text-3xl font-bold mb-4 text-green-800">DJ Spotlight</h2>
-                <h3 className="text-2xl font-semibold mb-2 text-black">Sarah Johnson</h3>
-                <p className="text-lg mb-4 text-green-600">Host of "Morning Brew"</p>
-                <p className="mb-6 text-gray-700">
-                  Sarah Johnson has been a beloved voice on Radio Wave Hub for over 5 years. With her energetic personality and exceptional music taste, she helps thousands of listeners start their day on the right note with her popular morning show.
-                </p>
-                <p className="text-gray-700">
-                  When she's not in the studio, Sarah enjoys hiking, photography, and discovering new indie artists to feature on her show. Her infectious laugh and genuine conversations with guests have made "Morning Brew" the most listened-to morning show in the region.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-        
         {/* Side by side ads */}
         <section className="py-6 bg-gray-50">
           <div className="container mx-auto px-4">
