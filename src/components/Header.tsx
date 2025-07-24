@@ -2,7 +2,7 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Radio, User, LogOut, BarChart3 } from 'lucide-react';
+import { Menu, X, Radio, User, LogOut, BarChart3, Clock } from 'lucide-react';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -43,6 +43,10 @@ const Header = () => {
             <Link to="/" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Home</Link>
             <Link to="/shows" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Shows</Link>
             <Link to="/podcasts" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Podcasts</Link>
+            <Link to="/catchup" className="text-gray-700 font-medium hover:text-green-600 transition-colors flex items-center">
+              <Clock size={18} className="mr-1" />
+              Catch Up
+            </Link>
             <Link to="/announcements" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Announcements</Link>
             <Link to="/news" className="text-gray-700 font-medium hover:text-green-600 transition-colors">News</Link>
             <Link to="/charts" className="text-gray-700 font-medium hover:text-green-600 transition-colors flex items-center">
@@ -133,6 +137,10 @@ const Header = () => {
             <Link to="/" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Home</Link>
             <Link to="/shows" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Shows</Link>
             <Link to="/podcasts" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Podcasts</Link>
+            <Link to="/catchup" className="text-gray-700 font-medium hover:text-green-600 transition-colors flex items-center" onClick={toggleMenu}>
+              <Clock size={18} className="mr-1" />
+              Catch Up
+            </Link>
             <Link to="/announcements" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Announcements</Link>
             <Link to="/news" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>News</Link>
             <Link to="/charts" className="text-gray-700 font-medium hover:text-green-600 transition-colors flex items-center" onClick={toggleMenu}>

@@ -19,6 +19,7 @@ import Announcements from '@/pages/Announcements';
 import Admin from '@/pages/Admin';
 import Auth from '@/pages/Auth';
 import NotFound from '@/pages/NotFound';
+import { CatchUp } from '@/pages/CatchUp';
 
 import './App.css';
 
@@ -38,6 +39,7 @@ function App() {
                     <Route path="/" element={<Index />} />
                     <Route path="/shows" element={<Shows />} />
                     <Route path="/podcasts" element={<Podcasts />} />
+                    <Route path="/catchup" element={<CatchUp />} />
                     <Route path="/news" element={<News />} />
                     <Route path="/news/:id" element={<BlogPost />} />
                     <Route path="/charts" element={<Charts />} />

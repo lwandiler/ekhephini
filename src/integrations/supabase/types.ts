@@ -605,6 +605,53 @@ export type Database = {
         }
         Relationships: []
       }
+      recorded_shows: {
+        Row: {
+          audio_url: string
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          expires_at: string
+          file_size_bytes: number | null
+          id: string
+          recorded_at: string
+          show_id: string | null
+          title: string
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          expires_at?: string
+          file_size_bytes?: number | null
+          id?: string
+          recorded_at?: string
+          show_id?: string | null
+          title: string
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          expires_at?: string
+          file_size_bytes?: number | null
+          id?: string
+          recorded_at?: string
+          show_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recorded_shows_show_id_fkey"
+            columns: ["show_id"]
+            isOneToOne: false
+            referencedRelation: "shows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shows: {
         Row: {
           active: boolean | null
@@ -691,7 +738,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_expired_recordings: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
