@@ -44,46 +44,53 @@ const SocialFeedsSection = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Check which social media platforms have been configured
-    const platforms = [];
-    if (settings.socialLinks.facebook && settings.socialLinks.facebook !== 'https://facebook.com/clickradio') {
-      platforms.push('facebook');
-    }
-    if (settings.socialLinks.twitter && settings.socialLinks.twitter !== 'https://twitter.com/clickradio') {
-      platforms.push('twitter');
-    }
-    if (settings.socialLinks.instagram && settings.socialLinks.instagram !== 'https://instagram.com/clickradio') {
-      platforms.push('instagram');
-    }
-    if (settings.socialLinks.youtube && settings.socialLinks.youtube !== 'https://youtube.com/clickradio') {
-      platforms.push('youtube');
-    }
-
-    setActivePlatforms(platforms);
-    
-    // Fetch real social media posts
-    if (platforms.length > 0) {
-      setLoading(true);
-      fetchSocialPosts(platforms).then((fetchedPosts) => {
-        setPosts(fetchedPosts);
+    // Check if API keys are configured by calling the edge function to test
+    const checkApiConfiguration = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('fetch-social-posts', {
+          body: { platforms: ['facebook', 'twitter', 'instagram', 'youtube'], check_config: true }
+        });
+        
+        if (error) {
+          console.error('Error checking API configuration:', error);
+          setActivePlatforms([]);
+          return;
+        }
+        
+        const configuredPlatforms = data?.configured_platforms || [];
+        setActivePlatforms(configuredPlatforms);
+        
+        // Fetch real social media posts if any platforms are configured
+        if (configuredPlatforms.length > 0) {
+          setLoading(true);
+          fetchSocialPosts(configuredPlatforms).then((fetchedPosts) => {
+            setPosts(fetchedPosts);
+            setLoading(false);
+          });
+        } else {
+          setPosts([]);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error checking configuration:', error);
+        setActivePlatforms([]);
         setLoading(false);
-      });
-    } else {
-      setPosts([]);
-      setLoading(false);
-    }
+      }
+    };
+    
+    checkApiConfiguration();
   }, [settings.socialLinks]);
 
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
       case 'facebook':
-        return <Facebook className="h-5 w-5 text-blue-600" />;
+        return <Facebook className="h-5 w-5 text-green-600" />;
       case 'twitter':
-        return <Twitter className="h-5 w-5 text-blue-400" />;
+        return <Twitter className="h-5 w-5 text-green-600" />;
       case 'instagram':
-        return <Instagram className="h-5 w-5 text-pink-500" />;
+        return <Instagram className="h-5 w-5 text-green-600" />;
       case 'youtube':
-        return <Youtube className="h-5 w-5 text-red-600" />;
+        return <Youtube className="h-5 w-5 text-green-600" />;
       default:
         return null;
     }
@@ -116,11 +123,11 @@ const SocialFeedsSection = () => {
   // Show loading state
   if (loading) {
     return (
-      <section className="py-12 bg-background">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <span className="ml-2 text-foreground">Loading social media posts...</span>
+            <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+            <span className="ml-2 text-black">Loading social media posts...</span>
           </div>
         </div>
       </section>
@@ -133,11 +140,11 @@ const SocialFeedsSection = () => {
     const platformPosts = posts.filter(post => post.platform === platform);
 
     return (
-      <section className="py-12 bg-background">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-3 mb-8">
             {getPlatformIcon(platform)}
-            <h2 className="text-3xl font-bold text-foreground">
+            <h2 className="text-3xl font-bold text-black">
               Our {formatPlatformName(platform)} Feed
             </h2>
           </div>
@@ -149,11 +156,11 @@ const SocialFeedsSection = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {getPlatformIcon(post.platform)}
-                      <span className="font-medium text-sm text-muted-foreground">
+                      <span className="font-medium text-sm text-gray-600">
                         {formatPlatformName(post.platform)}
                       </span>
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-gray-600">
                       {formatDate(post.date)}
                     </span>
                   </div>
@@ -166,9 +173,9 @@ const SocialFeedsSection = () => {
                       className="w-full h-48 object-cover rounded-md mb-4"
                     />
                   )}
-                  <p className="text-sm text-foreground mb-4">{post.content}</p>
+                  <p className="text-sm text-black mb-4">{post.content}</p>
                   
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center justify-between text-xs text-gray-600">
                     <div className="flex gap-4">
                       {post.likes && <span>👍 {post.likes}</span>}
                       {post.shares && <span>🔄 {post.shares}</span>}
@@ -193,9 +200,9 @@ const SocialFeedsSection = () => {
 
   // Multiple platforms - show tabs
   return (
-    <section className="py-12 bg-background">
+    <section className="py-12 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Our Social Feeds</h2>
+        <h2 className="text-3xl font-bold text-black mb-8 text-center">Our Social Feeds</h2>
         
         <Tabs defaultValue={activePlatforms[0]} className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
@@ -218,10 +225,10 @@ const SocialFeedsSection = () => {
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-medium text-sm">{post.author}</span>
+                            <User className="h-4 w-4 text-gray-600" />
+                            <span className="font-medium text-sm text-black">{post.author}</span>
                           </div>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-gray-600">
                             {formatDate(post.date)}
                           </span>
                         </div>
@@ -234,9 +241,9 @@ const SocialFeedsSection = () => {
                             className="w-full h-48 object-cover rounded-md mb-4"
                           />
                         )}
-                        <p className="text-sm text-foreground mb-4">{post.content}</p>
+                        <p className="text-sm text-black mb-4">{post.content}</p>
                         
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex items-center justify-between text-xs text-gray-600">
                           <div className="flex gap-4">
                             {post.likes && <span>👍 {post.likes}</span>}
                             {post.shares && <span>🔄 {post.shares}</span>}
@@ -257,7 +264,7 @@ const SocialFeedsSection = () => {
                 
                 {platformPosts.length === 0 && (
                   <div className="text-center py-8">
-                    <p className="text-muted-foreground">No posts available for {formatPlatformName(platform)}</p>
+                    <p className="text-gray-600">No posts available for {formatPlatformName(platform)}</p>
                   </div>
                 )}
               </TabsContent>

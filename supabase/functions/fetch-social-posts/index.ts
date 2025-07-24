@@ -147,9 +147,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { platforms } = await req.json()
-    
-    const allPosts: SocialPost[] = []
+    const { platforms, check_config } = await req.json()
     
     // Get API keys from environment
     const facebookToken = Deno.env.get('FACEBOOK_ACCESS_TOKEN')
@@ -160,6 +158,36 @@ Deno.serve(async (req) => {
     const instagramUserId = Deno.env.get('INSTAGRAM_USER_ID')
     const youtubeApiKey = Deno.env.get('YOUTUBE_API_KEY')
     const youtubeChannelId = Deno.env.get('YOUTUBE_CHANNEL_ID')
+    
+    // If check_config is true, just return which platforms are configured
+    if (check_config) {
+      const configuredPlatforms = []
+      
+      if (facebookToken && facebookPageId) {
+        configuredPlatforms.push('facebook')
+      }
+      if (twitterToken && twitterUsername) {
+        configuredPlatforms.push('twitter')
+      }
+      if (instagramToken && instagramUserId) {
+        configuredPlatforms.push('instagram')
+      }
+      if (youtubeApiKey && youtubeChannelId) {
+        configuredPlatforms.push('youtube')
+      }
+      
+      return new Response(
+        JSON.stringify({ configured_platforms: configuredPlatforms }),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json' 
+          } 
+        }
+      )
+    }
+    
+    const allPosts: SocialPost[] = []
     
     // Fetch posts from each platform if configured
     if (platforms.includes('facebook') && facebookToken && facebookPageId) {
