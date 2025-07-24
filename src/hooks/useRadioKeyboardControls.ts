@@ -10,13 +10,8 @@ export function useRadioKeyboardControls(
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Prevent default actions for these keys to avoid page scrolling, etc.
-      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') {
         e.preventDefault();
-      }
-
-      // Space bar toggles play/pause
-      if (e.code === 'Space') {
-        togglePlayPause();
       }
 
       // Arrow Up increases volume (by 5)
