@@ -37,6 +37,7 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    console.log('Submitting ad request...');
 
     try {
       const { error } = await supabase
@@ -45,6 +46,7 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
 
       if (error) throw error;
 
+      console.log('Ad request submitted successfully');
       toast({
         title: "Success!",
         description: "Your ad request has been submitted. We'll get back to you soon!",
