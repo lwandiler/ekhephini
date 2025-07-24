@@ -20,6 +20,7 @@ import ChatMessagesTab from './admin/ChatMessagesTab';
 import SiteCustomizationTab from './admin/SiteCustomizationTab';
 import PodcastsTab from './admin/PodcastsTab';
 import AdsTab from './admin/AdsTab';
+import AdRequestsTab from './admin/AdRequestsTab';
 import MediaTab from './admin/MediaTab';
 import { NewsletterTab } from './admin/NewsletterTab';
 
@@ -96,6 +97,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="announcements" className="data-[state=active]:text-radio-accent">Announcements</TabsTrigger>
               <TabsTrigger value="banners" className="data-[state=active]:text-radio-accent">Banners</TabsTrigger>
               <TabsTrigger value="ads" className="data-[state=active]:text-radio-accent">Ads</TabsTrigger>
+              <TabsTrigger value="ad-requests" className="data-[state=active]:text-radio-accent">Ad Requests</TabsTrigger>
               <TabsTrigger value="media" className="data-[state=active]:text-radio-accent">Media</TabsTrigger>
               <TabsTrigger value="newsletter" className="data-[state=active]:text-radio-accent">Newsletter</TabsTrigger>
               <TabsTrigger value="chat" className="data-[state=active]:text-radio-accent">Chat</TabsTrigger>
@@ -152,6 +154,10 @@ const AdminDashboard = () => {
               
               <TabsContent value="ads">
                 <AdsTab />
+              </TabsContent>
+              
+              <TabsContent value="ad-requests">
+                <AdRequestsTab />
               </TabsContent>
               
               <TabsContent value="media">

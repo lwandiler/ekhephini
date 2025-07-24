@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_requests: {
+        Row: {
+          ad_type: string
+          budget_range: string | null
+          company_name: string
+          contact_name: string
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          phone: string | null
+          preferred_duration: string | null
+          status: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          ad_type: string
+          budget_range?: string | null
+          company_name: string
+          contact_name: string
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          phone?: string | null
+          preferred_duration?: string | null
+          status?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          ad_type?: string
+          budget_range?: string | null
+          company_name?: string
+          contact_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          phone?: string | null
+          preferred_duration?: string | null
+          status?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           active: boolean | null

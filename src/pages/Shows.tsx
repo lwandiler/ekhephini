@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
@@ -9,9 +10,72 @@ import AdBanner from '@/components/AdBanner';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { advertisementData } from '@/data/mockData';
-import ThemeToggle from '@/components/theme/ThemeToggle';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Shows = () => {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    company_name: '',
+    contact_name: '',
+    email: '',
+    phone: '',
+    website_url: '',
+    ad_type: '',
+    budget_range: '',
+    preferred_duration: '',
+    message: ''
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from('ad_requests')
+        .insert([formData]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success!",
+        description: "Your ad request has been submitted. We'll get back to you soon!",
+      });
+
+      // Reset form
+      setFormData({
+        company_name: '',
+        contact_name: '',
+        email: '',
+        phone: '',
+        website_url: '',
+        ad_type: '',
+        budget_range: '',
+        preferred_duration: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error submitting ad request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit ad request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const showsList = [
     {
       id: 1,
@@ -98,16 +162,159 @@ const Shows = () => {
         {/* Ad Banner */}
         <AdBanner position="top" />
         
-        {/* Become a Guest */}
+        {/* Advertise With Us */}
         <section className="bg-green-800 text-white py-12">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Want to Be a Guest on Our Shows?</h2>
-            <p className="text-xl text-white/80 mb-6 max-w-2xl mx-auto">
-              We're always looking for interesting guests to feature on our shows. If you have a story to tell, music to share, or expertise to offer, we'd love to hear from you.
-            </p>
-            <button className="bg-white text-green-800 hover:bg-gray-100 px-6 py-3 rounded-md font-medium">
-              Apply to Be a Guest
-            </button>
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-4">Advertise With Us</h2>
+              <p className="text-xl text-white/80 max-w-2xl mx-auto">
+                Reach our engaged audience with your brand. Submit your advertising request and we'll get back to you with our rates and availability.
+              </p>
+            </div>
+            
+            <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-sm rounded-lg p-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-white font-medium mb-2">Company Name *</label>
+                    <input 
+                      type="text" 
+                      name="company_name"
+                      value={formData.company_name}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
+                      placeholder="Your company name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white font-medium mb-2">Contact Name *</label>
+                    <input 
+                      type="text" 
+                      name="contact_name"
+                      value={formData.contact_name}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
+                      placeholder="Your full name"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-white font-medium mb-2">Email *</label>
+                    <input 
+                      type="email" 
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white font-medium mb-2">Phone</label>
+                    <input 
+                      type="tel" 
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
+                      placeholder="Your phone number"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-white font-medium mb-2">Website URL</label>
+                  <input 
+                    type="url" 
+                    name="website_url"
+                    value={formData.website_url}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
+                    placeholder="https://yourwebsite.com"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-white font-medium mb-2">Ad Type *</label>
+                    <select 
+                      name="ad_type"
+                      value={formData.ad_type}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-white/50" 
+                      required
+                    >
+                      <option value="">Select ad type</option>
+                      <option value="banner">Banner Ad</option>
+                      <option value="sidebar">Sidebar Ad</option>
+                      <option value="sponsored">Sponsored Content</option>
+                      <option value="audio">Audio Spot</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-white font-medium mb-2">Budget Range</label>
+                    <select 
+                      name="budget_range"
+                      value={formData.budget_range}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                    >
+                      <option value="">Select budget range</option>
+                      <option value="under-500">Under $500</option>
+                      <option value="500-1000">$500 - $1,000</option>
+                      <option value="1000-2500">$1,000 - $2,500</option>
+                      <option value="2500-5000">$2,500 - $5,000</option>
+                      <option value="over-5000">Over $5,000</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-white font-medium mb-2">Preferred Duration</label>
+                  <select 
+                    name="preferred_duration"
+                    value={formData.preferred_duration}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-white/50"
+                  >
+                    <option value="">Select duration</option>
+                    <option value="1-week">1 Week</option>
+                    <option value="2-weeks">2 Weeks</option>
+                    <option value="1-month">1 Month</option>
+                    <option value="3-months">3 Months</option>
+                    <option value="6-months">6 Months</option>
+                    <option value="ongoing">Ongoing</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-white font-medium mb-2">Message</label>
+                  <textarea 
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-md bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
+                    placeholder="Tell us about your advertising goals and any specific requirements..."
+                  ></textarea>
+                </div>
+                
+                <div className="text-center">
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-white text-green-800 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed px-8 py-3 rounded-md font-semibold text-lg transition-colors duration-200"
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit Ad Request'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </section>
       </main>
