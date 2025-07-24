@@ -81,12 +81,12 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white border border-gray-200 shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center mb-2">
+          <DialogTitle className="text-2xl font-bold text-center mb-2 text-gray-900">
             Advertise With Us
           </DialogTitle>
-          <p className="text-center text-muted-foreground mb-6">
+          <p className="text-center text-gray-600 mb-6">
             Reach our engaged audience with your brand. Submit your advertising request and we'll get back to you with our rates and availability.
           </p>
         </DialogHeader>
@@ -163,7 +163,7 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
                 name="ad_type"
                 value={formData.ad_type}
                 onChange={handleInputChange}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:cursor-not-allowed disabled:opacity-50"
                 required
               >
                 <option value="">Select ad type</option>
@@ -180,7 +180,7 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
                 name="budget_range"
                 value={formData.budget_range}
                 onChange={handleInputChange}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <option value="">Select budget range</option>
                 <option value="under-500">Under $500</option>
@@ -199,7 +199,7 @@ const AdRequestModal = ({ children }: AdRequestModalProps) => {
               name="preferred_duration"
               value={formData.preferred_duration}
               onChange={handleInputChange}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <option value="">Select duration</option>
               <option value="1-week">1 Week</option>
