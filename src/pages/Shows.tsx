@@ -95,15 +95,8 @@ const Shows = () => {
           </div>
         </section>
         
-        {/* Side by side ads */}
-        <section className="py-6 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <AdBanner position="sidebar" />
-              <AdBanner position="sidebar" />
-            </div>
-          </div>
-        </section>
+        {/* Ad Banner */}
+        <AdBanner position="top" />
         
         {/* Become a Guest */}
         <section className="bg-green-800 text-white py-12">
