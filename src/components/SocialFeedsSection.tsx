@@ -1,9 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Facebook, Twitter, Instagram, Youtube, ExternalLink, Calendar, User } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Youtube, ExternalLink, Calendar, User, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { StationContext } from '@/contexts/StationContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SocialPost {
   id: string;
@@ -18,59 +19,29 @@ interface SocialPost {
   image?: string;
 }
 
-// Mock data for demonstration - in a real app, this would come from social media APIs
-const mockSocialPosts: SocialPost[] = [
-  {
-    id: '1',
-    platform: 'facebook',
-    content: 'Live on air now! Tune in for your favorite morning show with great music and local news updates.',
-    author: 'Radio Station',
-    date: '2024-01-15T08:30:00Z',
-    likes: 45,
-    shares: 12,
-    comments: 8,
-    url: 'https://facebook.com/example'
-  },
-  {
-    id: '2',
-    platform: 'twitter',
-    content: 'What\'s your favorite song from the 90s? Share with us using #ThrowbackThursday 🎵',
-    author: 'Radio Station',
-    date: '2024-01-15T14:20:00Z',
-    likes: 23,
-    shares: 15,
-    comments: 6,
-    url: 'https://twitter.com/example'
-  },
-  {
-    id: '3',
-    platform: 'instagram',
-    content: 'Behind the scenes at our studio! Check out our DJs preparing for tonight\'s show.',
-    author: 'Radio Station',
-    date: '2024-01-15T16:45:00Z',
-    likes: 67,
-    shares: 8,
-    comments: 12,
-    image: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-    url: 'https://instagram.com/example'
-  },
-  {
-    id: '4',
-    platform: 'youtube',
-    content: 'New podcast episode is live! Listen to our interview with local musician Sarah Johnson.',
-    author: 'Radio Station',
-    date: '2024-01-15T12:00:00Z',
-    likes: 89,
-    shares: 25,
-    comments: 18,
-    url: 'https://youtube.com/example'
+const fetchSocialPosts = async (platforms: string[]): Promise<SocialPost[]> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('fetch-social-posts', {
+      body: { platforms }
+    });
+    
+    if (error) {
+      console.error('Error fetching social posts:', error);
+      return [];
+    }
+    
+    return data.posts || [];
+  } catch (error) {
+    console.error('Error calling fetch-social-posts function:', error);
+    return [];
   }
-];
+};
 
 const SocialFeedsSection = () => {
   const { settings } = useContext(StationContext);
   const [activePlatforms, setActivePlatforms] = useState<string[]>([]);
   const [posts, setPosts] = useState<SocialPost[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Check which social media platforms have been configured
@@ -90,9 +61,17 @@ const SocialFeedsSection = () => {
 
     setActivePlatforms(platforms);
     
-    // Filter mock posts to only show platforms that are configured
-    const filteredPosts = mockSocialPosts.filter(post => platforms.includes(post.platform));
-    setPosts(filteredPosts);
+    // Fetch real social media posts
+    if (platforms.length > 0) {
+      setLoading(true);
+      fetchSocialPosts(platforms).then((fetchedPosts) => {
+        setPosts(fetchedPosts);
+        setLoading(false);
+      });
+    } else {
+      setPosts([]);
+      setLoading(false);
+    }
   }, [settings.socialLinks]);
 
   const getPlatformIcon = (platform: string) => {
@@ -132,6 +111,20 @@ const SocialFeedsSection = () => {
   // Don't render if no platforms are configured
   if (activePlatforms.length === 0) {
     return null;
+  }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <section className="py-12 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2 text-foreground">Loading social media posts...</span>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   // If only one platform is configured, show its feed directly
