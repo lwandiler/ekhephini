@@ -2,7 +2,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
-import ChatBot from '@/components/ChatBot';
+
 import ShowSchedule from '@/components/ShowSchedule';
 import ShowCard from '@/components/ShowCard';
 import AdBanner from '@/components/AdBanner';
@@ -116,7 +116,7 @@ const Shows = () => {
       
       <Footer />
       <RadioPlayer />
-      <ChatBot />
+      
     </div>
   );
 };

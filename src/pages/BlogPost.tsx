@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
-import ChatBot from '@/components/ChatBot';
+
 import { Button } from '@/components/ui/button';
 import { Calendar, User, Tag, ArrowLeft } from 'lucide-react';
 import { blogService, BlogPost as BlogPostType } from '@/services/api/blogService';
@@ -73,7 +73,6 @@ const BlogPost = () => {
         </main>
         <Footer />
         <RadioPlayer />
-        <ChatBot />
       </div>
     );
   }
@@ -93,7 +92,6 @@ const BlogPost = () => {
         </main>
         <Footer />
         <RadioPlayer />
-        <ChatBot />
       </div>
     );
   }
@@ -196,7 +194,7 @@ const BlogPost = () => {
       
       <Footer />
       <RadioPlayer />
-      <ChatBot />
+      
     </div>
   );
 };

@@ -3,10 +3,9 @@ import { useState, useEffect, useContext } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
-import ChatBot from '@/components/ChatBot';
-import SocialChat from '@/components/SocialChat';
 import HeroBannerCarousel from '@/components/HeroBannerCarousel';
 import EditModeToggle from '@/components/EditModeToggle';
+import SocialFeedsSection from '@/components/SocialFeedsSection';
 import PodcastPlayer from '@/components/PodcastPlayer';
 import { useAuth } from '@/contexts/AuthContext';
 import { ThemeContext } from '@/contexts/ThemeContext';
@@ -126,8 +125,6 @@ const HomePage = () => {
           currentPodcast={currentPodcast}
           onClose={handleClosePodcastPlayer}
         />
-        <ChatBot />
-        <SocialChat />
         <EditModeToggle />
         <Toaster position="top-center" richColors />
       </div>

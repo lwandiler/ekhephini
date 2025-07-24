@@ -8,6 +8,7 @@ import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import EditableText from '@/components/EditableText';
 import EditableImage from '@/components/EditableImage';
 import { Button } from '@/components/ui/button';
+import SocialFeedsSection from '@/components/SocialFeedsSection';
 import NewsletterForm from '@/components/NewsletterForm';
 import { Radio } from 'lucide-react';
 
@@ -150,6 +151,9 @@ const ClassicTemplate = ({
             </div>
           </div>
         </section>
+        
+        {/* Social Feeds Section */}
+        <SocialFeedsSection />
         
         {/* Call to Action */}
         <section className="bg-gradient-to-r from-purple-900 to-indigo-900 text-white py-12">

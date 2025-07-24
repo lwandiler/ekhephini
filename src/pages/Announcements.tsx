@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
-import ChatBot from '@/components/ChatBot';
+
 import AdBanner from '@/components/AdBanner';
 import { Megaphone, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -66,7 +66,6 @@ const Announcements = () => {
         </main>
         <Footer />
         <RadioPlayer />
-        <ChatBot />
       </div>
     );
   }
@@ -140,7 +139,7 @@ const Announcements = () => {
       
       <Footer />
       <RadioPlayer />
-      <ChatBot />
+      
     </div>
   );
 };

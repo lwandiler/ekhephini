@@ -9,6 +9,7 @@ import NowLive from '@/components/NowLive';
 import UpcomingShows from '@/components/UpcomingShows';
 import { Button } from '@/components/ui/button';
 import NewsletterForm from '@/components/NewsletterForm';
+import SocialFeedsSection from '@/components/SocialFeedsSection';
 import { Play, Radio, Music, Headphones, Calendar, Mail } from 'lucide-react';
 
 interface ModernTemplateProps {
@@ -162,6 +163,9 @@ const ModernTemplate = ({
             </div>
           </div>
         </section>
+        
+        {/* Social Feeds Section */}
+        <SocialFeedsSection />
         
         {/* Newsletter - Modern Style with green gradient */}
         <section className="py-20 bg-gradient-to-r from-green-800 to-green-700 text-white">

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
-import ChatBot from '@/components/ChatBot';
+
 import NewsList from '@/components/NewsList';
 import AdBanner from '@/components/AdBanner';
 import NewsletterForm from '@/components/NewsletterForm';
@@ -52,7 +52,6 @@ const News = () => {
         </main>
         <Footer />
         <RadioPlayer />
-        <ChatBot />
       </div>
     );
   }
@@ -126,7 +125,7 @@ const News = () => {
       
       <Footer />
       <RadioPlayer />
-      <ChatBot />
+      
     </div>
   );
 };

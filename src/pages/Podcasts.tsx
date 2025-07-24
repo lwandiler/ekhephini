@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
-import ChatBot from '@/components/ChatBot';
+
 import PodcastCard from '@/components/PodcastCard';
 import PodcastPlayer from '@/components/PodcastPlayer';
 import { Button } from '@/components/ui/button';
@@ -98,7 +98,6 @@ const Podcasts = () => {
         </main>
         <Footer />
         <RadioPlayer />
-        <ChatBot />
       </div>
     );
   }
@@ -198,7 +197,7 @@ const Podcasts = () => {
       
       <Footer />
       <RadioPlayer />
-      <ChatBot />
+      
       
       {/* Podcast Player */}
       <PodcastPlayer 

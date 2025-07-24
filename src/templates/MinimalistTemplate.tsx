@@ -5,6 +5,7 @@ import AdBanner from '@/components/AdBanner';
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import { Button } from '@/components/ui/button';
 import NewsletterForm from '@/components/NewsletterForm';
+import SocialFeedsSection from '@/components/SocialFeedsSection';
 import { Play, Radio, Headphones } from 'lucide-react';
 
 interface MinimalistTemplateProps {
@@ -139,6 +140,9 @@ const MinimalistTemplate = ({
             </div>
           </div>
         </section>
+        
+        {/* Social Feeds Section */}
+        <SocialFeedsSection />
         
         {/* Newsletter - Minimalist Style */}
         <section className="py-20 bg-black text-white">
