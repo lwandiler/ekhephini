@@ -70,14 +70,14 @@ serve(async (req) => {
 
     const activeShowIds = new Set(activeRecordings?.map(r => r.show_id) || []);
 
-    // Get station settings for stream URL
+    // Get station settings for recording stream URL
     const { data: stationSettings } = await supabaseClient
       .from('station_settings')
-      .select('stream_url')
+      .select('recording_stream_url')
       .eq('id', 1)
       .single();
 
-    const streamUrl = stationSettings?.stream_url || 'https://stream.zeno.fm/your-stream-url';
+    const baseRecordingUrl = stationSettings?.recording_stream_url;
 
     let recordingsStarted = 0;
 
@@ -107,15 +107,40 @@ serve(async (req) => {
           
           const durationSeconds = duration * 60;
 
+          // Generate timestamped recording URL
+          const generateRecordingUrl = (baseUrl: string): string => {
+            if (!baseUrl) return '';
+            
+            // Calculate timestamp for one hour ago
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+            const unixTimestamp = Math.floor(oneHourAgo.getTime() / 1000);
+            
+            // Transform URL: insert timestamp and duration between 'index' and '.m3u8'
+            // Example: index.m3u8 becomes index-1753221840-3600.m3u8
+            const transformedUrl = baseUrl.replace(
+              /index\.m3u8$/,
+              `index-${unixTimestamp}-3600.m3u8`
+            );
+            
+            console.log(`Generated recording URL: ${transformedUrl}`);
+            return transformedUrl;
+          };
+
           // Simulate recording process (in production, this would use FFmpeg)
           const backgroundRecording = async () => {
             try {
               // Wait a bit to simulate recording startup
               await new Promise(resolve => setTimeout(resolve, 5000));
 
-              // Generate filename and URL
-              const fileName = `${show.id}_${new Date().toISOString().split('T')[0]}_${recordingId}.mp3`;
-              const audioUrl = `https://yfkdcqgmyyrcxppxcswz.supabase.co/storage/v1/object/public/recorded-shows/${fileName}`;
+              // Generate recording URL with timestamp
+              let audioUrl = '';
+              if (baseRecordingUrl) {
+                audioUrl = generateRecordingUrl(baseRecordingUrl);
+              } else {
+                // Fallback to placeholder
+                const fileName = `${show.id}_${new Date().toISOString().split('T')[0]}_${recordingId}.mp3`;
+                audioUrl = `https://yfkdcqgmyyrcxppxcswz.supabase.co/storage/v1/object/public/recorded-shows/${fileName}`;
+              }
 
               // Create database entry
               const { error: dbError } = await supabaseClient
@@ -134,7 +159,7 @@ serve(async (req) => {
                 return;
               }
 
-              console.log(`Recording created for show: ${show.title}`);
+              console.log(`Recording created for show: ${show.title} with URL: ${audioUrl}`);
             } catch (error) {
               console.error('Recording failed:', error);
             }

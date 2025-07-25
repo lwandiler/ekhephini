@@ -16,6 +16,7 @@ export interface StationSettings {
   stationTagline: string;
   stationDescription: string;
   streamUrl: string;
+  recordingStreamUrl?: string;
   logoUrl: string;
   socialLinks: {
     facebook: string;

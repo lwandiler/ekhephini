@@ -700,6 +700,7 @@ export type Database = {
           id: number
           logo_url: string | null
           page_content: Json | null
+          recording_stream_url: string | null
           social_links: Json | null
           station_description: string | null
           station_name: string
@@ -712,6 +713,7 @@ export type Database = {
           id?: number
           logo_url?: string | null
           page_content?: Json | null
+          recording_stream_url?: string | null
           social_links?: Json | null
           station_description?: string | null
           station_name?: string
@@ -724,6 +726,7 @@ export type Database = {
           id?: number
           logo_url?: string | null
           page_content?: Json | null
+          recording_stream_url?: string | null
           social_links?: Json | null
           station_description?: string | null
           station_name?: string

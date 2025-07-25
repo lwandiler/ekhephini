@@ -95,6 +95,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, onSaveSettings }) =
         station_tagline: localSettings.stationTagline,
         station_description: localSettings.stationDescription,
         stream_url: localSettings.streamUrl,
+        recording_stream_url: localSettings.recordingStreamUrl,
         logo_url: localSettings.logoUrl,
         social_links: localSettings.socialLinks,
         contact_info: localSettings.contactInfo
