@@ -212,11 +212,11 @@ serve(async (req) => {
               const unixTimestamp = Math.floor(oneHourAgo.getTime() / 1000);
               
               // Transform the stream URL to a catch-up URL
-              // Replace the stream segment with catch-up format
-              // Example: /mdda/streams/mcr128kbps.m3u8 becomes /mdda/catchup/mcr128kbps-1753221840-3600.m3u8
+              // Example: https://streamlive-edge-flu01.broadsmart-streaming.co.za/dumafm/index.m3u8 becomes 
+              // https://streamlive-edge-flu01.broadsmart-streaming.co.za/dumafm/index-1753221840-3600.m3u8
               const transformedUrl = baseUrl.replace(
-                /\/streams\/([^\/]+)\.m3u8$/,
-                `/catchup/$1-${unixTimestamp}-3600.m3u8`
+                /\/index\.m3u8$/,
+                `/index-${unixTimestamp}-3600.m3u8`
               );
               
               console.log(`Original URL: ${baseUrl}`);

@@ -164,8 +164,8 @@ export const CatchUp: React.FC = () => {
     
     console.log('Using catch-up recording URL:', audioUrl);
     
-    // Verify this is a catch-up URL (should contain /catchup/ and timestamp)
-    if (!audioUrl.includes('/catchup/')) {
+    // Verify this is a catch-up URL (should contain index- and timestamp)
+    if (!audioUrl.includes('/index-')) {
       console.warn('Warning: URL does not appear to be a catch-up recording URL');
       toast.error('Invalid recording URL format');
       setCurrentlyPlaying(null);
