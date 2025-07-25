@@ -87,6 +87,35 @@ export const CatchUp: React.FC = () => {
     };
 
     fetchRecordedShows();
+
+    // Set up real-time subscription for new recordings
+    const channel = supabase
+      .channel('recorded_shows_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'recorded_shows'
+        },
+        (payload) => {
+          console.log('Recorded show change detected:', payload);
+          
+          if (payload.eventType === 'INSERT') {
+            toast.success('New catch-up recording available!');
+            // Refresh the data
+            fetchRecordedShows();
+          } else if (payload.eventType === 'DELETE') {
+            // Remove from local state
+            setRecordedShows(prev => prev.filter(show => show.id !== payload.old.id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const playRecordedShow = (audioUrl: string, showId: string) => {

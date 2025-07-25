@@ -47,6 +47,38 @@ export const RecordedShowsTab: React.FC = () => {
 
   useEffect(() => {
     loadData();
+
+    // Set up real-time subscription for recorded shows changes
+    const channel = supabase
+      .channel('admin_recorded_shows_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'recorded_shows'
+        },
+        (payload) => {
+          console.log('Admin: Recorded show change detected:', payload);
+          
+          if (payload.eventType === 'INSERT') {
+            toast.success('New recording created automatically!');
+            // Refresh the data
+            loadData();
+          } else if (payload.eventType === 'DELETE') {
+            // Refresh data on delete
+            loadData();
+          } else if (payload.eventType === 'UPDATE') {
+            // Refresh data on update
+            loadData();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const loadData = async () => {
