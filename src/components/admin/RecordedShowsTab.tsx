@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trash2, Plus, Play, Clock, Calendar, Upload } from 'lucide-react';
+import { Trash2, Plus, Play, Clock, Calendar, Upload, Link } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -363,16 +363,17 @@ export const RecordedShowsTab: React.FC = () => {
                         </p>
                       </CardHeader>
                       <CardContent>
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Recording Title</TableHead>
-                              <TableHead>Recorded</TableHead>
-                              <TableHead>Duration</TableHead>
-                              <TableHead>Expires</TableHead>
-                              <TableHead>Actions</TableHead>
-                            </TableRow>
-                          </TableHeader>
+                         <Table>
+                           <TableHeader>
+                             <TableRow>
+                               <TableHead>Recording Title</TableHead>
+                               <TableHead>Recorded</TableHead>
+                               <TableHead>Duration</TableHead>
+                               <TableHead>Recording URL</TableHead>
+                               <TableHead>Expires</TableHead>
+                               <TableHead>Actions</TableHead>
+                             </TableRow>
+                           </TableHeader>
                           <TableBody>
                             {sortedRecordings.map((recording) => (
                               <TableRow key={recording.id}>
@@ -394,11 +395,19 @@ export const RecordedShowsTab: React.FC = () => {
                                   <div className="flex items-center text-sm text-muted-foreground">
                                     <Clock className="h-4 w-4 mr-1" />
                                     {formatDuration(recording.duration_seconds)}
-                                  </div>
-                                </TableCell>
-                                <TableCell>
-                                  <span className={`text-sm ${new Date(recording.expires_at) <= new Date() ? 'text-destructive' : 'text-muted-foreground'}`}>
-                                    {getTimeUntilExpiry(recording.expires_at)}
+                                   </div>
+                                 </TableCell>
+                                 <TableCell>
+                                   <div className="flex items-center text-sm text-muted-foreground max-w-xs">
+                                     <Link className="h-4 w-4 mr-1 flex-shrink-0" />
+                                     <code className="text-xs bg-muted px-2 py-1 rounded break-all">
+                                       {recording.audio_url}
+                                     </code>
+                                   </div>
+                                 </TableCell>
+                                 <TableCell>
+                                   <span className={`text-sm ${new Date(recording.expires_at) <= new Date() ? 'text-destructive' : 'text-muted-foreground'}`}>
+                                     {getTimeUntilExpiry(recording.expires_at)}
                                   </span>
                                 </TableCell>
                                 <TableCell>
