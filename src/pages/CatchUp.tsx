@@ -162,7 +162,15 @@ export const CatchUp: React.FC = () => {
     const audio = new Audio();
     setAudioElement(audio);
     
-    console.log('Full audio URL:', audioUrl);
+    console.log('Using catch-up recording URL:', audioUrl);
+    
+    // Verify this is a catch-up URL (should contain /catchup/ and timestamp)
+    if (!audioUrl.includes('/catchup/')) {
+      console.warn('Warning: URL does not appear to be a catch-up recording URL');
+      toast.error('Invalid recording URL format');
+      setCurrentlyPlaying(null);
+      return;
+    }
     
     // Check if HLS.js is supported
     if (Hls.isSupported()) {
