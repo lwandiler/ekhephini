@@ -355,10 +355,10 @@ export const CatchUp: React.FC = () => {
                 });
 
                 return (
-                  <Card key={showId} className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-900/20 to-gray-900/20 border-green-800/30">
+                  <Card key={showId} className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-600 to-green-800 border-green-500">
                     <div className="flex flex-col md:flex-row">
                       <div className="md:w-1/3 relative group">
-                        <div className="w-full h-48 md:h-full bg-gradient-to-br from-green-600/20 to-green-800/10 flex items-center justify-center relative overflow-hidden">
+                        <div className="w-full h-48 md:h-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center relative overflow-hidden">
                           {show?.image_url ? (
                             <>
                               <img 
@@ -366,16 +366,16 @@ export const CatchUp: React.FC = () => {
                                 alt={show.title}
                                 className="w-full h-full object-cover"
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-green-900/60 via-transparent to-transparent"></div>
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                             </>
                           ) : (
                             <div className="text-center">
-                              <Clock className="w-12 h-12 text-green-400 mx-auto mb-2" />
-                              <div className="text-green-400 font-semibold text-sm">CATCH UP</div>
+                              <Clock className="w-12 h-12 text-white mx-auto mb-2" />
+                              <div className="text-white font-semibold text-sm">CATCH UP</div>
                             </div>
                           )}
                           <div className="absolute top-3 left-3">
-                            <Badge className="bg-green-600/90 text-white text-xs">
+                            <Badge className="bg-black text-white text-xs">
                               {sortedRecordings.length} Episode{sortedRecordings.length > 1 ? 's' : ''}
                             </Badge>
                           </div>
@@ -384,33 +384,33 @@ export const CatchUp: React.FC = () => {
                       
                       <div className="md:w-2/3 p-6">
                         <div className="flex items-center mb-3">
-                          <Badge className="bg-green-600 text-white mr-3">
+                          <Badge className="bg-black text-white mr-3">
                             AVAILABLE
                           </Badge>
                           {show && (
-                            <span className="text-xs text-green-400 font-medium">
+                            <span className="text-xs text-white font-medium">
                               {show.time} • {show.day_of_week}
                             </span>
                           )}
                         </div>
                         
-                        <h3 className="text-2xl font-bold mb-2 text-foreground">
+                        <h3 className="text-2xl font-bold mb-2 text-white">
                           {show?.title || 'Unknown Show'}
                         </h3>
                         
-                        <p className="text-green-300 mb-3 font-medium">
+                        <p className="text-white/90 mb-3 font-medium">
                           {show?.host && `Hosted by ${show.host}`}
                         </p>
                         
                         {show?.description && (
-                          <p className="text-muted-foreground mb-4 line-clamp-2 text-sm">
+                          <p className="text-white/80 mb-4 line-clamp-2 text-sm">
                             {show.description}
                           </p>
                         )}
 
                         <div className="space-y-3">
-                          <h4 className="font-semibold text-sm text-foreground flex items-center">
-                            <Play className="w-4 h-4 mr-2 text-green-400" />
+                          <h4 className="font-semibold text-sm text-white flex items-center">
+                            <Play className="w-4 h-4 mr-2 text-white" />
                             Available Episodes:
                           </h4>
                           <div className="grid gap-2 max-h-40 overflow-y-auto">
@@ -420,10 +420,10 @@ export const CatchUp: React.FC = () => {
                               const buttonText = isPlaying ? (isPaused ? "Resume" : "Pause") : "Play";
                               
                               return (
-                                <div key={recording.id} className="flex items-center justify-between p-3 bg-gradient-to-r from-green-950/30 to-gray-900/20 rounded-lg border border-green-800/20 hover:border-green-600/40 transition-all duration-200">
+                                <div key={recording.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-white/20 hover:border-white/40 transition-all duration-200">
                                   <div className="flex-1 min-w-0">
-                                    <h5 className="font-medium text-sm text-foreground truncate">{recording.title}</h5>
-                                    <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                                    <h5 className="font-medium text-sm text-white truncate">{recording.title}</h5>
+                                    <div className="flex items-center gap-3 mt-1 text-xs text-white/70">
                                       <span className="flex items-center">
                                         <Calendar className="w-3 h-3 mr-1" />
                                         {format(new Date(recording.recorded_at), 'MMM dd')}
@@ -432,7 +432,7 @@ export const CatchUp: React.FC = () => {
                                         <Clock className="w-3 h-3 mr-1" />
                                         {formatDuration(recording.duration_seconds || 0)}
                                       </span>
-                                      <span className="text-green-400 text-xs">
+                                      <span className="text-white/90 text-xs">
                                         Expires {getTimeUntilExpiry(recording.expires_at)}
                                       </span>
                                     </div>
@@ -441,7 +441,7 @@ export const CatchUp: React.FC = () => {
                                     variant={isPlaying ? "secondary" : "outline"}
                                     size="sm"
                                     onClick={() => playRecordedShow(recording.audio_url, recording.id)}
-                                    className={`ml-3 ${isPlaying ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-600/50 text-green-400 hover:bg-green-600/20'}`}
+                                    className={`ml-3 ${isPlaying ? 'bg-black text-white hover:bg-black/80' : 'border-white/50 text-white hover:bg-white/20'}`}
                                   >
                                     {showPauseIcon ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                                     <span className="ml-1 hidden sm:inline">{buttonText}</span>
