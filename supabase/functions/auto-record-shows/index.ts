@@ -221,71 +221,45 @@ serve(async (req) => {
               return transformedUrl;
             };
 
-            // Actually record from the stream and store in Supabase
-            const backgroundRecording = async () => {
+            // Generate recording URL and store in database
+            const storeRecordingUrl = async () => {
               try {
                 if (!baseRecordingUrl) {
                   console.error('No recording stream URL configured');
                   return;
                 }
 
-                console.log(`Starting actual recording from: ${baseRecordingUrl}`);
+                // Generate timestamped recording URL for the previous hour
+                const recordingUrl = generateRecordingUrl(baseRecordingUrl);
                 
-                // Record from the actual stream
-                const audioData = await recordFromStream(baseRecordingUrl, durationSeconds);
-                
-                // Create filename for the recording
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                const filename = `${show.id}-hour-${hourToRecord}-${timestamp}.mp3`;
-                
-                // Upload to Supabase storage
-                const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                  .from('recorded-shows')
-                  .upload(filename, audioData, {
-                    contentType: 'audio/mpeg',
-                    upsert: false
-                  });
+                console.log(`Generated recording URL for ${show.title}: ${recordingUrl}`);
 
-                if (uploadError) {
-                  console.error(`Error uploading recording for ${show.title}:`, uploadError);
-                  return;
-                }
-
-                // Get the public URL for the uploaded file
-                const { data: urlData } = supabaseClient.storage
-                  .from('recorded-shows')
-                  .getPublicUrl(filename);
-
-                const audioUrl = urlData.publicUrl;
-
-                // Create database entry with proper show linking
+                // Create database entry with the recording stream URL
                 const { error: dbError } = await supabaseClient
                   .from('recorded_shows')
                   .insert({
                     id: recordingId,
                     title: `${show.title} - Hour ${hourToRecord}`,
                     show_id: show.id,
-                    audio_url: audioUrl,
+                    audio_url: recordingUrl,
                     duration_seconds: durationSeconds,
-                    file_size_bytes: audioData.length,
+                    file_size_bytes: null, // Not applicable for stream URLs
                     description: `Catch-up recording: ${show.title} hosted by ${show.host} - Hour ${hourToRecord} of ${showDurationHours}`
                   });
 
                 if (dbError) {
                   console.error('Database error:', dbError);
-                  // Clean up uploaded file if database insert fails
-                  await supabaseClient.storage.from('recorded-shows').remove([filename]);
                   return;
                 }
 
-                console.log(`Recording created for show: ${show.title} with URL: ${audioUrl} (${audioData.length} bytes)`);
+                console.log(`Recording URL stored for show: ${show.title} with URL: ${recordingUrl}`);
               } catch (error) {
-                console.error('Recording failed:', error);
+                console.error('Recording URL storage failed:', error);
               }
             };
 
-            // Start recording in background
-            backgroundRecording();
+            // Store recording URL
+            storeRecordingUrl();
             recordingsStarted++;
           } else {
             console.log(`Show ${show.title} already recorded today`);

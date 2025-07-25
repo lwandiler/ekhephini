@@ -25,6 +25,7 @@ export const CatchUp: React.FC = () => {
   const [showDetails, setShowDetails] = useState<{[key: string]: any}>({});
   const [loading, setLoading] = useState(true);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
   // Format time from database format (HH:MM:SS) to display format (H:MM AM/PM)
   const formatTimeRange = (startTime: string, endTime: string): string => {
