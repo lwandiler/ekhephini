@@ -35,7 +35,6 @@ export const CatchUp: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
-  
   const [hlsInstance, setHlsInstance] = useState<any>(null);
 
   // Format time from database format (HH:MM:SS) to display format (H:MM AM/PM)
@@ -172,7 +171,6 @@ export const CatchUp: React.FC = () => {
     
     // Then set the new playing state
     setCurrentlyPlaying(showId);
-    
     
     // Check if the URL is a placeholder or invalid
     if (audioUrl.includes('example.com')) {
@@ -409,8 +407,6 @@ export const CatchUp: React.FC = () => {
                             {sortedRecordings.map((recording) => {
                               const isPlaying = currentlyPlaying === recording.id;
                               const buttonText = isPlaying ? "Stop" : "Play";
-                              
-                              console.log(`CatchUp: Button state for ${recording.id} - isPlaying: ${isPlaying}, buttonText: ${buttonText}`);
                               
                               return (
                                 <div key={recording.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-white/20 hover:border-white/40 transition-all duration-200">
