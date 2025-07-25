@@ -429,6 +429,8 @@ export const CatchUp: React.FC = () => {
                               const showPauseIcon = isPlaying && !isPaused;
                               const buttonText = isPlaying ? (isPaused ? "Resume" : "Pause") : "Play";
                               
+                              console.log(`CatchUp: Button state for ${recording.id} - isPlaying: ${isPlaying}, isPaused: ${isPaused}, showPauseIcon: ${showPauseIcon}, buttonText: ${buttonText}`);
+                              
                               return (
                                 <div key={recording.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-white/20 hover:border-white/40 transition-all duration-200">
                                   <div className="flex-1 min-w-0">
