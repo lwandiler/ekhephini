@@ -147,69 +147,70 @@ serve(async (req) => {
             // Each recording is 1 hour (3600 seconds)
             const durationSeconds = 3600;
 
-          // Generate timestamped recording URL
-          const generateRecordingUrl = (baseUrl: string): string => {
-            if (!baseUrl) return '';
-            
-            // Calculate timestamp for one hour ago
-            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-            const unixTimestamp = Math.floor(oneHourAgo.getTime() / 1000);
-            
-            // Transform URL: insert timestamp and duration between 'index' and '.m3u8'
-            // Example: index.m3u8 becomes index-1753221840-3600.m3u8
-            const transformedUrl = baseUrl.replace(
-              /index\.m3u8$/,
-              `index-${unixTimestamp}-3600.m3u8`
-            );
-            
-            console.log(`Generated recording URL: ${transformedUrl}`);
-            return transformedUrl;
-          };
+            // Generate timestamped recording URL
+            const generateRecordingUrl = (baseUrl: string): string => {
+              if (!baseUrl) return '';
+              
+              // Calculate timestamp for one hour ago
+              const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+              const unixTimestamp = Math.floor(oneHourAgo.getTime() / 1000);
+              
+              // Transform URL: insert timestamp and duration between 'index' and '.m3u8'
+              // Example: index.m3u8 becomes index-1753221840-3600.m3u8
+              const transformedUrl = baseUrl.replace(
+                /index\.m3u8$/,
+                `index-${unixTimestamp}-3600.m3u8`
+              );
+              
+              console.log(`Generated recording URL: ${transformedUrl}`);
+              return transformedUrl;
+            };
 
-          // Simulate recording process (in production, this would use FFmpeg)
-          const backgroundRecording = async () => {
-            try {
-              // Wait a bit to simulate recording startup
-              await new Promise(resolve => setTimeout(resolve, 5000));
+            // Simulate recording process (in production, this would use FFmpeg)
+            const backgroundRecording = async () => {
+              try {
+                // Wait a bit to simulate recording startup
+                await new Promise(resolve => setTimeout(resolve, 5000));
 
-              // Generate recording URL with timestamp
-              let audioUrl = '';
-              if (baseRecordingUrl) {
-                audioUrl = generateRecordingUrl(baseRecordingUrl);
-              } else {
-                // Fallback to placeholder
-                const fileName = `${show.id}_${new Date().toISOString().split('T')[0]}_${recordingId}.mp3`;
-                audioUrl = `https://yfkdcqgmyyrcxppxcswz.supabase.co/storage/v1/object/public/recorded-shows/${fileName}`;
+                // Generate recording URL with timestamp
+                let audioUrl = '';
+                if (baseRecordingUrl) {
+                  audioUrl = generateRecordingUrl(baseRecordingUrl);
+                } else {
+                  // Fallback to placeholder
+                  const fileName = `${show.id}_${new Date().toISOString().split('T')[0]}_${recordingId}.mp3`;
+                  audioUrl = `https://yfkdcqgmyyrcxppxcswz.supabase.co/storage/v1/object/public/recorded-shows/${fileName}`;
+                }
+
+                // Create database entry with proper show linking
+                const { error: dbError } = await supabaseClient
+                  .from('recorded_shows')
+                  .insert({
+                    id: recordingId,
+                    title: `${show.title} - Hour ${hourToRecord}`,
+                    show_id: show.id,
+                    audio_url: audioUrl,
+                    duration_seconds: durationSeconds,
+                    description: `Catch-up recording: ${show.title} hosted by ${show.host} - Hour ${hourToRecord} of ${showDurationHours}`
+                  });
+
+                if (dbError) {
+                  console.error('Database error:', dbError);
+                  return;
+                }
+
+                console.log(`Recording created for show: ${show.title} with URL: ${audioUrl}`);
+              } catch (error) {
+                console.error('Recording failed:', error);
               }
+            };
 
-              // Create database entry with proper show linking
-              const { error: dbError } = await supabaseClient
-                .from('recorded_shows')
-                .insert({
-                  id: recordingId,
-                  title: `${show.title} - Hour ${hourToRecord}`,
-                  show_id: show.id,
-                  audio_url: audioUrl,
-                  duration_seconds: durationSeconds,
-                  description: `Catch-up recording: ${show.title} hosted by ${show.host} - Hour ${hourToRecord} of ${showDurationHours}`
-                });
-
-              if (dbError) {
-                console.error('Database error:', dbError);
-                return;
-              }
-
-              console.log(`Recording created for show: ${show.title} with URL: ${audioUrl}`);
-            } catch (error) {
-              console.error('Recording failed:', error);
-            }
-          };
-
-          // Start recording in background
-          backgroundRecording();
-          recordingsStarted++;
-        } else {
-          console.log(`Show ${show.title} already recorded today`);
+            // Start recording in background
+            backgroundRecording();
+            recordingsStarted++;
+          } else {
+            console.log(`Show ${show.title} already recorded today`);
+          }
         }
       }
     }
