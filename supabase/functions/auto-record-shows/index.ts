@@ -17,11 +17,66 @@ interface Show {
   active: boolean;
 }
 
-interface ActiveRecording {
-  id: string;
-  show_id: string;
-  title: string;
-  started_at: string;
+// Function to record from stream URL
+async function recordFromStream(streamUrl: string, durationSeconds: number = 3600): Promise<Uint8Array> {
+  console.log(`Starting recording from stream: ${streamUrl}`);
+  
+  try {
+    const response = await fetch(streamUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; RadioRecorder/1.0)',
+        'Accept': 'audio/*,*/*;q=0.9',
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to connect to stream: ${response.status}`);
+    }
+    
+    if (!response.body) {
+      throw new Error('No stream data available');
+    }
+    
+    const reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let totalBytes = 0;
+    const maxBytes = durationSeconds * 128 * 1024 / 8; // Estimate for 128kbps audio
+    
+    const startTime = Date.now();
+    const maxDuration = durationSeconds * 1000; // Convert to milliseconds
+    
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        if (Date.now() - startTime > maxDuration) break;
+        if (totalBytes > maxBytes) break;
+        
+        if (value) {
+          chunks.push(value);
+          totalBytes += value.length;
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+    
+    // Combine all chunks into a single Uint8Array
+    const result = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      result.set(chunk, offset);
+      offset += chunk.length;
+    }
+    
+    console.log(`Recording completed. Captured ${totalBytes} bytes in ${Date.now() - startTime}ms`);
+    return result;
+    
+  } catch (error) {
+    console.error('Error recording from stream:', error);
+    throw error;
+  }
 }
 
 serve(async (req) => {
@@ -166,21 +221,42 @@ serve(async (req) => {
               return transformedUrl;
             };
 
-            // Simulate recording process (in production, this would use FFmpeg)
+            // Actually record from the stream and store in Supabase
             const backgroundRecording = async () => {
               try {
-                // Wait a bit to simulate recording startup
-                await new Promise(resolve => setTimeout(resolve, 5000));
-
-                // Generate recording URL with timestamp
-                let audioUrl = '';
-                if (baseRecordingUrl) {
-                  audioUrl = generateRecordingUrl(baseRecordingUrl);
-                } else {
-                  // Fallback to placeholder
-                  const fileName = `${show.id}_${new Date().toISOString().split('T')[0]}_${recordingId}.mp3`;
-                  audioUrl = `https://yfkdcqgmyyrcxppxcswz.supabase.co/storage/v1/object/public/recorded-shows/${fileName}`;
+                if (!baseRecordingUrl) {
+                  console.error('No recording stream URL configured');
+                  return;
                 }
+
+                console.log(`Starting actual recording from: ${baseRecordingUrl}`);
+                
+                // Record from the actual stream
+                const audioData = await recordFromStream(baseRecordingUrl, durationSeconds);
+                
+                // Create filename for the recording
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                const filename = `${show.id}-hour-${hourToRecord}-${timestamp}.mp3`;
+                
+                // Upload to Supabase storage
+                const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                  .from('recorded-shows')
+                  .upload(filename, audioData, {
+                    contentType: 'audio/mpeg',
+                    upsert: false
+                  });
+
+                if (uploadError) {
+                  console.error(`Error uploading recording for ${show.title}:`, uploadError);
+                  return;
+                }
+
+                // Get the public URL for the uploaded file
+                const { data: urlData } = supabaseClient.storage
+                  .from('recorded-shows')
+                  .getPublicUrl(filename);
+
+                const audioUrl = urlData.publicUrl;
 
                 // Create database entry with proper show linking
                 const { error: dbError } = await supabaseClient
@@ -191,15 +267,18 @@ serve(async (req) => {
                     show_id: show.id,
                     audio_url: audioUrl,
                     duration_seconds: durationSeconds,
+                    file_size_bytes: audioData.length,
                     description: `Catch-up recording: ${show.title} hosted by ${show.host} - Hour ${hourToRecord} of ${showDurationHours}`
                   });
 
                 if (dbError) {
                   console.error('Database error:', dbError);
+                  // Clean up uploaded file if database insert fails
+                  await supabaseClient.storage.from('recorded-shows').remove([filename]);
                   return;
                 }
 
-                console.log(`Recording created for show: ${show.title} with URL: ${audioUrl}`);
+                console.log(`Recording created for show: ${show.title} with URL: ${audioUrl} (${audioData.length} bytes)`);
               } catch (error) {
                 console.error('Recording failed:', error);
               }
