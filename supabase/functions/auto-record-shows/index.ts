@@ -128,11 +128,12 @@ serve(async (req) => {
     // Get station settings for recording stream URL
     const { data: stationSettings } = await supabaseClient
       .from('station_settings')
-      .select('recording_stream_url')
+      .select('recording_stream_url, stream_url')
       .eq('id', 1)
       .single();
 
-    const baseRecordingUrl = stationSettings?.recording_stream_url;
+    // Use recording_stream_url if available, otherwise fall back to stream_url
+    const baseRecordingUrl = stationSettings?.recording_stream_url || stationSettings?.stream_url;
 
     let recordingsStarted = 0;
 
