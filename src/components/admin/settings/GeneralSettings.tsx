@@ -57,7 +57,7 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onSettingsC
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="recordingStreamUrl">Recording Stream URL</Label>
+          <Label htmlFor="recordingStreamUrl">Catch Up Recording Stream URL</Label>
           <Input 
             id="recordingStreamUrl" 
             value={settings.recordingStreamUrl || ''}
@@ -65,7 +65,7 @@ const GeneralSettings: React.FC<GeneralSettingsProps> = ({ settings, onSettingsC
             placeholder="https://streamlive-edge-flu01.broadsmart-streaming.co.za/dumafm/index.m3u8"
           />
           <p className="text-sm text-muted-foreground">
-            URL for hourly recordings. System will automatically add timestamp between 'index' and '.m3u8'
+            URL specifically for catch-up recordings only. System will automatically add timestamp between 'index' and '.m3u8' for hourly recordings.
           </p>
         </div>
       </CardContent>
