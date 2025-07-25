@@ -5,6 +5,7 @@ import RadioPlayer from '@/components/RadioPlayer';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Play, Pause, Clock, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format } from 'date-fns';
@@ -354,68 +355,104 @@ export const CatchUp: React.FC = () => {
                 });
 
                 return (
-                  <Card key={showId} className="overflow-hidden">
-                    <CardHeader>
-                      <div className="flex items-start gap-4">
-                        {show?.image_url && (
-                          <img 
-                            src={show.image_url} 
-                            alt={show.title}
-                            className="w-16 h-16 rounded-lg object-cover"
-                          />
-                        )}
-                        <div className="flex-1">
-                          <CardTitle className="text-xl">
-                            {show?.title || 'Unknown Show'}
-                          </CardTitle>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            Hosted by {show?.host || 'Unknown Host'}
-                          </p>
-                          {show && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {show.time} • {show.day_of_week}
-                            </p>
+                  <Card key={showId} className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-900/20 to-gray-900/20 border-green-800/30">
+                    <div className="flex flex-col md:flex-row">
+                      <div className="md:w-1/3 relative group">
+                        <div className="w-full h-48 md:h-full bg-gradient-to-br from-green-600/20 to-green-800/10 flex items-center justify-center relative overflow-hidden">
+                          {show?.image_url ? (
+                            <>
+                              <img 
+                                src={show.image_url} 
+                                alt={show.title}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-green-900/60 via-transparent to-transparent"></div>
+                            </>
+                          ) : (
+                            <div className="text-center">
+                              <Clock className="w-12 h-12 text-green-400 mx-auto mb-2" />
+                              <div className="text-green-400 font-semibold text-sm">CATCH UP</div>
+                            </div>
                           )}
-                          {show?.description && (
-                            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                              {show.description}
-                            </p>
-                          )}
+                          <div className="absolute top-3 left-3">
+                            <Badge className="bg-green-600/90 text-white text-xs">
+                              {sortedRecordings.length} Episode{sortedRecordings.length > 1 ? 's' : ''}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <h4 className="font-semibold text-sm">Available Recordings:</h4>
-                        {sortedRecordings.map((recording) => {
-                          const isPlaying = currentlyPlaying === recording.id;
-                          const showPauseIcon = isPlaying && !isPaused;
-                          const buttonText = isPlaying ? (isPaused ? "Resume" : "Pause") : "Play";
-                          
-                          return (
-                            <div key={recording.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                              <div className="flex-1">
-                                <h5 className="font-medium text-sm">{recording.title}</h5>
-                                <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                                  <span>Recorded: {format(new Date(recording.recorded_at), 'MMM dd, yyyy')}</span>
-                                  <span>{formatDuration(recording.duration_seconds || 0)}</span>
-                                  <span>Expires: {getTimeUntilExpiry(recording.expires_at)}</span>
+                      
+                      <div className="md:w-2/3 p-6">
+                        <div className="flex items-center mb-3">
+                          <Badge className="bg-green-600 text-white mr-3">
+                            AVAILABLE
+                          </Badge>
+                          {show && (
+                            <span className="text-xs text-green-400 font-medium">
+                              {show.time} • {show.day_of_week}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <h3 className="text-2xl font-bold mb-2 text-foreground">
+                          {show?.title || 'Unknown Show'}
+                        </h3>
+                        
+                        <p className="text-green-300 mb-3 font-medium">
+                          {show?.host && `Hosted by ${show.host}`}
+                        </p>
+                        
+                        {show?.description && (
+                          <p className="text-muted-foreground mb-4 line-clamp-2 text-sm">
+                            {show.description}
+                          </p>
+                        )}
+
+                        <div className="space-y-3">
+                          <h4 className="font-semibold text-sm text-foreground flex items-center">
+                            <Play className="w-4 h-4 mr-2 text-green-400" />
+                            Available Episodes:
+                          </h4>
+                          <div className="grid gap-2 max-h-40 overflow-y-auto">
+                            {sortedRecordings.map((recording) => {
+                              const isPlaying = currentlyPlaying === recording.id;
+                              const showPauseIcon = isPlaying && !isPaused;
+                              const buttonText = isPlaying ? (isPaused ? "Resume" : "Pause") : "Play";
+                              
+                              return (
+                                <div key={recording.id} className="flex items-center justify-between p-3 bg-gradient-to-r from-green-950/30 to-gray-900/20 rounded-lg border border-green-800/20 hover:border-green-600/40 transition-all duration-200">
+                                  <div className="flex-1 min-w-0">
+                                    <h5 className="font-medium text-sm text-foreground truncate">{recording.title}</h5>
+                                    <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                                      <span className="flex items-center">
+                                        <Calendar className="w-3 h-3 mr-1" />
+                                        {format(new Date(recording.recorded_at), 'MMM dd')}
+                                      </span>
+                                      <span className="flex items-center">
+                                        <Clock className="w-3 h-3 mr-1" />
+                                        {formatDuration(recording.duration_seconds || 0)}
+                                      </span>
+                                      <span className="text-green-400 text-xs">
+                                        Expires {getTimeUntilExpiry(recording.expires_at)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <Button
+                                    variant={isPlaying ? "secondary" : "outline"}
+                                    size="sm"
+                                    onClick={() => playRecordedShow(recording.audio_url, recording.id)}
+                                    className={`ml-3 ${isPlaying ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-600/50 text-green-400 hover:bg-green-600/20'}`}
+                                  >
+                                    {showPauseIcon ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                    <span className="ml-1 hidden sm:inline">{buttonText}</span>
+                                  </Button>
                                 </div>
-                              </div>
-                              <Button
-                                variant={isPlaying ? "secondary" : "outline"}
-                                size="sm"
-                                onClick={() => playRecordedShow(recording.audio_url, recording.id)}
-                                className="ml-3"
-                              >
-                                {showPauseIcon ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                                <span className="ml-1">{buttonText}</span>
-                              </Button>
-                            </div>
-                          );
-                        })}
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
-                    </CardContent>
+                    </div>
                   </Card>
                 );
               });
