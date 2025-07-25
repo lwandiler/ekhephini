@@ -56,18 +56,41 @@ export const CatchUp: React.FC = () => {
   };
 
   const playRecordedShow = (audioUrl: string, showId: string) => {
+    console.log('Attempting to play audio:', audioUrl);
     setCurrentlyPlaying(showId);
+    
+    // Check if the URL is a placeholder or invalid
+    if (audioUrl.includes('example.com') || !audioUrl.includes('supabase.co')) {
+      toast.error('This is a demo recording - audio file not available');
+      setCurrentlyPlaying(null);
+      return;
+    }
+    
     // Create audio element and play
     const audio = new Audio(audioUrl);
+    
+    audio.addEventListener('loadstart', () => {
+      console.log('Audio loading started');
+    });
+    
+    audio.addEventListener('canplay', () => {
+      console.log('Audio can start playing');
+    });
+    
+    audio.addEventListener('error', (e) => {
+      console.error('Audio error:', e);
+      toast.error('Error loading audio file');
+      setCurrentlyPlaying(null);
+    });
+    
     audio.play().catch((error) => {
       console.error('Error playing audio:', error);
-      toast.error('Failed to play recording');
+      toast.error('Failed to play recording - audio file may not exist');
       setCurrentlyPlaying(null);
     });
 
-    audio.onended = () => setCurrentlyPlaying(null);
-    audio.onerror = () => {
-      toast.error('Error playing audio file');
+    audio.onended = () => {
+      console.log('Audio playback ended');
       setCurrentlyPlaying(null);
     };
   };
