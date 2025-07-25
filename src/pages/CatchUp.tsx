@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Clock, Calendar } from 'lucide-react';
+import { Play, Square, Clock, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format } from 'date-fns';
 import Hls from 'hls.js';
@@ -35,7 +35,7 @@ export const CatchUp: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
+  
   const [hlsInstance, setHlsInstance] = useState<any>(null);
 
   // Format time from database format (HH:MM:SS) to display format (H:MM AM/PM)
@@ -146,40 +146,22 @@ export const CatchUp: React.FC = () => {
       setAudioElement(null);
     }
     setCurrentlyPlaying(null);
-    setIsPaused(false);
   };
 
-  const pauseRecording = () => {
-    console.log('CatchUp: pauseRecording called - currentlyPlaying:', currentlyPlaying, 'isPaused:', isPaused);
-    if (audioElement && currentlyPlaying) {
-      if (isPaused) {
-        // Resume playback
-        console.log('CatchUp: Resuming playback');
-        audioElement.play().catch((error) => {
-          console.error('Error resuming recording:', error);
-          toast.error('Failed to resume recording');
-        });
-        setIsPaused(false);
-      } else {
-        // Pause playback
-        console.log('CatchUp: Pausing playback');
-        audioElement.pause();
-        setIsPaused(true);
-      }
-    } else {
-      console.log('CatchUp: Cannot pause - missing audioElement or currentlyPlaying');
-    }
+  const stopRecording = () => {
+    console.log('CatchUp: stopRecording called - currentlyPlaying:', currentlyPlaying);
+    stopPlayback();
   };
 
   const playRecordedShow = (audioUrl: string, showId: string) => {
     console.log('CatchUp: Attempting to play recorded show:', audioUrl);
     console.log('CatchUp: Show ID:', showId);
-    console.log('CatchUp: Current state - currentlyPlaying:', currentlyPlaying, 'isPaused:', isPaused);
+    console.log('CatchUp: Current state - currentlyPlaying:', currentlyPlaying);
     
-    // If already playing this show, pause/resume it
+    // If already playing this show, stop it
     if (currentlyPlaying === showId) {
-      console.log('CatchUp: Same show clicked, calling pauseRecording');
-      pauseRecording();
+      console.log('CatchUp: Same show clicked, calling stopRecording');
+      stopRecording();
       return;
     }
     
@@ -190,7 +172,7 @@ export const CatchUp: React.FC = () => {
     
     // Then set the new playing state
     setCurrentlyPlaying(showId);
-    setIsPaused(false);
+    
     
     // Check if the URL is a placeholder or invalid
     if (audioUrl.includes('example.com')) {
@@ -426,10 +408,9 @@ export const CatchUp: React.FC = () => {
                           <div className="grid gap-2 max-h-40 overflow-y-auto">
                             {sortedRecordings.map((recording) => {
                               const isPlaying = currentlyPlaying === recording.id;
-                              const showPauseIcon = isPlaying && !isPaused;
-                              const buttonText = isPlaying ? (isPaused ? "Resume" : "Pause") : "Play";
+                              const buttonText = isPlaying ? "Stop" : "Play";
                               
-                              console.log(`CatchUp: Button state for ${recording.id} - isPlaying: ${isPlaying}, isPaused: ${isPaused}, showPauseIcon: ${showPauseIcon}, buttonText: ${buttonText}`);
+                              console.log(`CatchUp: Button state for ${recording.id} - isPlaying: ${isPlaying}, buttonText: ${buttonText}`);
                               
                               return (
                                 <div key={recording.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-white/20 hover:border-white/40 transition-all duration-200">
@@ -455,7 +436,7 @@ export const CatchUp: React.FC = () => {
                                     onClick={() => playRecordedShow(recording.audio_url, recording.id)}
                                     className={`ml-3 ${isPlaying ? 'bg-black text-white hover:bg-black/80' : 'border-white/50 text-white hover:bg-white/20'}`}
                                   >
-                                    {showPauseIcon ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                    {isPlaying ? <Square className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                                     <span className="ml-1 hidden sm:inline">{buttonText}</span>
                                   </Button>
                                 </div>
