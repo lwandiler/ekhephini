@@ -150,9 +150,11 @@ export const CatchUp: React.FC = () => {
   };
 
   const pauseRecording = () => {
+    console.log('CatchUp: pauseRecording called - currentlyPlaying:', currentlyPlaying, 'isPaused:', isPaused);
     if (audioElement && currentlyPlaying) {
       if (isPaused) {
         // Resume playback
+        console.log('CatchUp: Resuming playback');
         audioElement.play().catch((error) => {
           console.error('Error resuming recording:', error);
           toast.error('Failed to resume recording');
@@ -160,22 +162,33 @@ export const CatchUp: React.FC = () => {
         setIsPaused(false);
       } else {
         // Pause playback
+        console.log('CatchUp: Pausing playback');
         audioElement.pause();
         setIsPaused(true);
       }
+    } else {
+      console.log('CatchUp: Cannot pause - missing audioElement or currentlyPlaying');
     }
   };
 
   const playRecordedShow = (audioUrl: string, showId: string) => {
-    console.log('Attempting to play recorded show:', audioUrl);
-    console.log('Show ID:', showId);
+    console.log('CatchUp: Attempting to play recorded show:', audioUrl);
+    console.log('CatchUp: Show ID:', showId);
+    console.log('CatchUp: Current state - currentlyPlaying:', currentlyPlaying, 'isPaused:', isPaused);
     
     // If already playing this show, pause/resume it
     if (currentlyPlaying === showId) {
+      console.log('CatchUp: Same show clicked, calling pauseRecording');
       pauseRecording();
       return;
     }
     
+    console.log('CatchUp: Setting new show as playing');
+    
+    // Stop any currently playing audio FIRST
+    stopPlayback();
+    
+    // Then set the new playing state
     setCurrentlyPlaying(showId);
     setIsPaused(false);
     
@@ -185,9 +198,6 @@ export const CatchUp: React.FC = () => {
       setCurrentlyPlaying(null);
       return;
     }
-    
-    // Stop any currently playing audio
-    stopPlayback();
     
     // Create new audio element for HLS playback
     const audio = new Audio();
