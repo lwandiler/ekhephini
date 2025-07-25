@@ -203,22 +203,24 @@ serve(async (req) => {
             // Each recording is 1 hour (3600 seconds)
             const durationSeconds = 3600;
 
-            // Generate timestamped recording URL
+            // Generate timestamped recording URL for catch-up
             const generateRecordingUrl = (baseUrl: string): string => {
               if (!baseUrl) return '';
               
-              // Calculate timestamp for one hour ago
+              // Calculate timestamp for one hour ago (when the recording should have started)
               const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
               const unixTimestamp = Math.floor(oneHourAgo.getTime() / 1000);
               
-              // Transform URL: insert timestamp and duration between 'index' and '.m3u8'
-              // Example: index.m3u8 becomes index-1753221840-3600.m3u8
+              // Transform the stream URL to a catch-up URL
+              // Replace the stream segment with catch-up format
+              // Example: /mdda/streams/mcr128kbps.m3u8 becomes /mdda/catchup/mcr128kbps-1753221840-3600.m3u8
               const transformedUrl = baseUrl.replace(
-                /index\.m3u8$/,
-                `index-${unixTimestamp}-3600.m3u8`
+                /\/streams\/([^\/]+)\.m3u8$/,
+                `/catchup/$1-${unixTimestamp}-3600.m3u8`
               );
               
-              console.log(`Generated recording URL: ${transformedUrl}`);
+              console.log(`Original URL: ${baseUrl}`);
+              console.log(`Transformed catch-up URL: ${transformedUrl}`);
               return transformedUrl;
             };
 

@@ -8,6 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Play, Pause, Clock, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format } from 'date-fns';
+import Hls from 'hls.js';
+
+// Extend Window interface for HLS.js
+declare global {
+  interface Window {
+    Hls: typeof Hls;
+  }
+}
 
 interface RecordedShow {
   id: string;
@@ -120,39 +128,81 @@ export const CatchUp: React.FC = () => {
   }, []);
 
   const playRecordedShow = (audioUrl: string, showId: string) => {
-    console.log('Attempting to play audio:', audioUrl);
+    console.log('Attempting to play HLS audio:', audioUrl);
+    console.log('Show ID:', showId);
     setCurrentlyPlaying(showId);
     
     // Check if the URL is a placeholder or invalid
-    if (audioUrl.includes('example.com') || !audioUrl.includes('supabase.co')) {
+    if (audioUrl.includes('example.com')) {
       toast.error('This is a demo recording - audio file not available');
       setCurrentlyPlaying(null);
       return;
     }
     
-    // Create audio element and play
-    const audio = new Audio(audioUrl);
+    // Add more detailed logging
+    console.log('URL includes /catchup/:', audioUrl.includes('/catchup/'));
+    console.log('URL includes /streams/:', audioUrl.includes('/streams/'));
     
-    audio.addEventListener('loadstart', () => {
-      console.log('Audio loading started');
-    });
+    // Stop any currently playing audio
+    if (audioElement) {
+      audioElement.pause();
+      audioElement.src = '';
+    }
     
-    audio.addEventListener('canplay', () => {
-      console.log('Audio can start playing');
-    });
+    // Create new audio element for HLS playback
+    const audio = new Audio();
+    setAudioElement(audio);
+    
+    // Check if HLS.js is supported
+    if (Hls.isSupported()) {
+      console.log('Using HLS.js for playback');
+      const hls = new Hls({
+        enableWorker: false,
+        lowLatencyMode: false,
+      });
+      
+      hls.loadSource(audioUrl);
+      hls.attachMedia(audio);
+      
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        console.log('HLS manifest parsed, attempting to play');
+        audio.play().catch((error) => {
+          console.error('Error playing HLS audio:', error);
+          toast.error('Failed to play recording');
+          setCurrentlyPlaying(null);
+        });
+      });
+      
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        console.error('HLS error:', data);
+        if (data.fatal) {
+          toast.error('Error loading catch-up recording');
+          setCurrentlyPlaying(null);
+        }
+      });
+      
+    } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+      // Native HLS support (Safari)
+      console.log('Using native HLS support');
+      audio.src = audioUrl;
+      audio.play().catch((error) => {
+        console.error('Error playing native HLS audio:', error);
+        toast.error('Failed to play recording');
+        setCurrentlyPlaying(null);
+      });
+    } else {
+      console.error('HLS not supported');
+      toast.error('HLS playback not supported in this browser');
+      setCurrentlyPlaying(null);
+      return;
+    }
     
     audio.addEventListener('error', (e) => {
-      console.error('Audio error:', e);
-      toast.error('Error loading audio file');
+      console.error('Audio element error:', e);
+      toast.error('Error loading catch-up recording');
       setCurrentlyPlaying(null);
     });
     
-    audio.play().catch((error) => {
-      console.error('Error playing audio:', error);
-      toast.error('Failed to play recording - audio file may not exist');
-      setCurrentlyPlaying(null);
-    });
-
     audio.onended = () => {
       console.log('Audio playback ended');
       setCurrentlyPlaying(null);
