@@ -127,9 +127,25 @@ export const CatchUp: React.FC = () => {
     };
   }, []);
 
+  const stopPlayback = () => {
+    if (audioElement) {
+      audioElement.pause();
+      audioElement.src = '';
+      setAudioElement(null);
+    }
+    setCurrentlyPlaying(null);
+  };
+
   const playRecordedShow = (audioUrl: string, showId: string) => {
-    console.log('Attempting to play HLS audio:', audioUrl);
+    console.log('Attempting to play recorded show:', audioUrl);
     console.log('Show ID:', showId);
+    
+    // If already playing this show, stop it
+    if (currentlyPlaying === showId) {
+      stopPlayback();
+      return;
+    }
+    
     setCurrentlyPlaying(showId);
     
     // Check if the URL is a placeholder or invalid
@@ -139,19 +155,14 @@ export const CatchUp: React.FC = () => {
       return;
     }
     
-    // Add more detailed logging
-    console.log('URL includes /catchup/:', audioUrl.includes('/catchup/'));
-    console.log('URL includes /streams/:', audioUrl.includes('/streams/'));
-    
     // Stop any currently playing audio
-    if (audioElement) {
-      audioElement.pause();
-      audioElement.src = '';
-    }
+    stopPlayback();
     
     // Create new audio element for HLS playback
     const audio = new Audio();
     setAudioElement(audio);
+    
+    console.log('Full audio URL:', audioUrl);
     
     // Check if HLS.js is supported
     if (Hls.isSupported()) {
@@ -347,10 +358,10 @@ export const CatchUp: React.FC = () => {
                                 variant={isPlaying ? "secondary" : "outline"}
                                 size="sm"
                                 onClick={() => playRecordedShow(recording.audio_url, recording.id)}
-                                disabled={isPlaying}
                                 className="ml-3"
                               >
                                 {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                                <span className="ml-1">{isPlaying ? "Stop" : "Play"}</span>
                               </Button>
                             </div>
                           );
