@@ -35,6 +35,7 @@ export const CatchUp: React.FC = () => {
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [hlsInstance, setHlsInstance] = useState<any>(null);
 
   // Format time from database format (HH:MM:SS) to display format (H:MM AM/PM)
   const formatTimeRange = (startTime: string, endTime: string): string => {
@@ -125,10 +126,19 @@ export const CatchUp: React.FC = () => {
 
     return () => {
       supabase.removeChannel(channel);
+      // Clean up audio resources when component unmounts
+      stopPlayback();
     };
   }, []);
 
   const stopPlayback = () => {
+    // Clean up HLS instance first
+    if (hlsInstance) {
+      console.log('Destroying HLS instance');
+      hlsInstance.destroy();
+      setHlsInstance(null);
+    }
+    
     if (audioElement) {
       audioElement.pause();
       audioElement.src = '';
@@ -200,6 +210,9 @@ export const CatchUp: React.FC = () => {
         lowLatencyMode: false,
       });
       
+      // Store HLS instance for cleanup
+      setHlsInstance(hls);
+      
       hls.loadSource(audioUrl);
       hls.attachMedia(audio);
       
@@ -209,6 +222,8 @@ export const CatchUp: React.FC = () => {
           console.error('Error playing HLS audio:', error);
           toast.error('Failed to play recording');
           setCurrentlyPlaying(null);
+          hls.destroy();
+          setHlsInstance(null);
         });
       });
       
@@ -217,6 +232,8 @@ export const CatchUp: React.FC = () => {
         if (data.fatal) {
           toast.error('Error loading catch-up recording');
           setCurrentlyPlaying(null);
+          hls.destroy();
+          setHlsInstance(null);
         }
       });
       
