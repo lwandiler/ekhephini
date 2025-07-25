@@ -177,57 +177,91 @@ export const CatchUp: React.FC = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recordedShows.map((recording) => {
-              const show = showDetails[recording.show_id];
-              const isPlaying = currentlyPlaying === recording.id;
-              
-              return (
-                <Card key={recording.id} className="overflow-hidden">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-lg">
-                          {show?.title || recording.title}
-                        </CardTitle>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Hosted by {show?.host || 'Unknown Host'}
-                        </p>
-                        {show && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {show.start_time} - {show.end_time} • {show.day_of_week}
-                          </p>
+          <div className="space-y-6">
+            {(() => {
+              // Group recordings by show
+              const groupedRecordings = recordedShows.reduce((acc, recording) => {
+                const showId = recording.show_id || 'unknown';
+                if (!acc[showId]) {
+                  acc[showId] = [];
+                }
+                acc[showId].push(recording);
+                return acc;
+              }, {} as Record<string, typeof recordedShows>);
+
+              return Object.entries(groupedRecordings).map(([showId, recordings]) => {
+                const show = showDetails[showId];
+                // Sort recordings by hour (extract hour number from title)
+                const sortedRecordings = recordings.sort((a, b) => {
+                  const hourA = parseInt(a.title.match(/Hour (\d+)/)?.[1] || '1');
+                  const hourB = parseInt(b.title.match(/Hour (\d+)/)?.[1] || '1');
+                  return hourA - hourB;
+                });
+
+                return (
+                  <Card key={showId} className="overflow-hidden">
+                    <CardHeader>
+                      <div className="flex items-start gap-4">
+                        {show?.image_url && (
+                          <img 
+                            src={show.image_url} 
+                            alt={show.title}
+                            className="w-16 h-16 rounded-lg object-cover"
+                          />
                         )}
+                        <div className="flex-1">
+                          <CardTitle className="text-xl">
+                            {show?.title || 'Unknown Show'}
+                          </CardTitle>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Hosted by {show?.host || 'Unknown Host'}
+                          </p>
+                          {show && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {show.start_time} - {show.end_time} • {show.day_of_week}
+                            </p>
+                          )}
+                          {show?.description && (
+                            <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                              {show.description}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <Button
-                        variant={isPlaying ? "secondary" : "outline"}
-                        size="sm"
-                        onClick={() => playRecordedShow(recording.audio_url, recording.id)}
-                        disabled={isPlaying}
-                      >
-                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {show?.description && (
-                        <p className="text-sm text-gray-600 line-clamp-3">
-                          {show.description}
-                        </p>
-                      )}
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>Recorded: {format(new Date(recording.recorded_at), 'MMM dd, yyyy')}</span>
-                        <span>{formatDuration(recording.duration_seconds || 0)}</span>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <h4 className="font-semibold text-sm">Available Recordings:</h4>
+                        {sortedRecordings.map((recording) => {
+                          const isPlaying = currentlyPlaying === recording.id;
+                          return (
+                            <div key={recording.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                              <div className="flex-1">
+                                <h5 className="font-medium text-sm">{recording.title}</h5>
+                                <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
+                                  <span>Recorded: {format(new Date(recording.recorded_at), 'MMM dd, yyyy')}</span>
+                                  <span>{formatDuration(recording.duration_seconds || 0)}</span>
+                                  <span>Expires: {getTimeUntilExpiry(recording.expires_at)}</span>
+                                </div>
+                              </div>
+                              <Button
+                                variant={isPlaying ? "secondary" : "outline"}
+                                size="sm"
+                                onClick={() => playRecordedShow(recording.audio_url, recording.id)}
+                                disabled={isPlaying}
+                                className="ml-3"
+                              >
+                                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                              </Button>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        Expires: {getTimeUntilExpiry(recording.expires_at)}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                    </CardContent>
+                  </Card>
+                );
+              });
+            })()}
           </div>
         )}
       </main>

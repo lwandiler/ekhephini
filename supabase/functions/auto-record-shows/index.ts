@@ -81,43 +81,71 @@ serve(async (req) => {
 
     let recordingsStarted = 0;
 
-    // Check for shows that just ended (to record them)
-    // Logic: At 10:00, we want to record the 9:00-10:00 show
+    // Check for shows that are currently running or just ended to record hourly segments
+    // Logic: At 10:00, we want to record the previous hour (9:00-10:00)
     for (const show of shows || []) {
       const showStart = show.start_time;
       const showEnd = show.end_time;
-
-      // Check if current time matches the show's end time (meaning the show just ended)
-      // We record shows that ended at the current hour
       const currentHour = now.getHours().toString().padStart(2, '0') + ':00:00';
       
-      if (showEnd === currentHour) {
-        // Check if we haven't already recorded this show today
-        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-        const { data: existingRecording } = await supabaseClient
-          .from('recorded_shows')
-          .select('id')
-          .eq('show_id', show.id)
-          .gte('recorded_at', todayStart)
-          .single();
-
-        if (!existingRecording) {
-          console.log(`Starting recording for show: ${show.title}`);
-
-          // Start recording
-          const recordingId = crypto.randomUUID();
-          
-          // Calculate duration in seconds
-          const startMinutes = timeToMinutes(showStart);
-          const endMinutes = timeToMinutes(showEnd);
-          let duration = endMinutes - startMinutes;
-          
-          // Handle shows that cross midnight
-          if (duration < 0) {
-            duration = (24 * 60) - startMinutes + endMinutes;
+      // Calculate show duration in hours
+      const startMinutes = timeToMinutes(showStart);
+      const endMinutes = timeToMinutes(showEnd);
+      let durationMinutes = endMinutes - startMinutes;
+      
+      // Handle shows that cross midnight
+      if (durationMinutes < 0) {
+        durationMinutes = (24 * 60) - startMinutes + endMinutes;
+      }
+      
+      const showDurationHours = Math.floor(durationMinutes / 60);
+      
+      // Check if current time is within or just after the show time range
+      const currentMinutes = timeToMinutes(currentHour);
+      let isInShowTimeRange = false;
+      
+      if (startMinutes <= endMinutes) {
+        // Show doesn't cross midnight
+        isInShowTimeRange = currentMinutes > startMinutes && currentMinutes <= endMinutes;
+      } else {
+        // Show crosses midnight
+        isInShowTimeRange = currentMinutes > startMinutes || currentMinutes <= endMinutes;
+      }
+      
+      if (isInShowTimeRange) {
+        // Calculate which hour of the show we should record
+        let hourToRecord = 1;
+        if (startMinutes <= endMinutes) {
+          hourToRecord = Math.floor((currentMinutes - startMinutes) / 60) + 1;
+        } else {
+          // Handle midnight crossing
+          if (currentMinutes > startMinutes) {
+            hourToRecord = Math.floor((currentMinutes - startMinutes) / 60) + 1;
+          } else {
+            hourToRecord = Math.floor(((24 * 60) - startMinutes + currentMinutes) / 60) + 1;
           }
-          
-          const durationSeconds = duration * 60;
+        }
+        
+        // Only record if we haven't exceeded the show duration
+        if (hourToRecord <= showDurationHours) {
+          // Check if we haven't already recorded this specific hour today
+          const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+          const { data: existingRecording } = await supabaseClient
+            .from('recorded_shows')
+            .select('id')
+            .eq('show_id', show.id)
+            .gte('recorded_at', todayStart)
+            .ilike('title', `%Hour ${hourToRecord}%`)
+            .single();
+
+          if (!existingRecording) {
+            console.log(`Starting recording for show: ${show.title} - Hour ${hourToRecord}`);
+
+            // Start recording
+            const recordingId = crypto.randomUUID();
+            
+            // Each recording is 1 hour (3600 seconds)
+            const durationSeconds = 3600;
 
           // Generate timestamped recording URL
           const generateRecordingUrl = (baseUrl: string): string => {
@@ -159,11 +187,11 @@ serve(async (req) => {
                 .from('recorded_shows')
                 .insert({
                   id: recordingId,
-                  title: `${show.title} - ${show.host}`,
+                  title: `${show.title} - Hour ${hourToRecord}`,
                   show_id: show.id,
                   audio_url: audioUrl,
                   duration_seconds: durationSeconds,
-                  description: `Catch-up recording: ${show.title} hosted by ${show.host} (${showStart} - ${showEnd})`
+                  description: `Catch-up recording: ${show.title} hosted by ${show.host} - Hour ${hourToRecord} of ${showDurationHours}`
                 });
 
               if (dbError) {
