@@ -292,66 +292,111 @@ export const RecordedShowsTab: React.FC = () => {
           {recordedShows.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">No recorded shows found.</p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Show</TableHead>
-                  <TableHead>Recorded</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Expires</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recordedShows.map((recording) => (
-                  <TableRow key={recording.id}>
-                    <TableCell className="font-medium">{recording.title}</TableCell>
-                    <TableCell>
-                      {recording.shows ? 
-                        `${recording.shows.title} - ${recording.shows.host}` : 
-                        'No show'
-                      }
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {new Date(recording.recorded_at).toLocaleDateString()}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {formatDuration(recording.duration_seconds)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`text-sm ${new Date(recording.expires_at) <= new Date() ? 'text-destructive' : 'text-muted-foreground'}`}>
-                        {getTimeUntilExpiry(recording.expires_at)}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => window.open(recording.audio_url, '_blank')}
-                        >
-                          <Play className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDelete(recording.id, recording.audio_url)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="space-y-4">
+              {(() => {
+                // Group recordings by show
+                const groupedRecordings = recordedShows.reduce((acc, recording) => {
+                  const showId = recording.show_id || 'no-show';
+                  const showKey = recording.shows ? 
+                    `${recording.shows.title} - ${recording.shows.host}` : 
+                    'Manual Uploads';
+                  
+                  if (!acc[showKey]) {
+                    acc[showKey] = [];
+                  }
+                  acc[showKey].push(recording);
+                  return acc;
+                }, {} as Record<string, typeof recordedShows>);
+
+                return Object.entries(groupedRecordings).map(([showKey, recordings]) => {
+                  // Sort recordings by hour (extract hour number from title) or by recorded date
+                  const sortedRecordings = recordings.sort((a, b) => {
+                    const hourA = parseInt(a.title.match(/Hour (\d+)/)?.[1] || '0');
+                    const hourB = parseInt(b.title.match(/Hour (\d+)/)?.[1] || '0');
+                    
+                    if (hourA && hourB) {
+                      return hourA - hourB;
+                    }
+                    
+                    // Fallback to date sorting
+                    return new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime();
+                  });
+
+                  return (
+                    <Card key={showKey} className="border border-border/50">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg">{showKey}</CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          {sortedRecordings.length} recording{sortedRecordings.length !== 1 ? 's' : ''}
+                        </p>
+                      </CardHeader>
+                      <CardContent>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Recording Title</TableHead>
+                              <TableHead>Recorded</TableHead>
+                              <TableHead>Duration</TableHead>
+                              <TableHead>Expires</TableHead>
+                              <TableHead>Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {sortedRecordings.map((recording) => (
+                              <TableRow key={recording.id}>
+                                <TableCell className="font-medium">
+                                  {recording.title}
+                                  {recording.description && (
+                                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                      {recording.description}
+                                    </p>
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center text-sm text-muted-foreground">
+                                    <Calendar className="h-4 w-4 mr-1" />
+                                    {new Date(recording.recorded_at).toLocaleDateString()}
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center text-sm text-muted-foreground">
+                                    <Clock className="h-4 w-4 mr-1" />
+                                    {formatDuration(recording.duration_seconds)}
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <span className={`text-sm ${new Date(recording.expires_at) <= new Date() ? 'text-destructive' : 'text-muted-foreground'}`}>
+                                    {getTimeUntilExpiry(recording.expires_at)}
+                                  </span>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex space-x-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => window.open(recording.audio_url, '_blank')}
+                                    >
+                                      <Play className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => handleDelete(recording.id, recording.audio_url)}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    </Card>
+                  );
+                });
+              })()}
+            </div>
           )}
         </CardContent>
       </Card>

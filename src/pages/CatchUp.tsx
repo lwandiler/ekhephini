@@ -26,6 +26,22 @@ export const CatchUp: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
 
+  // Format time from database format (HH:MM:SS) to display format (H:MM AM/PM)
+  const formatTimeRange = (startTime: string, endTime: string): string => {
+    const formatTime = (time: string) => {
+      const [hours, minutes] = time.split(':');
+      const hour = parseInt(hours);
+      const minute = minutes;
+      
+      if (hour === 0) return `12:${minute} AM`;
+      if (hour < 12) return `${hour}:${minute} AM`;
+      if (hour === 12) return `12:${minute} PM`;
+      return `${hour - 12}:${minute} PM`;
+    };
+
+    return `${formatTime(startTime)} - ${formatTime(endTime)}`;
+  };
+
   useEffect(() => {
     const fetchRecordedShows = async () => {
       try {
@@ -51,10 +67,13 @@ export const CatchUp: React.FC = () => {
           console.error('Error fetching show details:', showError);
         }
 
-        // Create a mapping of show_id to show details
+        // Create a mapping of show_id to show details with formatted time
         const showMapping = {};
         shows?.forEach(show => {
-          showMapping[show.id] = show;
+          showMapping[show.id] = {
+            ...show,
+            time: formatTimeRange(show.start_time, show.end_time)
+          };
         });
 
         setRecordedShows(recordings || []);
@@ -218,7 +237,7 @@ export const CatchUp: React.FC = () => {
                           </p>
                           {show && (
                             <p className="text-xs text-muted-foreground mt-1">
-                              {show.start_time} - {show.end_time} • {show.day_of_week}
+                              {show.time} • {show.day_of_week}
                             </p>
                           )}
                           {show?.description && (
