@@ -81,15 +81,27 @@ serve(async (req) => {
 
     let recordingsStarted = 0;
 
-    // Check each show to see if it should be recording
+    // Check for shows that just ended (to record them)
+    // Logic: At 10:00, we want to record the 9:00-10:00 show
     for (const show of shows || []) {
       const showStart = show.start_time;
       const showEnd = show.end_time;
 
-      // Check if current time is within show time range
-      if (currentTime >= showStart && currentTime <= showEnd) {
-        // Check if we're not already recording this show
-        if (!activeShowIds.has(show.id)) {
+      // Check if current time matches the show's end time (meaning the show just ended)
+      // We record shows that ended at the current hour
+      const currentHour = now.getHours().toString().padStart(2, '0') + ':00:00';
+      
+      if (showEnd === currentHour) {
+        // Check if we haven't already recorded this show today
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+        const { data: existingRecording } = await supabaseClient
+          .from('recorded_shows')
+          .select('id')
+          .eq('show_id', show.id)
+          .gte('recorded_at', todayStart)
+          .single();
+
+        if (!existingRecording) {
           console.log(`Starting recording for show: ${show.title}`);
 
           // Start recording
@@ -142,16 +154,16 @@ serve(async (req) => {
                 audioUrl = `https://yfkdcqgmyyrcxppxcswz.supabase.co/storage/v1/object/public/recorded-shows/${fileName}`;
               }
 
-              // Create database entry
+              // Create database entry with proper show linking
               const { error: dbError } = await supabaseClient
                 .from('recorded_shows')
                 .insert({
                   id: recordingId,
-                  title: show.title,
+                  title: `${show.title} - ${show.host}`,
                   show_id: show.id,
                   audio_url: audioUrl,
                   duration_seconds: durationSeconds,
-                  description: `Auto-recorded: ${show.title} - ${show.description || ''}`
+                  description: `Catch-up recording: ${show.title} hosted by ${show.host} (${showStart} - ${showEnd})`
                 });
 
               if (dbError) {
@@ -169,7 +181,7 @@ serve(async (req) => {
           backgroundRecording();
           recordingsStarted++;
         } else {
-          console.log(`Show ${show.title} is already being recorded`);
+          console.log(`Show ${show.title} already recorded today`);
         }
       }
     }

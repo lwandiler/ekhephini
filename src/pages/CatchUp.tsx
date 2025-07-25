@@ -5,9 +5,9 @@ import RadioPlayer from '@/components/RadioPlayer';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Clock, Calendar } from 'lucide-react';
+import { Play, Pause, Clock, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 
 interface RecordedShow {
   id: string;
@@ -17,43 +17,58 @@ interface RecordedShow {
   audio_url: string;
   duration_seconds: number | null;
   expires_at: string;
-  shows?: {
-    host: string;
-    image_url: string | null;
-  } | null;
+  show_id: string | null;
 }
 
 export const CatchUp: React.FC = () => {
   const [recordedShows, setRecordedShows] = useState<RecordedShow[]>([]);
+  const [showDetails, setShowDetails] = useState<{[key: string]: any}>({});
   const [loading, setLoading] = useState(true);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchRecordedShows = async () => {
+      try {
+        const { data: recordings, error: recordingError } = await supabase
+          .from('recorded_shows')
+          .select('*')
+          .order('recorded_at', { ascending: false });
+
+        if (recordingError) {
+          console.error('Error fetching recordings:', recordingError);
+          toast.error('Failed to load recordings');
+          return;
+        }
+
+        // Fetch show details for all recordings
+        const showIds = recordings?.map(r => r.show_id).filter(Boolean) || [];
+        const { data: shows, error: showError } = await supabase
+          .from('shows')
+          .select('*')
+          .in('id', showIds);
+
+        if (showError) {
+          console.error('Error fetching show details:', showError);
+        }
+
+        // Create a mapping of show_id to show details
+        const showMapping = {};
+        shows?.forEach(show => {
+          showMapping[show.id] = show;
+        });
+
+        setRecordedShows(recordings || []);
+        setShowDetails(showMapping);
+      } catch (error) {
+        console.error('Error fetching recorded shows:', error);
+        toast.error('Failed to load catch up shows');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchRecordedShows();
   }, []);
-
-  const fetchRecordedShows = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('recorded_shows')
-        .select(`
-          *,
-          shows (
-            host,
-            image_url
-          )
-        `)
-        .order('recorded_at', { ascending: false });
-
-      if (error) throw error;
-      setRecordedShows(data || []);
-    } catch (error) {
-      console.error('Error fetching recorded shows:', error);
-      toast.error('Failed to load catch up shows');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const playRecordedShow = (audioUrl: string, showId: string) => {
     console.log('Attempting to play audio:', audioUrl);
@@ -162,62 +177,57 @@ export const CatchUp: React.FC = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6">
-            {recordedShows.map((show) => (
-              <Card key={show.id} className="bg-card/80 backdrop-blur-sm border-border/50 hover:bg-card/90 transition-all duration-200">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-xl text-foreground mb-2">
-                        {show.title}
-                      </CardTitle>
-                      {show.shows?.host && (
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Hosted by {show.shows.host}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recordedShows.map((recording) => {
+              const show = showDetails[recording.show_id];
+              const isPlaying = currentlyPlaying === recording.id;
+              
+              return (
+                <Card key={recording.id} className="overflow-hidden">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-lg">
+                          {show?.title || recording.title}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Hosted by {show?.host || 'Unknown Host'}
                         </p>
-                      )}
-                      {show.description && (
-                        <p className="text-muted-foreground text-sm leading-relaxed">
+                        {show && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {show.start_time} - {show.end_time} • {show.day_of_week}
+                          </p>
+                        )}
+                      </div>
+                      <Button
+                        variant={isPlaying ? "secondary" : "outline"}
+                        size="sm"
+                        onClick={() => playRecordedShow(recording.audio_url, recording.id)}
+                        disabled={isPlaying}
+                      >
+                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {show?.description && (
+                        <p className="text-sm text-gray-600 line-clamp-3">
                           {show.description}
                         </p>
                       )}
-                    </div>
-                    {show.shows?.image_url && (
-                      <img
-                        src={show.shows.image_url}
-                        alt={show.title}
-                        className="w-16 h-16 rounded-lg object-cover ml-4"
-                      />
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {formatRecordedDate(show.recorded_at)}
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Recorded: {format(new Date(recording.recorded_at), 'MMM dd, yyyy')}</span>
+                        <span>{formatDuration(recording.duration_seconds || 0)}</span>
                       </div>
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1" />
-                        {formatDuration(show.duration_seconds)}
-                      </div>
-                      <div className="text-primary font-medium">
-                        Expires {getTimeUntilExpiry(show.expires_at)}
+                      <div className="text-xs text-muted-foreground">
+                        Expires: {getTimeUntilExpiry(recording.expires_at)}
                       </div>
                     </div>
-                    <Button
-                      onClick={() => playRecordedShow(show.audio_url, show.id)}
-                      disabled={currentlyPlaying === show.id}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                    >
-                      <Play className="h-4 w-4 mr-2" />
-                      {currentlyPlaying === show.id ? 'Playing...' : 'Play'}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>
