@@ -19,6 +19,7 @@ interface ShowRow {
   start_time: string;
   end_time: string;
   description?: string;
+  image_url?: string;
 }
 
 interface ValidationError {
@@ -33,11 +34,11 @@ const BulkShowsUpload: React.FC<BulkShowsUploadProps> = ({ onUploadComplete }) =
   const [successCount, setSuccessCount] = useState(0);
 
   const downloadTemplate = () => {
-    const headers = ['title', 'host', 'day_of_week', 'start_time', 'end_time', 'description'];
+    const headers = ['title', 'host', 'day_of_week', 'start_time', 'end_time', 'description', 'image_url'];
     const sampleData = [
-      ['Morning Show', 'John Doe', 'Monday', '08:00', '10:00', 'Your morning dose of music and news'],
-      ['Drive Time', 'Jane Smith', 'Tuesday', '17:00', '19:00', 'Perfect music for your commute home'],
-      ['Weekend Mix', 'DJ Mike', 'Saturday', '12:00', '14:00', 'The best weekend vibes']
+      ['Morning Show', 'John Doe', 'Monday', '08:00', '10:00', 'Your morning dose of music and news', 'https://example.com/morning-show.jpg'],
+      ['Drive Time', 'Jane Smith', 'Tuesday', '17:00', '19:00', 'Perfect music for your commute home', 'https://example.com/drive-time.jpg'],
+      ['Weekend Mix', 'DJ Mike', 'Saturday', '12:00', '14:00', 'The best weekend vibes', 'https://example.com/weekend-mix.jpg']
     ];
 
     const csvContent = [
@@ -147,7 +148,7 @@ const BulkShowsUpload: React.FC<BulkShowsUploadProps> = ({ onUploadComplete }) =
       const show: any = {};
       
       headers.forEach((header, index) => {
-        if (requiredHeaders.includes(header) || header === 'description') {
+        if (requiredHeaders.includes(header) || header === 'description' || header === 'image_url') {
           show[header] = values[index] || '';
         }
       });
@@ -189,6 +190,7 @@ const BulkShowsUpload: React.FC<BulkShowsUploadProps> = ({ onUploadComplete }) =
         start_time: show.start_time,
         end_time: show.end_time,
         description: show.description || null,
+        image_url: show.image_url || null,
         active: true
       }));
 
@@ -287,10 +289,11 @@ const BulkShowsUpload: React.FC<BulkShowsUploadProps> = ({ onUploadComplete }) =
           <h4 className="font-medium mb-2">CSV Format Requirements:</h4>
           <ul className="text-sm text-gray-600 space-y-1">
             <li>• Required columns: title, host, day_of_week, start_time, end_time</li>
-            <li>• Optional columns: description</li>
+            <li>• Optional columns: description, image_url</li>
             <li>• Time format: HH:MM (e.g., 08:00, 17:30)</li>
             <li>• Valid days: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday, Weekdays, Weekends, Daily</li>
             <li>• End time must be after start time</li>
+            <li>• Image URL should be a valid web URL (e.g., https://example.com/image.jpg)</li>
           </ul>
         </div>
       </CardContent>

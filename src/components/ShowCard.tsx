@@ -19,7 +19,7 @@ const ShowCard = ({
   host, 
   time, 
   description, 
-  image = "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80", 
+  image, 
   isLive = false 
 }: ShowCardProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -28,7 +28,7 @@ const ShowCard = ({
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gray-900 border-gray-800 text-white group">
       <div className="relative">
         <img 
-          src={image} 
+          src={image || "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"} 
           alt={title} 
           className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
         />

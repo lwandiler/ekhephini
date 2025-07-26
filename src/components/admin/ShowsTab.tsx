@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fetchShows, type Show } from '@/services/api/showsService';
 import BulkShowsUpload from './BulkShowsUpload';
+import { MediaPickerModal } from './MediaPickerModal';
 
 const ShowsTab = () => {
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -17,6 +18,8 @@ const ShowsTab = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [editingShow, setEditingShow] = useState<Show | null>(null);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string>('');
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
   
   useEffect(() => {
     loadShows();
@@ -53,6 +56,7 @@ const ShowsTab = () => {
       start_time: formData.get('show-start-time') as string,
       end_time: formData.get('show-end-time') as string,
       description: formData.get('show-description') as string,
+      image_url: selectedImageUrl || null,
       active: true
     };
 
@@ -78,6 +82,7 @@ const ShowsTab = () => {
 
       setShowForm(false);
       setEditingShow(null);
+      setSelectedImageUrl('');
       loadShows(); // Reload the shows list
       (e.target as HTMLFormElement).reset();
     } catch (error) {
@@ -90,6 +95,7 @@ const ShowsTab = () => {
 
   const handleEdit = (show: Show) => {
     setEditingShow(show);
+    setSelectedImageUrl(show.image_url || '');
     setShowForm(true);
   };
 
@@ -133,6 +139,7 @@ const ShowsTab = () => {
             setShowForm(!showForm);
             if (showForm) {
               setEditingShow(null);
+              setSelectedImageUrl('');
             }
           }}
           className="bg-radio-accent hover:bg-radio-accent/80"
@@ -194,12 +201,42 @@ const ShowsTab = () => {
                 <Label htmlFor="show-description">Description</Label>
                 <Textarea id="show-description" name="show-description" placeholder="Enter show description" defaultValue={editingShow?.description || ''} rows={4} />
               </div>
+              
+              <div className="space-y-2">
+                <Label>Show Image</Label>
+                <div className="flex items-center gap-4">
+                  {selectedImageUrl && (
+                    <img 
+                      src={selectedImageUrl} 
+                      alt="Show preview" 
+                      className="w-20 h-20 object-cover rounded-md border"
+                    />
+                  )}
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setShowMediaPicker(true)}
+                  >
+                    {selectedImageUrl ? 'Change Image' : 'Select Image'}
+                  </Button>
+                  {selectedImageUrl && (
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      onClick={() => setSelectedImageUrl('')}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </div>
+              </div>
             </CardContent>
             
             <CardFooter className="flex justify-end space-x-2">
               <Button variant="outline" type="button" onClick={() => {
                 setShowForm(false);
                 setEditingShow(null);
+                setSelectedImageUrl('');
               }}>Cancel</Button>
               <Button type="submit" disabled={submitting} className="bg-radio-accent hover:bg-radio-accent/80">
                 {submitting ? 'Saving...' : (editingShow ? 'Update Show' : 'Save Show')}
@@ -262,6 +299,13 @@ const ShowsTab = () => {
           )}
         </div>
       )}
+      
+      <MediaPickerModal
+        open={showMediaPicker}
+        onOpenChange={setShowMediaPicker}
+        onSelect={setSelectedImageUrl}
+        mediaType="image"
+      />
     </div>
   );
 };
