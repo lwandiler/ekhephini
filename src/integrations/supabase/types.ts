@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_clicks: {
+        Row: {
+          ad_id: string
+          city: string | null
+          clicked_at: string
+          country: string | null
+          created_at: string
+          device_type: string | null
+          id: string
+          ip_address: unknown | null
+          session_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          ad_id: string
+          city?: string | null
+          clicked_at?: string
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          ip_address?: unknown | null
+          session_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          ad_id?: string
+          city?: string | null
+          clicked_at?: string
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          ip_address?: unknown | null
+          session_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_clicks_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ad_requests: {
         Row: {
           ad_type: string
@@ -479,6 +526,48 @@ export type Database = {
           user_email?: string
           user_id?: string
           user_name?: string | null
+        }
+        Relationships: []
+      }
+      content_interactions: {
+        Row: {
+          city: string | null
+          content_id: string
+          content_type: string
+          country: string | null
+          created_at: string
+          device_type: string | null
+          id: string
+          interaction_type: string
+          ip_address: unknown | null
+          session_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          city?: string | null
+          content_id: string
+          content_type: string
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          interaction_type: string
+          ip_address?: unknown | null
+          session_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          city?: string | null
+          content_id?: string
+          content_type?: string
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          interaction_type?: string
+          ip_address?: unknown | null
+          session_id?: string
+          user_agent?: string | null
         }
         Relationships: []
       }

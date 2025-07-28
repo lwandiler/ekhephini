@@ -11,6 +11,11 @@ export interface AnalyticsData {
   deviceStats: Array<{ device: string; users: number }>;
   listeningHours: Array<{ hour: number; listeners: number }>;
   showStats: Array<{ show_name: string; total_listeners: number; total_listening_time: number }>;
+  adClickStats: Array<{ title: string; clicks: number }>;
+  mostLikedPodcasts: Array<{ title: string; host_or_author: string; likes: number }>;
+  mostLikedShows: Array<{ title: string; host_or_author: string; likes: number }>;
+  mostLikedBlogs: Array<{ title: string; host_or_author: string; likes: number }>;
+  mostViewedBlogs: Array<{ title: string; author: string; views: number }>;
   isLoading: boolean;
   error: string | null;
 }
@@ -26,6 +31,11 @@ export const useAnalytics = (days: number = 30) => {
     deviceStats: [],
     listeningHours: [],
     showStats: [],
+    adClickStats: [],
+    mostLikedPodcasts: [],
+    mostLikedShows: [],
+    mostLikedBlogs: [],
+    mostViewedBlogs: [],
     isLoading: true,
     error: null
   });
@@ -41,14 +51,24 @@ export const useAnalytics = (days: number = 30) => {
           geographicData,
           deviceStats,
           listeningHours,
-          showStats
+          showStats,
+          adClickStats,
+          mostLikedPodcasts,
+          mostLikedShows,
+          mostLikedBlogs,
+          mostViewedBlogs
         ] = await Promise.all([
           analyticsService.getTotalStats(),
           analyticsService.getListenerGrowth(days),
           analyticsService.getGeographicData(),
           analyticsService.getDeviceStats(),
           analyticsService.getListeningHours(),
-          analyticsService.getShowStats(days)
+          analyticsService.getShowStats(days),
+          analyticsService.getAdClickStats(days),
+          analyticsService.getMostLikedContent('podcast', days),
+          analyticsService.getMostLikedContent('show', days),
+          analyticsService.getMostLikedContent('blog_post', days),
+          analyticsService.getMostViewedContent('blog_post', days)
         ]);
 
         setData({
@@ -58,6 +78,11 @@ export const useAnalytics = (days: number = 30) => {
           deviceStats,
           listeningHours,
           showStats,
+          adClickStats,
+          mostLikedPodcasts,
+          mostLikedShows,
+          mostLikedBlogs,
+          mostViewedBlogs,
           isLoading: false,
           error: null
         });
@@ -111,11 +136,26 @@ export const useAnalyticsTracking = () => {
     });
   };
 
+  const trackAdClick = (adId: string) => {
+    analyticsService.trackAdClick(adId);
+  };
+
+  const trackContentLike = (contentType: string, contentId: string) => {
+    analyticsService.trackContentInteraction(contentType, contentId, 'like');
+  };
+
+  const trackContentView = (contentType: string, contentId: string) => {
+    analyticsService.trackContentInteraction(contentType, contentId, 'view');
+  };
+
   return {
     trackPageView,
     trackPlay,
     trackPause,
     trackStop,
-    trackVolumeChange
+    trackVolumeChange,
+    trackAdClick,
+    trackContentLike,
+    trackContentView
   };
 };

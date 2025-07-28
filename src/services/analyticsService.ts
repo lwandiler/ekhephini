@@ -296,17 +296,181 @@ class AnalyticsService {
     }
   }
 
+  async trackAdClick(adId: string) {
+    const { deviceType, browser, os } = this.getDeviceInfo();
+    
+    try {
+      await supabase
+        .from('ad_clicks')
+        .insert({
+          ad_id: adId,
+          session_id: this.sessionId,
+          user_agent: navigator.userAgent,
+          device_type: deviceType
+        });
+    } catch (error) {
+      console.error('Failed to track ad click:', error);
+    }
+  }
+
+  async trackContentInteraction(contentType: string, contentId: string, interactionType: string) {
+    const { deviceType, browser, os } = this.getDeviceInfo();
+    
+    try {
+      await supabase
+        .from('content_interactions')
+        .insert({
+          content_type: contentType,
+          content_id: contentId,
+          interaction_type: interactionType,
+          session_id: this.sessionId,
+          user_agent: navigator.userAgent,
+          device_type: deviceType
+        });
+    } catch (error) {
+      console.error('Failed to track content interaction:', error);
+    }
+  }
+
+  async getAdClickStats(days: number = 30) {
+    try {
+      const { data, error } = await supabase
+        .from('ad_clicks')
+        .select(`
+          ad_id,
+          ads!inner(title),
+          clicked_at
+        `)
+        .gte('clicked_at', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString());
+
+      if (error) throw error;
+
+      // Aggregate clicks by ad
+      const adClicks: { [key: string]: { title: string; clicks: number } } = {};
+      data?.forEach(click => {
+        const adTitle = click.ads.title;
+        if (!adClicks[adTitle]) {
+          adClicks[adTitle] = { title: adTitle, clicks: 0 };
+        }
+        adClicks[adTitle].clicks++;
+      });
+
+      return Object.values(adClicks).sort((a, b) => b.clicks - a.clicks);
+    } catch (error) {
+      console.error('Failed to get ad click stats:', error);
+      return [];
+    }
+  }
+
+  async getMostLikedContent(contentType: string, days: number = 30) {
+    try {
+      let selectQuery = '';
+      let joinTable = '';
+      
+      switch (contentType) {
+        case 'podcast':
+          selectQuery = 'content_id, podcasts!inner(title, host)';
+          joinTable = 'podcasts';
+          break;
+        case 'show':
+          selectQuery = 'content_id, shows!inner(title, host)';
+          joinTable = 'shows';
+          break;
+        case 'blog_post':
+          selectQuery = 'content_id, blog_posts!inner(title, author)';
+          joinTable = 'blog_posts';
+          break;
+        default:
+          return [];
+      }
+
+      const { data, error } = await supabase
+        .from('content_interactions')
+        .select(selectQuery)
+        .eq('content_type', contentType)
+        .eq('interaction_type', 'like')
+        .gte('created_at', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString());
+
+      if (error) throw error;
+
+      // Aggregate likes by content
+      const contentLikes: { [key: string]: { title: string; host_or_author: string; likes: number } } = {};
+      data?.forEach(interaction => {
+        const content = interaction[joinTable];
+        const title = content.title;
+        const hostOrAuthor = content.host || content.author;
+        
+        if (!contentLikes[title]) {
+          contentLikes[title] = { title, host_or_author: hostOrAuthor, likes: 0 };
+        }
+        contentLikes[title].likes++;
+      });
+
+      return Object.values(contentLikes).sort((a, b) => b.likes - a.likes);
+    } catch (error) {
+      console.error(`Failed to get most liked ${contentType}:`, error);
+      return [];
+    }
+  }
+
+  async getMostViewedContent(contentType: string, days: number = 30) {
+    try {
+      let selectQuery = '';
+      let joinTable = '';
+      
+      switch (contentType) {
+        case 'blog_post':
+          selectQuery = 'content_id, blog_posts!inner(title, author)';
+          joinTable = 'blog_posts';
+          break;
+        default:
+          return [];
+      }
+
+      const { data, error } = await supabase
+        .from('content_interactions')
+        .select(selectQuery)
+        .eq('content_type', contentType)
+        .eq('interaction_type', 'view')
+        .gte('created_at', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString());
+
+      if (error) throw error;
+
+      // Aggregate views by content
+      const contentViews: { [key: string]: { title: string; author: string; views: number } } = {};
+      data?.forEach(interaction => {
+        const content = interaction[joinTable];
+        const title = content.title;
+        const author = content.author;
+        
+        if (!contentViews[title]) {
+          contentViews[title] = { title, author, views: 0 };
+        }
+        contentViews[title].views++;
+      });
+
+      return Object.values(contentViews).sort((a, b) => b.views - a.views);
+    } catch (error) {
+      console.error(`Failed to get most viewed ${contentType}:`, error);
+      return [];
+    }
+  }
+
   async getTotalStats() {
     try {
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
       
-      // Get unique visitors
+      // Get unique visitors by counting distinct session IDs (more accurate for unique users)
       const { data: sessionsData, error: sessionsError } = await supabase
         .from('analytics_sessions')
-        .select('id')
+        .select('session_id')
         .gte('created_at', thirtyDaysAgo);
 
       if (sessionsError) throw sessionsError;
+
+      // Count unique session IDs for unique listeners
+      const uniqueSessionIds = new Set(sessionsData?.map(s => s.session_id) || []);
+      const totalListeners = uniqueSessionIds.size;
 
       // Get average listening time
       const { data: avgTimeData, error: avgTimeError } = await supabase
@@ -334,7 +498,7 @@ class AnalyticsService {
       const mostPopularShow = showData?.[0] || { show_name: 'No data', total_listeners: 0 };
 
       return {
-        totalListeners: sessionsData?.length || 0,
+        totalListeners,
         avgListeningTime: avgDuration,
         mostPopularShow: mostPopularShow.show_name,
         mostPopularShowListeners: mostPopularShow.total_listeners
