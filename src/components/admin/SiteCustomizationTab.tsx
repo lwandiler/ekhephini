@@ -468,10 +468,6 @@ const SiteCustomizationTab = () => {
                   rows={4}
                 />
               </div>
-              
-              <Button onClick={handleTextUpdate} className="w-full">
-                Update Page Text
-              </Button>
             </CardContent>
           </Card>
         </TabsContent>
