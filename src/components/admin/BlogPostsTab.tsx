@@ -285,7 +285,7 @@ const BlogPostsTab = () => {
                     />
                   ) : (
                     <Editor
-                      apiKey="no-api-key"
+                      apiKey="tb6gme89hzkg0jsd61agtzaqkx241294ujp3l9g0gxn0mzn5"
                       value={formData.content}
                       onEditorChange={(content) => setFormData(prev => ({ ...prev, content }))}
                       init={{
