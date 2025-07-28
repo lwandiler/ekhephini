@@ -21,7 +21,7 @@ export const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">Font Size</label>
+      <label className="text-sm font-medium">Font Size <span className="text-muted-foreground">(Current: {currentFontSize})</span></label>
       <Select 
         value={currentFontSize} 
         onValueChange={(value) => onChange(value as FontSize)}

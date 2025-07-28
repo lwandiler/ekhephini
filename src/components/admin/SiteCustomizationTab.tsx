@@ -152,9 +152,11 @@ const SiteCustomizationTab = () => {
   const handlePreviewTheme = () => {
     // Apply theme preview without saving to localStorage or database
     applyThemeToDocument(themeOptions);
+    // Force a re-render by updating the theme context temporarily
+    setThemeOptions(prev => ({ ...prev }));
     toast({
       title: "Theme Preview",
-      description: "Theme preview applied. Changes are not saved yet.",
+      description: "Theme preview applied. Refresh the page to see full effects. Changes are not saved yet.",
     });
   };
 
@@ -437,6 +439,9 @@ const SiteCustomizationTab = () => {
                 <CardDescription>
                   Customize your website's color scheme and typography
                 </CardDescription>
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <span className="font-medium">Currently Applied:</span> {themeOptions.type} theme, {themeOptions.colorScheme} color, {themeOptions.fontFamily} font, {themeOptions.fontSize} size
+                </div>
               </div>
               <div className="flex gap-2">
                 <Button 

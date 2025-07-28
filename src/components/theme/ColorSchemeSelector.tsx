@@ -15,7 +15,7 @@ export const ColorSchemeSelector: React.FC<ColorSchemeSelectorProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">Color Scheme</label>
+      <label className="text-sm font-medium">Color Scheme <span className="text-muted-foreground">(Current: {currentColorScheme})</span></label>
       <div className="grid grid-cols-3 gap-2">
         {colorSchemes.map((scheme) => (
           <Button

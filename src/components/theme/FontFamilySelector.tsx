@@ -21,7 +21,7 @@ export const FontFamilySelector: React.FC<FontFamilySelectorProps> = ({
 }) => {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">Font Family</label>
+      <label className="text-sm font-medium">Font Family <span className="text-muted-foreground">(Current: {currentFontFamily})</span></label>
       <Select 
         value={currentFontFamily} 
         onValueChange={(value) => onChange(value as FontFamily)}
