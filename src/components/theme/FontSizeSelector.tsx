@@ -29,7 +29,7 @@ export const FontSizeSelector: React.FC<FontSizeSelectorProps> = ({
         <SelectTrigger>
           <SelectValue placeholder="Select size" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white border border-gray-200">
           {fontSizes.map((size) => (
             <SelectItem key={size.value} value={size.value}>
               {size.name}

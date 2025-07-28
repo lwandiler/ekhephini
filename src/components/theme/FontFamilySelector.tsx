@@ -29,7 +29,7 @@ export const FontFamilySelector: React.FC<FontFamilySelectorProps> = ({
         <SelectTrigger>
           <SelectValue placeholder="Select font" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white border border-gray-200">
           {fontFamilies.map((font) => (
             <SelectItem 
               key={font.value} 
