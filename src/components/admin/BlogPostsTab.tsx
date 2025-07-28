@@ -175,15 +175,62 @@ const BlogPostsTab = () => {
   };
 
   // TinyMCE image upload handler
-  const handleTinyImageUpload = async (blobInfo: any, progress: (percent: number) => void) => {
-    try {
-      const file = blobInfo.blob();
-      await handleMediaUpload(file);
-      progress(100);
-      return formData.featured_image || ''; // Return the uploaded image URL
-    } catch (error) {
-      throw new Error('Image upload failed');
-    }
+  const handleTinyImageUpload = async (blobInfo: any, progress: (percent: number) => void): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const file = blobInfo.blob();
+        
+        // Create a temporary media upload hook instance just for this upload
+        const { supabase } = await import('@/integrations/supabase/client');
+        
+        // Check file type and size
+        if (!file.type.startsWith('image/')) {
+          throw new Error('Please select a valid image file');
+        }
+        
+        if (file.size > 2 * 1024 * 1024) {
+          throw new Error('Image must be under 2MB');
+        }
+        
+        progress(20);
+        
+        // Create unique filename
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${new Date().getTime()}.${fileExt}`;
+        const filePath = `banners/images/${fileName}`;
+        
+        progress(40);
+        
+        // Upload to Supabase Storage
+        const { data, error } = await supabase
+          .storage
+          .from('media')
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
+        
+        if (error) {
+          console.error('Storage upload error:', error);
+          throw new Error('Upload failed: ' + error.message);
+        }
+        
+        progress(80);
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase
+          .storage
+          .from('media')
+          .getPublicUrl(filePath);
+        
+        progress(100);
+        resolve(publicUrl);
+        
+      } catch (error: any) {
+        console.error('TinyMCE image upload error:', error);
+        reject(error);
+      }
+    });
   };
 
   return (
