@@ -64,7 +64,7 @@ export default {
 				},
 				radio: {
 					'blue': 'hsl(222 84% 5%)',        // #0f172a converted to HSL
-					'light-blue': 'hsl(220 39% 11%)', // #1e293b converted to HSL  
+					'light-blue': 'hsl(220 39% 11%)', // #1e293b converted to HSL
 					'accent': 'hsl(142 71% 45%)',     // Green-600 converted to HSL
 					'light': 'hsl(210 40% 98%)',      // #f8fafc converted to HSL
 					'muted': 'hsl(214 32% 65%)'       // #94a3b8 converted to HSL
@@ -130,6 +130,7 @@ export default {
 				'inter': ['Inter', 'sans-serif'],
 				'roboto': ['Roboto', 'sans-serif'],
 				'playfair': ['Playfair Display', 'serif'],
+				'asap': ['Asap', 'sans-serif'],
 			},
 			fontSize: {
 				'size-small': ['0.875rem', '1.25rem'],      // Small

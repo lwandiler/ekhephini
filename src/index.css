@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Asap:wght@400;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -32,77 +33,81 @@
       transform: translateX(calc(-100% + 200px));
     }
   }
-  
+
   /* Add text shadow utility classes for better visibility */
   .text-shadow-sm {
     text-shadow: 0 1px 2px rgba(0,0,0,0.2);
   }
-  
+
   .text-shadow-md {
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
-  
+
   .text-shadow-lg {
     text-shadow: 0 4px 6px rgba(0,0,0,0.4);
   }
-  
+
   .text-shadow-white-sm {
     text-shadow: 0 1px 2px rgba(255,255,255,0.2);
   }
-  
+
   /* Theme classes for color schemes */
   .theme-purple {
     --primary: 270 91% 65%;
     --primary-foreground: 0 0% 98%;
   }
-  
+
   .theme-blue {
     --primary: 221 83% 53%;
     --primary-foreground: 0 0% 98%;
   }
-  
+
   .theme-green {
     --primary: 142 76% 36%;
     --primary-foreground: 0 0% 98%;
   }
-  
+
   .theme-red {
     --primary: 0 84% 60%;
     --primary-foreground: 0 0% 98%;
   }
-  
+
   .theme-orange {
     --primary: 25 95% 53%;
     --primary-foreground: 0 0% 98%;
   }
-  
+
   .theme-pink {
     --primary: 330 81% 60%;
     --primary-foreground: 0 0% 98%;
   }
-  
+
   /* Font family classes */
   .font-inter {
     font-family: 'Inter', sans-serif;
   }
-  
+
   .font-roboto {
     font-family: 'Roboto', sans-serif;
   }
-  
+
   .font-playfair {
     font-family: 'Playfair Display', serif;
   }
-  
+
+  .font-asap {
+    font-family: 'Asap', sans-serif;
+  }
+
   /* Font size classes */
   .text-size-small {
     font-size: 0.875rem;
   }
-  
+
   .text-size-medium {
     font-size: 1rem;
   }
-  
+
   .text-size-large {
     font-size: 1.125rem;
   }
@@ -113,15 +118,15 @@
   button {
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
-  
+
   /* Ensure all button text and child elements are white */
   button * {
     @apply text-white !important;
   }
-  
+
   /* Specific Listen Button targeting with green gradient */
-  button:has-text("Listen"), 
-  [data-testid*="listen"], 
+  button:has-text("Listen"),
+  [data-testid*="listen"],
   .listen-button,
   button[class*="listen"],
   button:contains("Listen") {
@@ -129,7 +134,7 @@
     color: white !important;
     border: none !important;
   }
-  
+
   button:has-text("Listen") *,
   [data-testid*="listen"] *,
   .listen-button *,
@@ -137,7 +142,7 @@
   button:contains("Listen") * {
     color: white !important;
   }
-  
+
   /* Listen button hover state */
   button:has-text("Listen"):hover,
   [data-testid*="listen"]:hover,
@@ -147,95 +152,95 @@
     background: linear-gradient(to right, #15803d, #166534) !important;
     color: white !important;
   }
-  
+
   /* Badge/tag styling - Green background with white text */
   .badge, [class*="badge"] {
     @apply bg-green-600 text-white !important;
   }
-  
+
   /* Override any specific button variants */
   .btn, [class*="btn"] {
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
-  
+
   .btn *, [class*="btn"] * {
     @apply text-white !important;
   }
-  
+
   /* Ensure buttons in specific components use green */
   .ui-button, [role="button"] {
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
-  
+
   .ui-button *, [role="button"] * {
     @apply text-white !important;
   }
-  
+
   /* Form buttons */
   input[type="submit"], input[type="button"] {
     @apply bg-green-600 text-white hover:bg-green-700 !important;
   }
-  
+
   /* Change all purple borders to green */
   .border-purple-500, .border-purple-600, .border-purple-700 {
     @apply border-green-600 !important;
   }
-  
+
   /* Change all purple text to green */
   .text-purple-500, .text-purple-600, .text-purple-700 {
     @apply text-green-600 !important;
   }
-  
+
   /* Change all purple backgrounds to green with white text */
   .bg-purple-500, .bg-purple-600, .bg-purple-700, .bg-purple-800, .bg-purple-900 {
     @apply bg-green-600 text-white !important;
   }
-  
+
   .bg-purple-500 *, .bg-purple-600 *, .bg-purple-700 *, .bg-purple-800 *, .bg-purple-900 * {
     @apply text-white !important;
   }
-  
+
   /* Change purple hover states to green */
   .hover\:bg-purple-500:hover, .hover\:bg-purple-600:hover, .hover\:bg-purple-700:hover, .hover\:bg-purple-800:hover {
     @apply bg-green-700 text-white !important;
   }
-  
+
   /* Ensure Listen button has green background with white text and icon */
   .listen-button, [data-testid="listen-button"] {
     background: linear-gradient(to right, #16a34a, #15803d) !important;
     color: white !important;
     border: none !important;
   }
-  
+
   .listen-button:hover, [data-testid="listen-button"]:hover {
     background: linear-gradient(to right, #15803d, #166534) !important;
     color: white !important;
   }
-  
+
   .listen-button *, [data-testid="listen-button"] * {
     @apply text-white !important;
   }
-  
+
   .listen-button svg, [data-testid="listen-button"] svg {
     @apply text-white !important;
   }
-  
+
   /* Ensure any button with green background classes has white text */
   .bg-green-500, .bg-green-600, .bg-green-700, .bg-green-800 {
     @apply text-white !important;
   }
-  
+
   .bg-green-500 *, .bg-green-600 *, .bg-green-700 *, .bg-green-800 * {
     @apply text-white !important;
   }
-  
+
   /* Target buttons with "Listen" text content more specifically */
   button[class*="gradient"]:has-text("Listen"),
   button[style*="gradient"]:has-text("Listen") {
     background: linear-gradient(to right, #16a34a, #15803d) !important;
     color: white !important;
   }
-  
+
   /* Override any inline styles on Listen buttons */
   button[style*="purple"]:has-text("Listen"),
   button[style*="blue"]:has-text("Listen") {

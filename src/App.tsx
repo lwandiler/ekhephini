@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -22,6 +21,7 @@ import Admin from '@/pages/Admin';
 import Auth from '@/pages/Auth';
 import NotFound from '@/pages/NotFound';
 import { CatchUp } from '@/pages/CatchUp';
+import Contact from '@/pages/Contact';
 
 import './App.css';
 
@@ -59,7 +59,8 @@ function App() {
                     <Route path="/catchup" element={<CatchUp />} />
                     <Route path="/news" element={<News />} />
                     <Route path="/news/:id" element={<BlogPost />} />
-                    
+                    <Route path="/contact" element={<Contact />} />
+
                     <Route path="/announcements" element={<Announcements />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/auth" element={<Auth />} />
