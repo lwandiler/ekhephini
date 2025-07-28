@@ -2,7 +2,7 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Radio, User, LogOut, BarChart3 } from 'lucide-react';
+import { Menu, X, Radio, User, LogOut } from 'lucide-react';
 import { ThemeContext } from '@/contexts/ThemeContext';
 import { StationContext } from '@/contexts/StationContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -48,10 +48,6 @@ const Header = () => {
             <Link to="/catchup" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Catch Up</Link>
             <Link to="/announcements" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Announcements</Link>
             <Link to="/news" className="text-gray-700 font-medium hover:text-green-600 transition-colors">News</Link>
-            <Link to="/charts" className="text-gray-700 font-medium hover:text-green-600 transition-colors flex items-center">
-              <BarChart3 size={18} className="mr-1" />
-              Charts
-            </Link>
             
             {user ? (
               <DropdownMenu>
@@ -77,13 +73,7 @@ const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Link to="/auth">
-                <Button variant="secondary" className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white">
-                  Sign In
-                </Button>
-              </Link>
-            )}
+            ) : null}
           </nav>
           
           {/* Mobile menu button */}
@@ -112,14 +102,8 @@ const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Link to="/auth">
-                <Button variant="secondary" size="sm" className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white">
-                  Sign In
-                </Button>
-              </Link>
-            )}
-            <Button 
+            ) : null}
+            <Button
               variant="ghost" 
               size="icon" 
               className="text-gray-700 hover:bg-gray-100" 
@@ -139,10 +123,6 @@ const Header = () => {
             <Link to="/catchup" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Catch Up</Link>
             <Link to="/announcements" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Announcements</Link>
             <Link to="/news" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>News</Link>
-            <Link to="/charts" className="text-gray-700 font-medium hover:text-green-600 transition-colors flex items-center" onClick={toggleMenu}>
-              <BarChart3 size={18} className="mr-1" />
-              Charts
-            </Link>
           </nav>
         )}
       </div>
