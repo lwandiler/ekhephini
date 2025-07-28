@@ -204,18 +204,18 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <Card className="fixed bottom-4 left-4 right-4 z-50 bg-card/95 backdrop-blur-sm border-border/50 shadow-2xl">
+    <Card className="fixed bottom-0 left-0 right-0 z-50 bg-green-900 border-green-700 text-white rounded-none border-t">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-sm text-foreground truncate">{title}</h4>
-            <p className="text-xs text-muted-foreground truncate">{showTitle}</p>
+            <h4 className="font-semibold text-sm text-white truncate">{title}</h4>
+            <p className="text-xs text-green-300 truncate">{showTitle}</p>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 text-white hover:text-green-300"
           >
             <Square className="h-4 w-4" />
           </Button>
@@ -231,7 +231,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
             className="w-full"
             disabled={isLoading || duration === 0}
           />
-          <div className="flex justify-between text-xs text-muted-foreground mt-1">
+          <div className="flex justify-between text-xs text-green-300 mt-1">
             <span>{formatTime(currentTime)}</span>
             <span>{duration > 0 ? formatTime(duration) : '--:--'}</span>
           </div>
@@ -246,7 +246,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
               size="sm"
               onClick={() => skip(-15)}
               disabled={isLoading}
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 text-white hover:text-green-300"
             >
               <SkipBack className="h-4 w-4" />
             </Button>
@@ -257,7 +257,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
               size="sm"
               onClick={togglePlayPause}
               disabled={isLoading}
-              className="h-10 w-10 p-0"
+              className="h-10 w-10 p-0 text-white hover:text-green-300"
             >
               {isLoading ? (
                 <Clock className="h-5 w-5 animate-spin" />
@@ -274,7 +274,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
               size="sm"
               onClick={() => skip(15)}
               disabled={isLoading}
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 text-white hover:text-green-300"
             >
               <SkipForward className="h-4 w-4" />
             </Button>
@@ -285,7 +285,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
               size="sm"
               onClick={stop}
               disabled={isLoading}
-              className="h-8 w-8 p-0"
+              className="h-8 w-8 p-0 text-white hover:text-green-300"
             >
               <Square className="h-4 w-4" />
             </Button>
@@ -297,7 +297,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
               variant="ghost"
               size="sm"
               onClick={toggleMute}
-              className="h-8 w-8 p-0 flex-shrink-0"
+              className="h-8 w-8 p-0 flex-shrink-0 text-white hover:text-green-300"
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="h-4 w-4" />
