@@ -327,7 +327,7 @@ const UsersTab = () => {
       
       {/* Add User Dialog */}
       <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white border-2 border-green-500">
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
             <DialogDescription>
@@ -398,7 +398,7 @@ const UsersTab = () => {
       
       {/* Edit User Dialog */}
       <Dialog open={isEditUserOpen} onOpenChange={setIsEditUserOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white border-2 border-green-500">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
