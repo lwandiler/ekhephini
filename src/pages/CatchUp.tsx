@@ -2,21 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RadioPlayer from '@/components/RadioPlayer';
+import { CatchUpPlayer } from '@/components/CatchUpPlayer';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Square, Clock, Calendar } from 'lucide-react';
+import { Play, Clock, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format } from 'date-fns';
-import Hls from 'hls.js';
-
-// Extend Window interface for HLS.js
-declare global {
-  interface Window {
-    Hls: typeof Hls;
-  }
-}
 
 interface RecordedShow {
   id: string;
@@ -29,13 +22,18 @@ interface RecordedShow {
   show_id: string | null;
 }
 
+interface CurrentlyPlayingShow {
+  id: string;
+  audioUrl: string;
+  title: string;
+  showTitle: string;
+}
+
 export const CatchUp: React.FC = () => {
   const [recordedShows, setRecordedShows] = useState<RecordedShow[]>([]);
   const [showDetails, setShowDetails] = useState<{[key: string]: any}>({});
   const [loading, setLoading] = useState(true);
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
-  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
-  const [hlsInstance, setHlsInstance] = useState<any>(null);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<CurrentlyPlayingShow | null>(null);
 
   // Format time from database format (HH:MM:SS) to display format (H:MM AM/PM)
   const formatTimeRange = (startTime: string, endTime: string): string => {
@@ -126,134 +124,35 @@ export const CatchUp: React.FC = () => {
 
     return () => {
       supabase.removeChannel(channel);
-      // Clean up audio resources when component unmounts
-      stopPlayback();
     };
   }, []);
 
-  const stopPlayback = () => {
-    // Clean up HLS instance first
-    if (hlsInstance) {
-      console.log('Destroying HLS instance');
-      hlsInstance.destroy();
-      setHlsInstance(null);
-    }
-    
-    if (audioElement) {
-      audioElement.pause();
-      audioElement.src = '';
-      setAudioElement(null);
-    }
-    setCurrentlyPlaying(null);
-  };
-
-  const stopRecording = () => {
-    console.log('CatchUp: stopRecording called - currentlyPlaying:', currentlyPlaying);
-    stopPlayback();
-  };
-
-  const playRecordedShow = (audioUrl: string, showId: string) => {
-    console.log('CatchUp: Attempting to play recorded show:', audioUrl);
-    console.log('CatchUp: Show ID:', showId);
-    console.log('CatchUp: Current state - currentlyPlaying:', currentlyPlaying);
-    
-    // If already playing this show, stop it
-    if (currentlyPlaying === showId) {
-      console.log('CatchUp: Same show clicked, calling stopRecording');
-      stopRecording();
-      return;
-    }
-    
-    console.log('CatchUp: Setting new show as playing');
-    
-    // Stop any currently playing audio FIRST
-    stopPlayback();
-    
-    // Then set the new playing state
-    setCurrentlyPlaying(showId);
-    
+  const playRecordedShow = (recording: RecordedShow) => {
     // Check if the URL is a placeholder or invalid
-    if (audioUrl.includes('example.com')) {
+    if (recording.audio_url.includes('example.com')) {
       toast.error('This is a demo recording - audio file not available');
-      setCurrentlyPlaying(null);
       return;
     }
-    
-    // Create new audio element for HLS playback
-    const audio = new Audio();
-    setAudioElement(audio);
-    
-    console.log('Using catch-up recording URL:', audioUrl);
     
     // Verify this is a catch-up URL (should contain index- and timestamp)
-    if (!audioUrl.includes('/index-')) {
+    if (!recording.audio_url.includes('/index-')) {
       console.warn('Warning: URL does not appear to be a catch-up recording URL');
       toast.error('Invalid recording URL format');
-      setCurrentlyPlaying(null);
       return;
     }
+
+    const show = showDetails[recording.show_id || 'unknown'];
     
-    // Check if HLS.js is supported
-    if (Hls.isSupported()) {
-      console.log('Using HLS.js for playback');
-      const hls = new Hls({
-        enableWorker: false,
-        lowLatencyMode: false,
-      });
-      
-      // Store HLS instance for cleanup
-      setHlsInstance(hls);
-      
-      hls.loadSource(audioUrl);
-      hls.attachMedia(audio);
-      
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        console.log('HLS manifest parsed, attempting to play');
-        audio.play().catch((error) => {
-          console.error('Error playing HLS audio:', error);
-          toast.error('Failed to play recording');
-          setCurrentlyPlaying(null);
-          hls.destroy();
-          setHlsInstance(null);
-        });
-      });
-      
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error('HLS error:', data);
-        if (data.fatal) {
-          toast.error('Error loading catch-up recording');
-          setCurrentlyPlaying(null);
-          hls.destroy();
-          setHlsInstance(null);
-        }
-      });
-      
-    } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
-      // Native HLS support (Safari)
-      console.log('Using native HLS support');
-      audio.src = audioUrl;
-      audio.play().catch((error) => {
-        console.error('Error playing native HLS audio:', error);
-        toast.error('Failed to play recording');
-        setCurrentlyPlaying(null);
-      });
-    } else {
-      console.error('HLS not supported');
-      toast.error('HLS playback not supported in this browser');
-      setCurrentlyPlaying(null);
-      return;
-    }
-    
-    audio.addEventListener('error', (e) => {
-      console.error('Audio element error:', e);
-      toast.error('Error loading catch-up recording');
-      setCurrentlyPlaying(null);
+    setCurrentlyPlaying({
+      id: recording.id,
+      audioUrl: recording.audio_url,
+      title: recording.title,
+      showTitle: show?.title || 'Unknown Show'
     });
-    
-    audio.onended = () => {
-      console.log('Audio playback ended');
-      setCurrentlyPlaying(null);
-    };
+  };
+
+  const stopPlayer = () => {
+    setCurrentlyPlaying(null);
   };
 
   const formatDuration = (seconds: number | null) => {
@@ -261,14 +160,6 @@ export const CatchUp: React.FC = () => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-  };
-
-  const formatRecordedDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
   };
 
   const getTimeUntilExpiry = (expiresAt: string) => {
@@ -302,7 +193,7 @@ export const CatchUp: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background/50 to-primary/5">
       <Header />
       
-      <main className="container mx-auto px-4 py-8 space-y-8">
+      <main className="container mx-auto px-4 py-8 space-y-8 pb-32">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-foreground">
             Catch Up
@@ -405,8 +296,7 @@ export const CatchUp: React.FC = () => {
                           </h4>
                           <div className="grid gap-2 max-h-40 overflow-y-auto">
                             {sortedRecordings.map((recording) => {
-                              const isPlaying = currentlyPlaying === recording.id;
-                              const buttonText = isPlaying ? "Stop" : "Play";
+                              const isPlaying = currentlyPlaying?.id === recording.id;
                               
                               return (
                                 <div key={recording.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-white/20 hover:border-white/40 transition-all duration-200">
@@ -429,11 +319,11 @@ export const CatchUp: React.FC = () => {
                                   <Button
                                     variant={isPlaying ? "secondary" : "outline"}
                                     size="sm"
-                                    onClick={() => playRecordedShow(recording.audio_url, recording.id)}
+                                    onClick={() => playRecordedShow(recording)}
                                     className={`ml-3 ${isPlaying ? 'bg-black text-white hover:bg-black/80' : 'border-white/50 text-white hover:bg-white/20'}`}
                                   >
-                                    {isPlaying ? <Square className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                                    <span className="ml-1 hidden sm:inline">{buttonText}</span>
+                                    <Play className="h-4 w-4" />
+                                    <span className="ml-1 hidden sm:inline">Play</span>
                                   </Button>
                                 </div>
                               );
@@ -449,6 +339,16 @@ export const CatchUp: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* Catch Up Player */}
+      {currentlyPlaying && (
+        <CatchUpPlayer
+          audioUrl={currentlyPlaying.audioUrl}
+          title={currentlyPlaying.title}
+          showTitle={currentlyPlaying.showTitle}
+          onClose={stopPlayer}
+        />
+      )}
 
       <RadioPlayer />
       <Footer />
