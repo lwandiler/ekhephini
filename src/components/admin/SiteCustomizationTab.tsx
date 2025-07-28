@@ -14,7 +14,8 @@ import { FontFamilySelector } from '@/components/theme/FontFamilySelector';
 import { FontSizeSelector } from '@/components/theme/FontSizeSelector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { stationService } from '@/services/api/stationService';
-import { Save } from 'lucide-react';
+import { Save, Eye } from 'lucide-react';
+import { applyThemeToDocument } from '@/utils/themeManager';
 
 const SiteCustomizationTab = () => {
   const { themeOptions, setThemeOptions } = useContext(ThemeContext);
@@ -102,6 +103,21 @@ const SiteCustomizationTab = () => {
     }
   };
 
+  const handlePreviewLogo = () => {
+    // Preview logo change in context without saving
+    if (setSettings) {
+      const newSettings = {
+        ...settings,
+        logoUrl: settings.logoUrl
+      };
+      setSettings(newSettings);
+      toast({
+        title: "Logo Preview",
+        description: "Logo preview applied. Changes are not saved yet.",
+      });
+    }
+  };
+
   const handleThemeChange = (updates: Partial<typeof themeOptions>) => {
     const newThemeOptions = { ...themeOptions, ...updates };
     setThemeOptions(newThemeOptions);
@@ -131,6 +147,15 @@ const SiteCustomizationTab = () => {
     } finally {
       setSavingStates(prev => ({ ...prev, theme: false }));
     }
+  };
+
+  const handlePreviewTheme = () => {
+    // Apply theme preview without saving to localStorage or database
+    applyThemeToDocument(themeOptions);
+    toast({
+      title: "Theme Preview",
+      description: "Theme preview applied. Changes are not saved yet.",
+    });
   };
 
   const handleTextUpdate = () => {
@@ -179,6 +204,24 @@ const SiteCustomizationTab = () => {
       });
     } finally {
       setSavingStates(prev => ({ ...prev, text: false }));
+    }
+  };
+
+  const handlePreviewText = () => {
+    // Preview text changes without saving
+    if (setSettings) {
+      const newSettings = {
+        ...settings,
+        stationName: pageTexts.heroTitle,
+        stationTagline: pageTexts.heroSubtitle,
+        stationDescription: pageTexts.aboutText,
+      };
+      setSettings(newSettings);
+      document.title = pageTexts.heroTitle;
+      toast({
+        title: "Text Preview",
+        description: "Text preview applied. Changes are not saved yet.",
+      });
     }
   };
 
@@ -333,15 +376,26 @@ const SiteCustomizationTab = () => {
                   Upload your station logo (recommended size: 400x400px, max 2MB)
                 </CardDescription>
               </div>
-              <Button 
-                onClick={handleSaveLogo} 
-                disabled={savingStates.logo}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {savingStates.logo ? 'Saving...' : 'Save Logo'}
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={handlePreviewLogo} 
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Preview Logo
+                </Button>
+                <Button 
+                  onClick={handleSaveLogo} 
+                  disabled={savingStates.logo}
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 flex-1"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {savingStates.logo ? 'Saving...' : 'Save Logo'}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col items-center space-y-4">
@@ -384,15 +438,26 @@ const SiteCustomizationTab = () => {
                   Customize your website's color scheme and typography
                 </CardDescription>
               </div>
-              <Button 
-                onClick={handleSaveTheme} 
-                disabled={savingStates.theme}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {savingStates.theme ? 'Saving...' : 'Save Theme'}
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={handlePreviewTheme} 
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Preview Theme
+                </Button>
+                <Button 
+                  onClick={handleSaveTheme} 
+                  disabled={savingStates.theme}
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 flex-1"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {savingStates.theme ? 'Saving...' : 'Save Theme'}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <ThemeTypeSelector 
@@ -427,15 +492,26 @@ const SiteCustomizationTab = () => {
                   Edit the main text content displayed on your website
                 </CardDescription>
               </div>
-              <Button 
-                onClick={handleSavePageText} 
-                disabled={savingStates.text}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {savingStates.text ? 'Saving...' : 'Save Text'}
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={handlePreviewText} 
+                  size="sm"
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Preview Text
+                </Button>
+                <Button 
+                  onClick={handleSavePageText} 
+                  disabled={savingStates.text}
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 flex-1"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {savingStates.text ? 'Saving...' : 'Save Text'}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
