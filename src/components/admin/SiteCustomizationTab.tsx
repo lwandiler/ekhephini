@@ -18,7 +18,7 @@ import { Save } from 'lucide-react';
 
 const SiteCustomizationTab = () => {
   const { themeOptions, setThemeOptions } = useContext(ThemeContext);
-  const { settings, setSettings } = useContext(StationContext);
+  const { settings, setSettings, refreshSettings } = useContext(StationContext);
   const [analyticsScript, setAnalyticsScript] = useState(localStorage.getItem('googleAnalyticsScript') || '');
   const [pageTexts, setPageTexts] = useState({
     heroTitle: settings.stationName,
@@ -80,6 +80,12 @@ const SiteCustomizationTab = () => {
         logo_url: settings.logoUrl,
       };
       await stationService.updateStationSettings(settingsToSave);
+      
+      // Refresh settings to ensure UI is updated
+      if (refreshSettings) {
+        await refreshSettings();
+      }
+      
       toast({
         title: "Logo Saved",
         description: "Logo has been saved to the database successfully.",
@@ -155,17 +161,9 @@ const SiteCustomizationTab = () => {
       };
       await stationService.updateStationSettings(settingsToSave);
       
-      // Update local state
-      if (setSettings) {
-        const newSettings = {
-          ...settings,
-          stationName: pageTexts.heroTitle,
-          stationTagline: pageTexts.heroSubtitle,
-          stationDescription: pageTexts.aboutText,
-        };
-        setSettings(newSettings);
-        localStorage.setItem('radioSettings', JSON.stringify(newSettings));
-        document.title = pageTexts.heroTitle;
+      // Refresh settings to ensure UI is updated
+      if (refreshSettings) {
+        await refreshSettings();
       }
       
       toast({
@@ -279,6 +277,11 @@ const SiteCustomizationTab = () => {
       // Also save theme options and analytics script to localStorage
       localStorage.setItem('clickRadioTheme', JSON.stringify(themeOptions));
       localStorage.setItem('googleAnalyticsScript', analyticsScript);
+      
+      // Refresh settings to ensure UI is updated
+      if (refreshSettings) {
+        await refreshSettings();
+      }
 
       toast({
         title: "Changes Saved",

@@ -49,6 +49,63 @@
   .text-shadow-white-sm {
     text-shadow: 0 1px 2px rgba(255,255,255,0.2);
   }
+  
+  /* Theme classes for color schemes */
+  .theme-purple {
+    --primary: 270 91% 65%;
+    --primary-foreground: 0 0% 98%;
+  }
+  
+  .theme-blue {
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 98%;
+  }
+  
+  .theme-green {
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 98%;
+  }
+  
+  .theme-red {
+    --primary: 0 84% 60%;
+    --primary-foreground: 0 0% 98%;
+  }
+  
+  .theme-orange {
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 98%;
+  }
+  
+  .theme-pink {
+    --primary: 330 81% 60%;
+    --primary-foreground: 0 0% 98%;
+  }
+  
+  /* Font family classes */
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .font-roboto {
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .font-playfair {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  /* Font size classes */
+  .text-size-small {
+    font-size: 0.875rem;
+  }
+  
+  .text-size-medium {
+    font-size: 1rem;
+  }
+  
+  .text-size-large {
+    font-size: 1.125rem;
+  }
 }
 
 /* Global button styling - Green background with white text */

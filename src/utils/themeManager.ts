@@ -36,6 +36,9 @@ export const applyThemeToDocument = (options: ThemeOptions): void => {
   rootElement.classList.remove('theme-purple', 'theme-blue', 'theme-green', 'theme-red', 'theme-orange', 'theme-pink');
   rootElement.classList.add(`theme-${options.colorScheme}`);
   
-  // Also apply to body for consistent styling
-  document.body.className = `theme-${options.colorScheme}`;
+  // Also apply to body for consistent styling, preserving any existing classes
+  const existingClasses = document.body.className.split(' ').filter(cls => !cls.startsWith('theme-'));
+  document.body.className = [...existingClasses, `theme-${options.colorScheme}`].join(' ');
+  
+  console.log('Theme applied:', options);
 };

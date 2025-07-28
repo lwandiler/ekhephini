@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, Radio, User, LogOut, BarChart3 } from 'lucide-react';
 import { ThemeContext } from '@/contexts/ThemeContext';
+import { StationContext } from '@/contexts/StationContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -17,6 +18,7 @@ import {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { themeOptions } = useContext(ThemeContext);
+  const { settings } = useContext(StationContext);
   const { user, signOut } = useAuth();
 
   const toggleMenu = () => {
@@ -30,12 +32,12 @@ const Header = () => {
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110">
               <img 
-                src="/lovable-uploads/38150e55-823d-433a-8672-ae40d2fcf2da.png" 
-                alt="Moutse Community Radio Station" 
+                src={settings.logoUrl} 
+                alt={settings.stationName} 
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 via-green-500 to-green-600">Moutse Community Radio</span>
+            <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-primary">{settings.stationName}</span>
           </Link>
           
           {/* Desktop navigation */}
