@@ -107,11 +107,11 @@ const ShowSchedule = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 border">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900">Show Schedule</h2>
+      <div className="bg-white rounded-[30px] shadow-lg p-8">
+        <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[32px] font-bold leading-normal mb-8">Show Schedule</h2>
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-20 w-full" />
+            <Skeleton key={i} className="h-20 w-full rounded-[20px]" />
           ))}
         </div>
       </div>
@@ -120,35 +120,36 @@ const ShowSchedule = () => {
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 border">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900">Show Schedule</h2>
+      <div className="bg-white rounded-[30px] shadow-lg p-8">
+        <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[32px] font-bold leading-normal mb-8">Show Schedule</h2>
         <div className="text-center py-8">
-          <p className="text-lg text-gray-600">
+          <p className="text-[#5F5F5F] font-asap text-lg leading-normal">
             {error}
           </p>
-          <Button 
+          <div 
             onClick={() => window.location.reload()} 
-            className="mt-4"
-            variant="outline"
+            className="mt-6 w-[180px] h-[50px] bg-[#004D9E] rounded-[25px] flex items-center justify-center mx-auto cursor-pointer hover:bg-[#003a7a] transition-colors"
           >
-            Try Again
-          </Button>
+            <span className="text-white font-asap text-[16px] font-bold leading-normal">
+              Try Again
+            </span>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 border">
-      <h2 className="text-2xl font-bold mb-6 text-gray-900">Show Schedule</h2>
+    <div className="bg-white rounded-[30px] shadow-lg p-8 max-w-6xl mx-auto">
+      <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[32px] font-bold leading-normal mb-8 text-center">Show Schedule</h2>
       
       <Tabs value={currentDay} onValueChange={setCurrentDay} className="w-full">
-        <TabsList className="grid grid-cols-7 mb-6 overflow-x-auto bg-gray-100">
+        <TabsList className="grid grid-cols-7 mb-8 bg-[#F8F9FA] rounded-[20px] p-1 overflow-x-auto">
           {schedule.map((day) => (
             <TabsTrigger 
               key={day.day} 
               value={day.day}
-              className="data-[state=active]:!bg-green-800 data-[state=active]:!text-white text-gray-600 hover:text-gray-900"
+              className="data-[state=active]:!bg-[#004D9E] data-[state=active]:!text-white text-[#5F5F5F] hover:text-black font-asap font-bold text-[14px] rounded-[15px] transition-colors"
             >
               {day.day.substring(0, 3)}
             </TabsTrigger>
@@ -156,41 +157,63 @@ const ShowSchedule = () => {
         </TabsList>
         
         {schedule.map((day) => (
-          <TabsContent key={day.day} value={day.day} className="space-y-4">
+          <TabsContent key={day.day} value={day.day} className="space-y-6">
             {day.shows.length === 0 ? (
-              <div className="text-center py-8 text-gray-600">
-                <p>No shows scheduled for {day.day}</p>
+              <div className="text-center py-12">
+                <p className="text-[#5F5F5F] font-asap text-lg">No shows scheduled for {day.day}</p>
               </div>
             ) : (
               day.shows.map((show) => (
                 <div 
                   key={show.id} 
-                  className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 border-l-4 border-green-600 rounded-r-md transition-colors bg-gray-50 hover:bg-gray-100"
+                  className="bg-[#F8F9FA] rounded-[20px] p-6 hover:shadow-md transition-shadow"
                 >
-                  <div className="mb-3 md:mb-0">
-                    <h3 className="font-bold text-lg text-gray-900">{show.title}</h3>
-                    <p className="text-gray-600">with {show.host}</p>
-                    {show.description && (
-                      <p className="text-sm mt-1 text-gray-500">
-                        {show.description}
+                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-4 mb-2">
+                        {isShowCurrentlyHappening(show) && (
+                          <div className="bg-[#F99300] text-white px-3 py-1 rounded-[15px] font-asap text-[12px] font-bold">
+                            LIVE NOW
+                          </div>
+                        )}
+                        <h3 className="text-black font-asap text-[24px] font-bold leading-normal">{show.title}</h3>
+                      </div>
+                      <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal mb-2">
+                        Host: {show.host}
                       </p>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
-                    <span className="bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium">
-                      {show.time}
-                    </span>
+                      {show.description && (
+                        <p className="text-[#5F5F5F] font-asap text-[14px] font-normal leading-normal">
+                          {show.description}
+                        </p>
+                      )}
+                    </div>
                     
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
-                      onClick={() => handleListenClick(show)}
-                    >
-                      <Play className="w-4 h-4 mr-1" />
-                      Listen
-                    </Button>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <div className="bg-[#004D9E] text-white px-4 py-2 rounded-[15px] font-asap text-[14px] font-bold">
+                        {show.time}
+                      </div>
+                      
+                      <div 
+                        onClick={() => handleListenClick(show)}
+                        className="w-[120px] h-[45px] bg-[#F99300] rounded-[25px] flex items-center justify-center cursor-pointer hover:bg-[#e8850a] transition-colors"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M8 5V19L19 12L8 5Z"
+                              fill="white"
+                              stroke="white"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span className="text-white font-asap text-[14px] font-bold leading-normal">
+                            Listen
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))
@@ -201,18 +224,18 @@ const ShowSchedule = () => {
       
       {/* Show Not Started Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md bg-white border-2 border-green-600">
+        <DialogContent className="max-w-md bg-white border-2 border-[#004D9E] rounded-[20px]">
           <DialogHeader>
-            <DialogTitle className="text-center text-black">
+            <DialogTitle className="text-center text-black font-asap text-[20px] font-bold">
               {selectedShow && hasShowPassed(selectedShow, schedule) ? 'Show Has Ended' : 'Show Not Started'}
             </DialogTitle>
           </DialogHeader>
-          <div className="py-4 text-center">
-            <p className="text-black mb-4">
+          <div className="py-6 text-center">
+            <p className="text-black font-asap text-[16px] mb-4">
               <strong>{selectedShow?.title}</strong> with {selectedShow?.host} 
               {selectedShow && hasShowPassed(selectedShow, schedule) ? ' has already ended.' : " hasn't started yet."}
             </p>
-            <p className="text-sm text-gray-700">
+            <p className="text-[#5F5F5F] font-asap text-[14px]">
               {selectedShow && hasShowPassed(selectedShow, schedule) 
                 ? `Catch the next episode ${getNextShowOccurrence(selectedShow, schedule)}`
                 : `Come back ${selectedShow ? getNextShowOccurrence(selectedShow, schedule) : ''} to listen live!`
@@ -220,9 +243,14 @@ const ShowSchedule = () => {
             </p>
           </div>
           <div className="flex justify-center">
-            <Button onClick={() => setDialogOpen(false)} className="bg-green-600 text-white hover:bg-green-700">
-              Got it
-            </Button>
+            <div 
+              onClick={() => setDialogOpen(false)} 
+              className="w-[120px] h-[45px] bg-[#004D9E] rounded-[25px] flex items-center justify-center cursor-pointer hover:bg-[#003a7a] transition-colors"
+            >
+              <span className="text-white font-asap text-[14px] font-bold leading-normal">
+                Got it
+              </span>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
