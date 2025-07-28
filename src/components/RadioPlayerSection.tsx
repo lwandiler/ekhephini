@@ -1,9 +1,9 @@
 const RadioPlayerSection = () => {
   return (
     <section className="relative w-full bg-white py-16">
-      <div className="container mx-auto px-[210px]">
+      <div className="container mx-auto px-4 md:px-8 lg:px-16 xl:px-[210px]">
         {/* Now Playing Card */}
-        <div className="relative w-[1021px] h-[294px] mx-auto">
+        <div className="relative w-full max-w-[1021px] h-[294px] mx-auto overflow-hidden">
           {/* Main card background */}
           <div className="absolute left-0 top-8 w-full h-[262px] bg-[#004D9E] rounded-[30px]"></div>
 
