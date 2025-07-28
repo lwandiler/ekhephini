@@ -73,21 +73,21 @@ export function getRecordingAvailabilityTime(show: Show): Date {
 }
 
 /**
- * Checks if a recording should be available now based on the 24-hour + 1-hour rule
+ * Checks if a recording should be available now based on the 3-day + 1-hour rule
  */
 export function isRecordingAvailable(show: Show): boolean {
   const availabilityTime = getRecordingAvailabilityTime(show);
   const now = new Date();
-  const oneDayLater = new Date(availabilityTime.getTime() + 24 * 60 * 60 * 1000);
+  const threeDaysLater = new Date(availabilityTime.getTime() + 3 * 24 * 60 * 60 * 1000);
   
   // Recording is available if:
   // 1. Current time is after availability time (show ended + 1 hour)
-  // 2. Current time is within 24 hours of availability time
-  return now >= availabilityTime && now <= oneDayLater;
+  // 2. Current time is within 3 days of availability time
+  return now >= availabilityTime && now <= threeDaysLater;
 }
 
 /**
- * Filters recordings to only show those available within the 24-hour window
+ * Filters recordings to only show those available within the 3-day window
  */
 export function filterAvailableRecordings(recordings: RecordingWithShow[], allShows: Show[]): RecordingWithShow[] {
   return recordings.filter(recording => {
@@ -129,20 +129,23 @@ export function getTimeUntilAvailable(show: Show): string {
 }
 
 /**
- * Gets the time remaining until a recording expires (24 hours after becoming available)
+ * Gets the time remaining until a recording expires (3 days after becoming available)
  */
 export function getTimeUntilExpired(show: Show): string {
   const availabilityTime = getRecordingAvailabilityTime(show);
-  const expiryTime = new Date(availabilityTime.getTime() + 24 * 60 * 60 * 1000);
+  const expiryTime = new Date(availabilityTime.getTime() + 3 * 24 * 60 * 60 * 1000);
   const now = new Date();
   
   if (now >= expiryTime) return 'Expired';
   
   const timeDiff = expiryTime.getTime() - now.getTime();
-  const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
   
-  if (hours > 0) {
+  if (days > 0) {
+    return `Expires in ${days}d ${hours}h`;
+  } else if (hours > 0) {
     return `Expires in ${hours}h ${minutes}m`;
   } else {
     return `Expires in ${minutes}m`;
