@@ -200,8 +200,8 @@ serve(async (req) => {
             // Start recording
             const recordingId = crypto.randomUUID();
             
-            // Each recording is 1 hour (3600 seconds)
-            const durationSeconds = 3600;
+            // Each recording is 3 hours (10800 seconds)
+            const durationSeconds = 10800;
 
             // Generate timestamped recording URL for catch-up
             const generateRecordingUrl = (baseUrl: string): string => {
@@ -214,10 +214,10 @@ serve(async (req) => {
               // Transform the stream URL to a catch-up URL
               // Example: https://streamlive-edge-flu01.broadsmart-streaming.co.za/dumafm/index.m3u8 becomes 
               // https://streamlive-edge-flu01.broadsmart-streaming.co.za/dumafm/index-1753221840-3600.m3u8
-              const transformedUrl = baseUrl.replace(
-                /\/index\.m3u8$/,
-                `/index-${unixTimestamp}-3600.m3u8`
-              );
+               const transformedUrl = baseUrl.replace(
+                 /\/index\.m3u8$/,
+                 `/index-${unixTimestamp}-10800.m3u8`
+               );
               
               console.log(`Original URL: ${baseUrl}`);
               console.log(`Transformed catch-up URL: ${transformedUrl}`);
