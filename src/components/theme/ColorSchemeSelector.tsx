@@ -21,10 +21,10 @@ export const ColorSchemeSelector: React.FC<ColorSchemeSelectorProps> = ({
           <Button
             key={scheme.value}
             variant={currentColorScheme === scheme.value ? "default" : "outline"}
-            className={`${
+            className={`relative overflow-hidden ${
               scheme.value === currentColorScheme 
-                ? `bg-gradient-to-r ${scheme.gradientClasses} text-white` 
-                : `bg-gradient-to-r ${scheme.gradientClasses} bg-clip-text text-transparent border`
+                ? `bg-gradient-to-r ${scheme.gradientClasses} text-white border-2 border-white shadow-lg` 
+                : `bg-gradient-to-r ${scheme.gradientClasses} text-white hover:opacity-90 transition-opacity`
             }`}
             onClick={() => onChange(scheme.value)}
           >
