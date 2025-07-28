@@ -204,7 +204,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
   const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <Card className="fixed bottom-0 left-0 right-0 z-50 bg-green-900 border-green-700 text-white rounded-none border-t">
+    <Card className="fixed bottom-0 left-0 right-0 z-[60] bg-green-900 border-green-700 text-white rounded-none border-t">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex-1 min-w-0">
