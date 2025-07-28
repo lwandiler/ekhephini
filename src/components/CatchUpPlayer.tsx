@@ -34,15 +34,33 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
   const [volume, setVolume] = useState(80);
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const hlsRef = useRef<any>(null);
   const progressUpdateRef = useRef<number | null>(null);
+  const playPauseTimeoutRef = useRef<number | null>(null);
 
   // Initialize audio player
   useEffect(() => {
     const initializePlayer = () => {
       setIsLoading(true);
+      setIsPlaying(false);
+      setCurrentTime(0);
+      setDuration(0);
+      setIsInitialized(false);
+      
+      // Clean up previous instance
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+      
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+        audioRef.current = null;
+      }
       
       // Create new audio element
       const audio = new Audio();
@@ -64,6 +82,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
         
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           setIsLoading(false);
+          setIsInitialized(true);
           setDuration(audio.duration || 0);
         });
         
@@ -79,6 +98,7 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
         audio.src = audioUrl;
         audio.addEventListener('loadedmetadata', () => {
           setIsLoading(false);
+          setIsInitialized(true);
           setDuration(audio.duration || 0);
         });
       } else {
@@ -105,40 +125,56 @@ export const CatchUpPlayer: React.FC<CatchUpPlayerProps> = ({
       audio.addEventListener('loadedmetadata', () => {
         setDuration(audio.duration || 0);
       });
+
+      // Play event handler to sync state
+      audio.addEventListener('play', () => {
+        setIsPlaying(true);
+      });
+
+      // Pause event handler to sync state
+      audio.addEventListener('pause', () => {
+        setIsPlaying(false);
+      });
     };
 
     initializePlayer();
 
     // Cleanup function
     return () => {
+      if (playPauseTimeoutRef.current) {
+        clearTimeout(playPauseTimeoutRef.current);
+      }
+      
       if (progressUpdateRef.current) {
         cancelAnimationFrame(progressUpdateRef.current);
       }
       
       if (hlsRef.current) {
         hlsRef.current.destroy();
+        hlsRef.current = null;
       }
       
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = '';
+        audioRef.current = null;
       }
     };
-  }, [audioUrl, onClose, volume]);
+  }, [audioUrl, onClose]);
 
   const togglePlayPause = () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || isLoading || !isInitialized) return;
     
     if (isPlaying) {
       audioRef.current.pause();
-      setIsPlaying(false);
     } else {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch((error) => {
-        console.error('Error playing audio:', error);
-        toast.error('Failed to play recording');
-      });
+      const playPromise = audioRef.current.play();
+      if (playPromise) {
+        playPromise.catch((error) => {
+          console.error('Error playing audio:', error);
+          toast.error('Failed to play recording');
+        });
+      }
     }
   };
 

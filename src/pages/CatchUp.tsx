@@ -141,14 +141,28 @@ export const CatchUp: React.FC = () => {
       return;
     }
 
-    const show = showDetails[recording.show_id || 'unknown'];
-    
-    setCurrentlyPlaying({
-      id: recording.id,
-      audioUrl: recording.audio_url,
-      title: recording.title,
-      showTitle: show?.title || 'Unknown Show'
-    });
+    // Stop any currently playing recording first
+    if (currentlyPlaying) {
+      setCurrentlyPlaying(null);
+      // Small delay to ensure cleanup before starting new player
+      setTimeout(() => {
+        const show = showDetails[recording.show_id || 'unknown'];
+        setCurrentlyPlaying({
+          id: recording.id,
+          audioUrl: recording.audio_url,
+          title: recording.title,
+          showTitle: show?.title || 'Unknown Show'
+        });
+      }, 100);
+    } else {
+      const show = showDetails[recording.show_id || 'unknown'];
+      setCurrentlyPlaying({
+        id: recording.id,
+        audioUrl: recording.audio_url,
+        title: recording.title,
+        showTitle: show?.title || 'Unknown Show'
+      });
+    }
   };
 
   const stopPlayer = () => {
