@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Trash2, Plus, Play, Clock, Calendar, Upload, Link } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { filterAvailableRecordings, getTimeUntilExpired } from '@/utils/recordingUtils';
 
 interface RecordedShow {
   id: string;
@@ -23,6 +24,11 @@ interface RecordedShow {
   shows?: {
     title: string;
     host: string;
+    day_of_week: string;
+    start_time: string;
+    end_time: string;
+    description?: string | null;
+    image_url?: string | null;
   } | null;
 }
 
@@ -30,14 +36,21 @@ interface Show {
   id: string;
   title: string;
   host: string;
+  day_of_week: string;
+  start_time: string;
+  end_time: string;
+  description?: string | null;
+  image_url?: string | null;
 }
 
 export const RecordedShowsTab: React.FC = () => {
   const [recordedShows, setRecordedShows] = useState<RecordedShow[]>([]);
+  const [allRecordedShows, setAllRecordedShows] = useState<RecordedShow[]>([]);
   const [shows, setShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showAvailableOnly, setShowAvailableOnly] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -79,7 +92,19 @@ export const RecordedShowsTab: React.FC = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [showAvailableOnly]);
+
+  // Handle filter toggle
+  useEffect(() => {
+    if (allRecordedShows.length > 0) {
+      if (showAvailableOnly) {
+        const availableRecordings = filterAvailableRecordings(allRecordedShows, shows);
+        setRecordedShows(availableRecordings);
+      } else {
+        setRecordedShows(allRecordedShows);
+      }
+    }
+  }, [showAvailableOnly, allRecordedShows, shows]);
 
   const loadData = async () => {
     try {
@@ -90,13 +115,18 @@ export const RecordedShowsTab: React.FC = () => {
             *,
             shows (
               title,
-              host
+              host,
+              day_of_week,
+              start_time,
+              end_time,
+              description,
+              image_url
             )
           `)
           .order('recorded_at', { ascending: false }),
         supabase
           .from('shows')
-          .select('id, title, host')
+          .select('*')
           .eq('active', true)
           .order('title')
       ]);
@@ -104,7 +134,17 @@ export const RecordedShowsTab: React.FC = () => {
       if (recordedResponse.error) throw recordedResponse.error;
       if (showsResponse.error) throw showsResponse.error;
 
-      setRecordedShows(recordedResponse.data || []);
+      const allRecordings = recordedResponse.data || [];
+      setAllRecordedShows(allRecordings);
+      
+      // Filter based on availability if needed
+      if (showAvailableOnly) {
+        const availableRecordings = filterAvailableRecordings(allRecordings, showsResponse.data || []);
+        setRecordedShows(availableRecordings);
+      } else {
+        setRecordedShows(allRecordings);
+      }
+      
       setShows(showsResponse.data || []);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -217,11 +257,27 @@ export const RecordedShowsTab: React.FC = () => {
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
   };
 
-  const getTimeUntilExpiry = (expiresAt: string) => {
-    const expiryDate = new Date(expiresAt);
-    const now = new Date();
-    if (expiryDate <= now) return 'Expired';
-    return formatDistanceToNow(expiryDate, { addSuffix: true });
+  const getRecordingExpiry = (recording: RecordedShow) => {
+    if (!recording.shows) {
+      // Fallback to database expiry for manual uploads
+      const expiryDate = new Date(recording.expires_at);
+      const now = new Date();
+      if (expiryDate <= now) return 'Expired';
+      return formatDistanceToNow(expiryDate, { addSuffix: true });
+    }
+    
+    const show = {
+      id: recording.show_id || '',
+      title: recording.shows.title,
+      host: recording.shows.host,
+      day_of_week: recording.shows.day_of_week,
+      start_time: recording.shows.start_time,
+      end_time: recording.shows.end_time,
+      description: recording.shows.description,
+      image_url: recording.shows.image_url
+    };
+    
+    return getTimeUntilExpired(show);
   };
 
   if (loading) {
@@ -232,7 +288,16 @@ export const RecordedShowsTab: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold text-foreground">Recorded Shows</h2>
-        <div className="space-x-2">
+        <div className="flex items-center space-x-2">
+          <label className="flex items-center space-x-2 text-sm">
+            <input
+              type="checkbox"
+              checked={showAvailableOnly}
+              onChange={(e) => setShowAvailableOnly(e.target.checked)}
+              className="rounded"
+            />
+            <span>Show available only (24h window)</span>
+          </label>
           <Button onClick={cleanupExpired} variant="outline">
             <Trash2 className="h-4 w-4 mr-2" />
             Cleanup Expired
@@ -330,7 +395,7 @@ export const RecordedShowsTab: React.FC = () => {
                 const groupedRecordings = recordedShows.reduce((acc, recording) => {
                   const showId = recording.show_id || 'no-show';
                   const showKey = recording.shows ? 
-                    `${recording.shows.title} - ${recording.shows.host}` : 
+                    `${recording.shows.title} - ${recording.shows.host} (${recording.shows.day_of_week})` : 
                     'Manual Uploads';
                   
                   if (!acc[showKey]) {
@@ -357,21 +422,27 @@ export const RecordedShowsTab: React.FC = () => {
                   return (
                     <Card key={showKey} className="border border-border/50">
                       <CardHeader className="pb-3">
-                        <CardTitle className="text-lg">{showKey}</CardTitle>
-                        <p className="text-sm text-muted-foreground">
-                          {sortedRecordings.length} recording{sortedRecordings.length !== 1 ? 's' : ''}
-                        </p>
+                         <CardTitle className="text-lg">{showKey}</CardTitle>
+                         <p className="text-sm text-muted-foreground">
+                           {sortedRecordings.length} recording{sortedRecordings.length !== 1 ? 's' : ''}
+                           {sortedRecordings[0]?.shows && (
+                             <span className="ml-2">
+                               • {sortedRecordings[0].shows.start_time} - {sortedRecordings[0].shows.end_time}
+                             </span>
+                           )}
+                         </p>
                       </CardHeader>
                       <CardContent>
                          <Table>
                            <TableHeader>
                              <TableRow>
-                               <TableHead>Recording Title</TableHead>
-                               <TableHead>Recorded</TableHead>
-                               <TableHead>Duration</TableHead>
-                               <TableHead>Recording URL</TableHead>
-                               <TableHead>Expires</TableHead>
-                               <TableHead>Actions</TableHead>
+                                 <TableHead>Recording Title</TableHead>
+                                 <TableHead>Show Details</TableHead>
+                                 <TableHead>Recorded</TableHead>
+                                 <TableHead>Duration</TableHead>
+                                 <TableHead>Recording URL</TableHead>
+                                 <TableHead>Expires</TableHead>
+                                 <TableHead>Actions</TableHead>
                              </TableRow>
                            </TableHeader>
                           <TableBody>
@@ -383,14 +454,27 @@ export const RecordedShowsTab: React.FC = () => {
                                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                                       {recording.description}
                                     </p>
-                                  )}
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex items-center text-sm text-muted-foreground">
-                                    <Calendar className="h-4 w-4 mr-1" />
-                                    {new Date(recording.recorded_at).toLocaleDateString()}
-                                  </div>
-                                </TableCell>
+                                   )}
+                                 </TableCell>
+                                 <TableCell>
+                                   {recording.shows && (
+                                     <div className="text-sm">
+                                       <div className="font-medium">{recording.shows.title}</div>
+                                       <div className="text-muted-foreground text-xs">
+                                         {recording.shows.host} • {recording.shows.day_of_week}
+                                       </div>
+                                       <div className="text-muted-foreground text-xs">
+                                         {recording.shows.start_time} - {recording.shows.end_time}
+                                       </div>
+                                     </div>
+                                   )}
+                                 </TableCell>
+                                 <TableCell>
+                                   <div className="flex items-center text-sm text-muted-foreground">
+                                     <Calendar className="h-4 w-4 mr-1" />
+                                     {new Date(recording.recorded_at).toLocaleDateString()}
+                                   </div>
+                                 </TableCell>
                                 <TableCell>
                                   <div className="flex items-center text-sm text-muted-foreground">
                                     <Clock className="h-4 w-4 mr-1" />
@@ -406,8 +490,8 @@ export const RecordedShowsTab: React.FC = () => {
                                    </div>
                                  </TableCell>
                                  <TableCell>
-                                   <span className={`text-sm ${new Date(recording.expires_at) <= new Date() ? 'text-destructive' : 'text-muted-foreground'}`}>
-                                     {getTimeUntilExpiry(recording.expires_at)}
+                                   <span className="text-sm text-muted-foreground">
+                                     {getRecordingExpiry(recording)}
                                   </span>
                                 </TableCell>
                                 <TableCell>

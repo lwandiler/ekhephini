@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Play, Clock, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format } from 'date-fns';
+import { filterAvailableRecordings, getTimeUntilExpired } from '@/utils/recordingUtils';
 
 interface RecordedShow {
   id: string;
@@ -20,6 +21,15 @@ interface RecordedShow {
   duration_seconds: number | null;
   expires_at: string;
   show_id: string | null;
+  shows?: {
+    title: string;
+    host: string;
+    day_of_week: string;
+    start_time: string;
+    end_time: string;
+    description?: string | null;
+    image_url?: string | null;
+  } | null;
 }
 
 interface CurrentlyPlayingShow {
@@ -31,7 +41,7 @@ interface CurrentlyPlayingShow {
 
 export const CatchUp: React.FC = () => {
   const [recordedShows, setRecordedShows] = useState<RecordedShow[]>([]);
-  const [showDetails, setShowDetails] = useState<{[key: string]: any}>({});
+  const [allShows, setAllShows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentlyPlaying, setCurrentlyPlaying] = useState<CurrentlyPlayingShow | null>(null);
 
@@ -54,9 +64,21 @@ export const CatchUp: React.FC = () => {
   useEffect(() => {
     const fetchRecordedShows = async () => {
       try {
+        // Fetch recordings with show details joined
         const { data: recordings, error: recordingError } = await supabase
           .from('recorded_shows')
-          .select('*')
+          .select(`
+            *,
+            shows (
+              title,
+              host,
+              day_of_week,
+              start_time,
+              end_time,
+              description,
+              image_url
+            )
+          `)
           .order('recorded_at', { ascending: false });
 
         if (recordingError) {
@@ -65,28 +87,21 @@ export const CatchUp: React.FC = () => {
           return;
         }
 
-        // Fetch show details for all recordings
-        const showIds = recordings?.map(r => r.show_id).filter(Boolean) || [];
-        const { data: shows, error: showError } = await supabase
+        // Fetch all shows for filtering logic
+        const { data: allShowsData, error: showsError } = await supabase
           .from('shows')
           .select('*')
-          .in('id', showIds);
+          .eq('active', true);
 
-        if (showError) {
-          console.error('Error fetching show details:', showError);
+        if (showsError) {
+          console.error('Error fetching shows:', showsError);
         }
 
-        // Create a mapping of show_id to show details with formatted time
-        const showMapping = {};
-        shows?.forEach(show => {
-          showMapping[show.id] = {
-            ...show,
-            time: formatTimeRange(show.start_time, show.end_time)
-          };
-        });
+        // Filter recordings based on 24-hour + 1-hour availability window
+        const availableRecordings = filterAvailableRecordings(recordings || [], allShowsData || []);
 
-        setRecordedShows(recordings || []);
-        setShowDetails(showMapping);
+        setRecordedShows(availableRecordings);
+        setAllShows(allShowsData || []);
       } catch (error) {
         console.error('Error fetching recorded shows:', error);
         toast.error('Failed to load catch up shows');
@@ -134,7 +149,7 @@ export const CatchUp: React.FC = () => {
       return;
     }
     
-    // Verify this is a catch-up URL (should contain index- and timestamp)
+    // Verify this is a catch-up URL (should contain index- and timestamp with 10800 duration)
     if (!recording.audio_url.includes('/index-')) {
       console.warn('Warning: URL does not appear to be a catch-up recording URL');
       toast.error('Invalid recording URL format');
@@ -146,21 +161,19 @@ export const CatchUp: React.FC = () => {
       setCurrentlyPlaying(null);
       // Small delay to ensure cleanup before starting new player
       setTimeout(() => {
-        const show = showDetails[recording.show_id || 'unknown'];
         setCurrentlyPlaying({
           id: recording.id,
           audioUrl: recording.audio_url,
           title: recording.title,
-          showTitle: show?.title || 'Unknown Show'
+          showTitle: recording.shows?.title || 'Unknown Show'
         });
       }, 100);
     } else {
-      const show = showDetails[recording.show_id || 'unknown'];
       setCurrentlyPlaying({
         id: recording.id,
         audioUrl: recording.audio_url,
         title: recording.title,
-        showTitle: show?.title || 'Unknown Show'
+        showTitle: recording.shows?.title || 'Unknown Show'
       });
     }
   };
@@ -176,11 +189,21 @@ export const CatchUp: React.FC = () => {
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
   };
 
-  const getTimeUntilExpiry = (expiresAt: string) => {
-    const expiryDate = new Date(expiresAt);
-    const now = new Date();
-    if (expiryDate <= now) return 'Expired';
-    return formatDistanceToNow(expiryDate, { addSuffix: true });
+  const getRecordingExpiry = (recording: RecordedShow) => {
+    if (!recording.shows) return 'Unknown';
+    
+    const show = {
+      id: recording.show_id || '',
+      title: recording.shows.title,
+      host: recording.shows.host,
+      day_of_week: recording.shows.day_of_week,
+      start_time: recording.shows.start_time,
+      end_time: recording.shows.end_time,
+      description: recording.shows.description,
+      image_url: recording.shows.image_url
+    };
+    
+    return getTimeUntilExpired(show);
   };
 
   if (loading) {
@@ -241,7 +264,8 @@ export const CatchUp: React.FC = () => {
               }, {} as Record<string, typeof recordedShows>);
 
               return Object.entries(groupedRecordings).map(([showId, recordings]) => {
-                const show = showDetails[showId];
+                const firstRecording = recordings[0];
+                const show = firstRecording.shows;
                 // Sort recordings by hour (extract hour number from title)
                 const sortedRecordings = recordings.sort((a, b) => {
                   const hourA = parseInt(a.title.match(/Hour (\d+)/)?.[1] || '1');
@@ -284,7 +308,7 @@ export const CatchUp: React.FC = () => {
                           </Badge>
                           {show && (
                             <span className="text-xs text-white font-medium">
-                              {show.time} • {show.day_of_week}
+                              {formatTimeRange(show.start_time, show.end_time)} • {show.day_of_week}
                             </span>
                           )}
                         </div>
@@ -326,7 +350,7 @@ export const CatchUp: React.FC = () => {
                                         {formatDuration(recording.duration_seconds || 0)}
                                       </span>
                                       <span className="text-white/90 text-xs">
-                                        Expires {getTimeUntilExpiry(recording.expires_at)}
+                                        {getRecordingExpiry(recording)}
                                       </span>
                                     </div>
                                   </div>

@@ -60,8 +60,8 @@ serve(async (req) => {
 
     // Function to extract timestamp from existing URL or generate from recorded_at
     const extractOrGenerateTimestamp = (audioUrl: string, recordedAt: string): string => {
-      // Try to extract existing timestamp from URL pattern: index-{timestamp}-3600.m3u8
-      const timestampMatch = audioUrl.match(/index-(\d+)-3600\.m3u8/);
+      // Try to extract existing timestamp from URL pattern: index-{timestamp}-10800.m3u8 or old 3600.m3u8
+      const timestampMatch = audioUrl.match(/index-(\d+)-(3600|10800)\.m3u8/);
       if (timestampMatch) {
         return timestampMatch[1];
       }
@@ -77,10 +77,10 @@ serve(async (req) => {
       try {
         const timestamp = extractOrGenerateTimestamp(recording.audio_url, recording.recorded_at);
         
-        // Generate new URL with the updated base URL
+        // Generate new URL with the updated base URL (changed from 3600 to 10800 for 3-hour duration)
         const newUrl = newBaseUrl.replace(
           /\/index\.m3u8$/,
-          `/index-${timestamp}-3600.m3u8`
+          `/index-${timestamp}-10800.m3u8`
         );
 
         console.log(`Updating recording ${recording.id}:`);
