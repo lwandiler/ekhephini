@@ -1,12 +1,14 @@
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { StationProvider } from '@/contexts/StationContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AudioPlayerProvider } from '@/contexts/AudioPlayerContext';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import { useAnalyticsTracking } from '@/hooks/useAnalytics';
 
 // Import pages
 import Index from '@/pages/Index';
@@ -25,6 +27,20 @@ import './App.css';
 
 const queryClient = new QueryClient();
 
+// Analytics tracking component
+function AnalyticsTracker() {
+  const location = useLocation();
+  const { trackPageView } = useAnalyticsTracking();
+
+  useEffect(() => {
+    // Track page view on route change
+    trackPageView(location.pathname + location.search);
+    console.log('Page view tracked:', location.pathname);
+  }, [location, trackPageView]);
+
+  return null;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -33,6 +49,7 @@ function App() {
           <StationProvider>
             <AudioPlayerProvider>
               <Router>
+                <AnalyticsTracker />
                 <GoogleAnalytics />
                 <div className="min-h-screen bg-background">
                   <Routes>

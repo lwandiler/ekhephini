@@ -4,6 +4,7 @@ import { Howl } from 'howler';
 import { RadioStation } from '@/hooks/audio/types';
 import { useHlsPlayer } from '@/hooks/audio/useHlsPlayer';
 import { tryUnlockAllAudioContexts } from '@/hooks/audio/utils/audioContextUnlockUtils';
+import { analyticsService } from '@/services/analyticsService';
 
 export function createAudioControls(
   audioState: {
@@ -69,11 +70,23 @@ export function createAudioControls(
     } else {
       hlsPlayer.play();
     }
+    
+    // Track play event
+    analyticsService.trackListeningEvent({
+      event_type: 'play',
+      station_name: currentStation?.name || 'Unknown Station'
+    });
   };
   
   // Pause current station
   const pauseCurrentStation = () => {
     hlsPlayer.pause();
+    
+    // Track pause event
+    analyticsService.trackListeningEvent({
+      event_type: 'pause',
+      station_name: currentStation?.name || 'Unknown Station'
+    });
   };
   
   // Toggle play/pause

@@ -110,9 +110,16 @@ class AnalyticsService {
     };
 
     try {
-      await supabase
+      console.log('Initializing analytics session:', this.sessionId);
+      const { error } = await supabase
         .from('analytics_sessions')
         .insert(this.currentSessionData);
+      
+      if (error) {
+        console.error('Failed to initialize analytics session:', error);
+      } else {
+        console.log('Analytics session initialized successfully');
+      }
     } catch (error) {
       console.error('Failed to initialize analytics session:', error);
     }
@@ -137,7 +144,8 @@ class AnalyticsService {
     const { deviceType, browser, os } = this.getDeviceInfo();
     
     try {
-      await supabase
+      console.log('Tracking listening event:', event.event_type);
+      const { error } = await supabase
         .from('analytics_listening_events')
         .insert({
           ...event,
@@ -145,6 +153,12 @@ class AnalyticsService {
           user_agent: navigator.userAgent,
           device_type: deviceType
         });
+      
+      if (error) {
+        console.error('Failed to track listening event:', error);
+      } else {
+        console.log('Listening event tracked successfully:', event.event_type);
+      }
     } catch (error) {
       console.error('Failed to track listening event:', error);
     }
