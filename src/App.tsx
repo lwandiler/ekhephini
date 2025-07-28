@@ -14,7 +14,7 @@ import Shows from '@/pages/Shows';
 import Podcasts from '@/pages/Podcasts';
 import News from '@/pages/News';
 import BlogPost from '@/pages/BlogPost';
-import Charts from '@/pages/Charts';
+
 import Announcements from '@/pages/Announcements';
 import Admin from '@/pages/Admin';
 import Auth from '@/pages/Auth';
@@ -42,7 +42,7 @@ function App() {
                     <Route path="/catchup" element={<CatchUp />} />
                     <Route path="/news" element={<News />} />
                     <Route path="/news/:id" element={<BlogPost />} />
-                    <Route path="/charts" element={<Charts />} />
+                    
                     <Route path="/announcements" element={<Announcements />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/auth" element={<Auth />} />
