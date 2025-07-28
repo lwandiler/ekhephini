@@ -108,7 +108,7 @@ const ThemeSelector = ({
               Theme Options
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 p-4">
+          <PopoverContent className="w-80 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-lg">
             <div className="space-y-4">
               <h3 className="font-medium text-lg">Theme Options</h3>
               

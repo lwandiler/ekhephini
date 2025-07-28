@@ -171,15 +171,15 @@ const Admin = () => {
           </div>
         ) : (
           <div className="container mx-auto px-4 py-12 flex justify-center">
-            <Card className="w-full max-w-md border-purple-200 shadow-lg">
-              <CardHeader className="space-y-1 bg-gradient-to-r from-purple-900 to-indigo-900 text-white rounded-t-lg">
-                <CardTitle className="text-2xl font-bold text-center">Click Radio Admin</CardTitle>
-                <CardDescription className="text-center text-purple-100">
+            <Card className="w-full max-w-md bg-white border-green-200 shadow-lg">
+              <CardHeader className="space-y-1 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
+                <CardTitle className="text-2xl font-bold text-center text-white">Click Radio Admin</CardTitle>
+                <CardDescription className="text-center text-green-100">
                   Enter your credentials to access the admin dashboard
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleLogin}>
-                <CardContent className="space-y-4 pt-6">
+                <CardContent className="space-y-4 pt-6 bg-white">
                   {error && (
                     <div className="bg-red-50 text-red-600 px-4 py-3 rounded-md text-sm">
                       {error}
@@ -187,21 +187,21 @@ const Admin = () => {
                   )}
                   
                   <div className="space-y-2">
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="username" className="text-black">Username</Label>
                     <Input 
                       id="username" 
                       placeholder="Enter your username" 
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="border-purple-200 focus-visible:ring-purple-500"
+                      className="border-green-200 focus-visible:ring-green-500 bg-white text-black"
                       required
                     />
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password">Password</Label>
-                      <a href="#" className="text-sm text-purple-700 hover:underline">
+                      <Label htmlFor="password" className="text-black">Password</Label>
+                      <a href="#" className="text-sm text-green-700 hover:underline">
                         Forgot password?
                       </a>
                     </div>
@@ -211,25 +211,25 @@ const Admin = () => {
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="border-purple-200 focus-visible:ring-purple-500"
+                      className="border-green-200 focus-visible:ring-green-500 bg-white text-black"
                       required
                     />
                   </div>
                   
                   <div className="pt-2">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-black">
                       Demo accounts:
                     </p>
-                    <ul className="text-xs text-gray-500 list-disc pl-5 mt-1">
+                    <ul className="text-xs text-black list-disc pl-5 mt-1">
                       <li>Username: admin / Password: password123</li>
                       <li>Username: manager / Password: manager456</li>
                     </ul>
                   </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="bg-white">
                   <Button 
                     type="submit" 
-                    className="w-full bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-800 hover:to-indigo-800"
+                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
                     disabled={loading}
                   >
                     {loading ? "Signing In..." : "Sign In"}
