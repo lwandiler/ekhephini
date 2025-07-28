@@ -1,5 +1,6 @@
 
 import { supabaseApi } from './config';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface StationSettingsResponse {
   id: number;
@@ -7,6 +8,7 @@ export interface StationSettingsResponse {
   station_tagline?: string;
   station_description?: string;
   stream_url?: string;
+  recording_stream_url?: string;
   logo_url?: string;
   social_links?: Record<string, string>;
   contact_info?: Record<string, string>;
@@ -38,6 +40,22 @@ export const stationService = {
     };
     
     const response = await supabaseApi.patch('/station_settings?id=eq.1', settingsData);
+    
+    // If recording_stream_url was updated, trigger URL updates for existing recordings
+    if (settings.recording_stream_url !== undefined) {
+      console.log('Recording stream URL updated, triggering recording URLs update...');
+      try {
+        const { data, error } = await supabase.functions.invoke('update-recording-urls');
+        if (error) {
+          console.error('Error updating recording URLs:', error);
+        } else {
+          console.log('Recording URLs update completed:', data);
+        }
+      } catch (error) {
+        console.error('Failed to trigger recording URLs update:', error);
+      }
+    }
+    
     return response.data[0];
   }
 };
