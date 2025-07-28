@@ -14,6 +14,7 @@ export async function loadSettingsFromDatabase() {
         stationTagline: data.station_tagline || defaultStationSettings.stationTagline,
         stationDescription: data.station_description || defaultStationSettings.stationDescription,
         streamUrl: data.stream_url || defaultStationSettings.streamUrl,
+        recordingStreamUrl: data.recording_stream_url || undefined,
         logoUrl: data.logo_url || defaultStationSettings.logoUrl,
         socialLinks: extractSocialLinks(data.social_links),
         contactInfo: extractContactInfo(data.contact_info)
