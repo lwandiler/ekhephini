@@ -94,8 +94,15 @@ const News = () => {
       <RadioPlayerSection />
 
       {/* News Content Section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4 md:px-8 lg:px-16 xl:px-[185px]">
+      <section className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px] bg-white">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[40px] font-bold leading-normal mb-4 text-center">
+            Latest News
+          </h2>
+          <p className="text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal mb-16 text-center max-w-3xl mx-auto">
+            Stay up to date with the latest news from the world of music, radio, and our station.
+          </p>
+          
           <Tabs defaultValue="all" className="w-full">
             <div className="flex justify-center mb-8">
               <TabsList className="bg-gray-100">
