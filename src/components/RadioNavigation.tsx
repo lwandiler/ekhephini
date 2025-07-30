@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 
 const RadioNavigation = () => {
   const { togglePlayPause, isPlaying } = useAudioPlayer();
+  const location = useLocation();
 
   return (
     <header className="w-full h-[111px] bg-white shadow-lg relative z-10">
@@ -26,32 +27,54 @@ const RadioNavigation = () => {
               Homes
             </Link>
             {/* Active underline for Homes */}
-            <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
+            {location.pathname === '/' && (
+              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
+            )}
           </div>
-          <Link
-            to="/shows"
-            className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-          >
-            Shows
-          </Link>
-          <Link
-            to="/podcasts"
-            className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-          >
-            Podcast
-          </Link>
-          <Link
-            to="/news"
-            className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-          >
-            News
-          </Link>
-          <Link
-            to="/contact"
-            className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-          >
-            Contact Us
-          </Link>
+          <div className="relative">
+            <Link
+              to="/shows"
+              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
+            >
+              Shows
+            </Link>
+            {location.pathname === '/shows' && (
+              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
+            )}
+          </div>
+          <div className="relative">
+            <Link
+              to="/podcasts"
+              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
+            >
+              Podcast
+            </Link>
+            {location.pathname === '/podcasts' && (
+              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
+            )}
+          </div>
+          <div className="relative">
+            <Link
+              to="/news"
+              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
+            >
+              News
+            </Link>
+            {location.pathname === '/news' && (
+              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
+            )}
+          </div>
+          <div className="relative">
+            <Link
+              to="/contact"
+              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
+            >
+              Contact Us
+            </Link>
+            {location.pathname === '/contact' && (
+              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
+            )}
+          </div>
         </nav>
 
         {/* Radio Player Controls */}
