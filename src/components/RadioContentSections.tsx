@@ -20,7 +20,7 @@ const RadioContentSections = () => {
             </h2>
 
             {/* Description */}
-            <p className="max-w-[611px] text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal mb-8">
+            <p className="max-w-[611px] text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal mb-8 text-left">
               Our Radio is the place to get in-depth insights on a variety of interesting topics, from technology to mental health.
               <br /><br />
               We are committed to delivering high-quality content that inspires, educates and entertains our listeners, featuring experts and leading sources to share their knowledge and experiences.
