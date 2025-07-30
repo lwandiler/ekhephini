@@ -58,7 +58,7 @@ const RadioNavigation = () => {
         <div className="flex items-center space-x-4">
           <button 
             onClick={togglePlayPause}
-            className="relative hover:opacity-80 transition-opacity cursor-pointer"
+            className="relative hover:opacity-80 transition-opacity cursor-pointer bg-white"
             title={isPlaying ? "Pause" : "Play"}
           >
             {/* Outer circle - play button */}
