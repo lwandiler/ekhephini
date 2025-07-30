@@ -1,7 +1,4 @@
-import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
-
 const RadioHeroSection = () => {
-  const { togglePlayPause, isPlaying } = useAudioPlayer();
   return (
     <section className="relative w-full h-[814px] overflow-hidden">
       {/* Background Image */}
@@ -36,27 +33,33 @@ const RadioHeroSection = () => {
 
         {/* Listen Live Button */}
         <div className="flex">
-          <button 
-            onClick={togglePlayPause}
-            className="w-[210px] h-[69px] bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-[50px] backdrop-blur-[45px] flex items-center justify-center transition-all duration-300 cursor-pointer"
-          >
+          <button className="w-[210px] h-[69px] bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-[50px] backdrop-blur-[45px] flex items-center justify-center transition-all duration-300 cursor-pointer">
             <div className="flex items-center space-x-4">
-              {isPlaying ? (
-                // Pause Icon
-                <svg className="w-[39px] h-[39px]" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="11" y="10" width="6" height="19" rx="1" fill="white"/>
-                  <rect x="22" y="10" width="6" height="19" rx="1" fill="white"/>
-                </svg>
-              ) : (
-                // Play Icon  
-                <svg className="w-[39px] h-[39px]" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M15 10L29 19.5L15 29V10Z" fill="white"/>
-                </svg>
-              )}
+              <svg className="w-[39px] h-[39px]" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M19.5 19.5C20.3975 19.5 21.125 18.7725 21.125 17.875C21.125 16.9775 20.3975 16.25 19.5 16.25C18.6025 16.25 17.875 16.9775 17.875 17.875C17.875 18.7725 18.6025 19.5 19.5 19.5Z"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M13 22.75C12.0947 21.5429 11.5433 20.1075 11.4078 18.6047C11.2723 17.1019 11.558 15.591 12.2328 14.2414C12.9076 12.8918 13.9449 11.7567 15.2284 10.9635C16.512 10.1702 17.9911 9.75 19.5 9.75C21.0089 9.75 22.488 10.1702 23.7716 10.9635C25.0551 11.7567 26.0924 12.8918 26.7672 14.2414C27.442 15.591 27.7277 17.1019 27.5922 18.6047C27.4567 20.1075 26.9053 21.5429 26 22.75M17.875 27.625C17.875 27.194 18.0462 26.7807 18.351 26.476C18.6557 26.1712 19.069 26 19.5 26C19.931 26 20.3443 26.1712 20.6491 26.476C20.9538 26.7807 21.125 27.194 21.125 27.625C21.125 28.4375 20.5725 32.5 20.3125 34.9375C20.3125 35.153 20.2269 35.3597 20.0745 35.512C19.9222 35.6644 19.7155 35.75 19.5 35.75C19.2845 35.75 19.0779 35.6644 18.9255 35.512C18.7731 35.3597 18.6875 35.153 18.6875 34.9375C18.4275 32.5 17.875 28.4375 17.875 27.625Z"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M27.625 30.0625C30.2338 28.3194 32.213 25.7835 33.27 22.8293C34.3271 19.8751 34.4061 16.6593 33.4953 13.6568C32.5845 10.6543 30.7323 8.0243 28.2122 6.15523C25.692 4.28615 22.6376 3.2771 19.5 3.2771C16.3624 3.2771 13.308 4.28615 10.7878 6.15523C8.26771 8.0243 6.41548 10.6543 5.50471 13.6568C4.59394 16.6593 4.67292 19.8751 5.72998 22.8293C6.78705 25.7835 8.76615 28.3194 11.375 30.0625"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
               <div className="text-left">
-                <div className="text-white font-asap text-[16px] font-bold leading-normal">
-                  {isPlaying ? 'Pause' : 'Listen Live'}
-                </div>
+                <div className="text-white font-asap text-[16px] font-bold leading-normal">Listen Live</div>
               </div>
             </div>
           </button>
