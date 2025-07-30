@@ -1,4 +1,4 @@
 const RadioPlayerSection = () => {
-  return;
+  return <div></div>;
 };
 export default RadioPlayerSection;
