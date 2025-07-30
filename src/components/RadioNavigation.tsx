@@ -44,12 +44,12 @@ const RadioNavigation = () => {
           </div>
           <div className="relative">
             <Link
-              to="/podcasts"
+              to="/catch-up"
               className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
             >
-              Podcast
+              Catch Up
             </Link>
-            {location.pathname === '/podcasts' && (
+            {location.pathname === '/catch-up' && (
               <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
             )}
           </div>
