@@ -1,6 +1,6 @@
 import RadioNavigation from '@/components/RadioNavigation';
 import NewsletterFooter from '@/components/NewsletterFooter';
-import RadioPlayer from '@/components/RadioPlayer';
+
 import ShowSchedule from '@/components/ShowSchedule';
 import PresentersTestimonialsSection from '@/components/PresentersTestimonialsSection';
 
@@ -107,7 +107,6 @@ const CatchUp = () => {
       {/* Newsletter Footer */}
       <NewsletterFooter />
       
-      <RadioPlayer />
     </div>
   );
 };

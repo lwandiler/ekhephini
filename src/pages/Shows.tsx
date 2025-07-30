@@ -1,7 +1,7 @@
 // Shows page component
 import RadioNavigation from '@/components/RadioNavigation';
 import NewsletterFooter from '@/components/NewsletterFooter';
-import RadioPlayer from '@/components/RadioPlayer';
+
 import ShowSchedule from '@/components/ShowSchedule';
 import ShowCard from '@/components/ShowCard';
 import AdBanner from '@/components/AdBanner';
@@ -161,7 +161,6 @@ const Shows = () => {
       {/* Newsletter Footer */}
       <NewsletterFooter />
       
-      <RadioPlayer />
     </div>;
 };
 export default Shows;
