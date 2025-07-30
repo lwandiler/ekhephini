@@ -137,7 +137,7 @@ const Shows = () => {
                 variant="outline"
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="flex items-center space-x-1"
+                className="flex items-center space-x-1 border-[#004995] text-[#004995] hover:bg-[#004995] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft size={16} />
                 <span>Previous</span>
@@ -149,7 +149,11 @@ const Shows = () => {
                     key={page}
                     variant={page === currentPage ? "default" : "outline"}
                     onClick={() => handlePageChange(page)}
-                    className="w-10 h-10"
+                    className={`w-10 h-10 ${
+                      page === currentPage 
+                        ? "bg-[#004995] text-white hover:bg-[#003875] border-[#004995]" 
+                        : "border-[#004995] text-[#004995] hover:bg-[#004995] hover:text-white"
+                    }`}
                   >
                     {page}
                   </Button>
@@ -160,7 +164,7 @@ const Shows = () => {
                 variant="outline"
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="flex items-center space-x-1"
+                className="flex items-center space-x-1 border-[#004995] text-[#004995] hover:bg-[#004995] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>Next</span>
                 <ChevronRight size={16} />
