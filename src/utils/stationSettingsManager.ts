@@ -27,7 +27,7 @@ import {
 
 // Default station settings
 export const defaultStationSettings = {
-  stationName: "Moutse Community Radio Station",
+  stationName: "Ekhepini Community Radio",
   stationTagline: "Your friend to rely on MCRS 96.9 FM",
   stationDescription: "Moutse Community Radio Station - Your trusted voice in the community, broadcasting on 96.9 FM.",
   streamUrl: "https://streamlive-edge-01.broadsmart-streaming.co.za:5443/mdda/streams/mcr128kbps.m3u8",
