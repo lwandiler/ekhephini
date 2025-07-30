@@ -77,3 +77,31 @@ export async function fetchShows(): Promise<DaySchedule[]> {
     return dayOrder.map(day => ({ day, shows: [] }));
   }
 }
+
+// Fetch all active shows for the shows page
+export async function fetchAllShows(): Promise<ShowWithFormattedTime[]> {
+  try {
+    const { data: shows, error } = await supabase
+      .from('shows')
+      .select('*')
+      .eq('active', true)
+      .order('day_of_week')
+      .order('start_time');
+
+    if (error) {
+      console.error('Error fetching shows:', error);
+      throw error;
+    }
+
+    return shows?.map(show => ({
+      ...show,
+      time: show.day_of_week ? `${show.day_of_week} ${formatTimeRange(show.start_time, show.end_time)}` : formatTimeRange(show.start_time, show.end_time),
+      start_time: show.start_time,
+      end_time: show.end_time
+    })) || [];
+
+  } catch (error) {
+    console.error('Failed to fetch shows:', error);
+    return [];
+  }
+}
