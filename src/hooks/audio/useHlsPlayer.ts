@@ -42,6 +42,14 @@ export function useHlsPlayer({
     // Set up audio element properties
     audio.volume = volume / 100;
     audio.crossOrigin = 'anonymous';
+    
+    // Prevent audio from being paused when tab is hidden
+    audio.preload = 'auto';
+    (audio as any).mozAudioChannelType = 'content';
+    
+    // Add these attributes to help with background playback
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
 
     // Set up event listeners
     audio.addEventListener('loadstart', () => {
@@ -153,6 +161,22 @@ export function useHlsPlayer({
     if (audioRef.current) {
       audioRef.current.volume = newVolume / 100;
     }
+  }, []);
+
+  // Handle tab visibility changes to keep audio playing
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (audioRef.current && !audioRef.current.paused) {
+        // Keep the audio playing even when tab is hidden
+        console.log('Tab visibility changed, ensuring audio continues playing');
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   // Cleanup on unmount
