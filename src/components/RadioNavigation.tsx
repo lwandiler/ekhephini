@@ -95,7 +95,7 @@ const RadioNavigation = () => {
           {/* Radio Info */}
           <div className="text-right">
             <div className="font-asap text-[16px] font-normal leading-normal">
-              <span className="text-black font-bold">play/pause</span>
+              <span className="text-black font-bold">live</span>
               <br />
               <span className="text-[#5F5F5F]">LIVE. 96.3 FM</span>
             </div>
