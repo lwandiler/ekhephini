@@ -86,65 +86,45 @@ const NewsList = ({ news = [], compact = false }: NewsListProps) => {
   };
 
   return (
-    <div className={`grid ${compact ? 'grid-cols-1 gap-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'}`}>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {news.map((item) => (
-        <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gray-900 border-gray-800 text-white group h-full flex flex-col">
-          {!compact && (
-            <div className="relative">
-              <img 
-                src={item.image} 
-                alt={item.title} 
-                className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80"></div>
+        <div key={item.id} className="bg-white rounded-[30px] shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+          <div className="relative">
+            <img
+              src={item.image}
+              alt={item.title}
+              className="w-full h-[200px] object-cover"
+            />
+            <div className="absolute top-4 left-4 bg-[#F99300] text-white px-3 py-1 rounded-[20px] font-asap text-[12px] font-bold">
+              {item.category}
             </div>
-          )}
+          </div>
           
-          <CardHeader className="pb-2">
-            <div className="flex justify-between items-start mb-2">
-              <span className={`text-xs font-medium ${getCategoryColor(item.category)} text-white px-2 py-1 rounded-full flex items-center gap-1`}>
-                <Tag size={12} />
-                {item.category}
-              </span>
-            </div>
-            <CardTitle className={`${compact ? "text-lg" : "text-xl"} text-white group-hover:text-purple-300 transition-colors duration-300`}>
+          <div className="p-6">
+            <h3 className="text-black font-asap text-[24px] font-bold leading-normal mb-2">
               {item.title}
-            </CardTitle>
-            <CardDescription className="flex items-center text-sm text-gray-400 mt-2">
-              <div className="flex items-center mr-3">
-                <Calendar size={14} className="mr-1 text-purple-400" />
-                {formatDate(item.date)}
-              </div>
-              <div className="flex items-center">
-                <User size={14} className="mr-1 text-purple-400" />
-                {item.author}
-              </div>
-            </CardDescription>
-          </CardHeader>
-          
-           {!compact && (
-            <CardContent className="flex-1">
-              <div 
-                className="text-gray-300 prose prose-sm prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: item.excerpt }}
-              />
-            </CardContent>
-          )}
-          
-          <CardFooter className={`${compact ? "pt-2 pb-4" : ""} mt-auto`}>
-            <Button 
-              variant="outline" 
-              size={compact ? "sm" : "default"}
-              className="text-purple-400 border-purple-600 hover:bg-purple-700 hover:text-white transition-all duration-300"
-              asChild
-            >
-              <Link to={`/news/${item.id}`} className="flex items-center">
-                Read More
-                <ArrowRight size={16} className="ml-1" />
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
+            </h3>
+            <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal mb-2">
+              By: {item.author}
+            </p>
+            <p className="text-[#5F5F5F] font-asap text-[14px] font-normal leading-normal mb-4">
+              {formatDate(item.date)}
+            </p>
+            <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal mb-6">
+              {item.excerpt}
+            </p>
+            
+            <div className="flex items-center space-x-2">
+              <span className="text-black font-asap text-[14px] font-normal leading-normal">Read More</span>
+              <svg className="w-3 h-4 rotate-90" viewBox="0 0 17 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M9.13655 11.4911L13.5123 6.70738H1.0198C0.74933 6.70738 0.489941 6.61907 0.298691 6.46189C0.107442 6.3047 -1.26765e-06 6.09152 -1.26765e-06 5.86923C-1.26765e-06 5.64693 0.107442 5.43375 0.298691 5.27656C0.489941 5.11938 0.74933 5.03107 1.0198 5.03107H13.5123L9.13655 1.4333C8.94497 1.27584 8.83734 1.06228 8.83734 0.839607C8.83734 0.61693 8.94497 0.403372 9.13655 0.245915C9.32813 0.0884585 9.58797 2.34629e-09 9.8589 0C10.1298 -2.34629e-09 10.3897 0.0884585 10.5813 0.245915L16.7001 5.27483C16.7951 5.3527 16.8706 5.44523 16.922 5.54711C16.9735 5.64899 17 5.75821 17 5.86853C17 5.97884 16.9735 6.08807 16.922 6.18995C16.8706 6.29183 16.7951 6.38435 16.7001 6.46222L10.5813 11.4911C10.4865 11.5693 10.3739 11.6313 10.25 11.6736C10.126 11.7159 9.99312 11.7377 9.8589 11.7377C9.72468 11.7377 9.59178 11.7159 9.46783 11.6736C9.34387 11.6313 9.23129 11.5693 9.13655 11.4911Z"
+                  fill="black"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   );
