@@ -25,15 +25,15 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(142 71% 45%)', // Green-600
+					DEFAULT: 'hsl(222 84% 30%)', // Site blue #004995
 					foreground: 'hsl(0 0% 100%)' // White
 				},
 				secondary: {
-					DEFAULT: 'hsl(142 71% 45%)', // Green-600
+					DEFAULT: 'hsl(222 84% 30%)', // Site blue #004995
 					foreground: 'hsl(0 0% 100%)' // White
 				},
 				destructive: {
-					DEFAULT: 'hsl(142 71% 45%)', // Green-600
+					DEFAULT: 'hsl(222 84% 30%)', // Site blue #004995
 					foreground: 'hsl(0 0% 100%)' // White
 				},
 				muted: {
@@ -41,7 +41,7 @@ export default {
 					foreground: 'hsl(var(--muted-foreground))'
 				},
 				accent: {
-					DEFAULT: 'hsl(142 71% 45%)', // Green-600
+					DEFAULT: 'hsl(222 84% 30%)', // Site blue #004995
 					foreground: 'hsl(0 0% 100%)' // White
 				},
 				popover: {
@@ -55,9 +55,9 @@ export default {
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(142 71% 45%)', // Green-600
+					primary: 'hsl(222 84% 30%)', // Site blue #004995
 					'primary-foreground': 'hsl(0 0% 100%)', // White
-					accent: 'hsl(142 71% 45%)', // Green-600
+					accent: 'hsl(222 84% 30%)', // Site blue #004995
 					'accent-foreground': 'hsl(0 0% 100%)', // White
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
@@ -65,28 +65,28 @@ export default {
 				radio: {
 					'blue': 'hsl(222 84% 5%)',        // #0f172a converted to HSL
 					'light-blue': 'hsl(220 39% 11%)', // #1e293b converted to HSL
-					'accent': 'hsl(142 71% 45%)',     // Green-600 converted to HSL
+					'accent': 'hsl(222 84% 30%)',     // Site blue #004995
 					'light': 'hsl(210 40% 98%)',      // #f8fafc converted to HSL
 					'muted': 'hsl(214 32% 65%)'       // #94a3b8 converted to HSL
 				},
 				clickradio: {
-					'primary': 'hsl(142 71% 45%)', // Green-600
-					'secondary': 'hsl(142 69% 58%)', // Green-500
-					'accent': 'hsl(142 76% 73%)', // Green-300
+					'primary': 'hsl(222 84% 30%)', // Site blue #004995
+					'secondary': 'hsl(222 84% 40%)', // Lighter blue
+					'accent': 'hsl(222 84% 50%)', // Even lighter blue
 					'light': '#F3F4F6', // gray-100
 					'dark': '#1E1B4B', // indigo-900
 					'text': '#4B5563', // gray-600
-					// Color scheme colors - all green variants
-					'blue-primary': 'hsl(142 71% 45%)', // Green-600
-					'blue-secondary': 'hsl(142 69% 58%)', // Green-500
-					'green-primary': 'hsl(142 71% 45%)', // Green-600
-					'green-secondary': 'hsl(142 69% 58%)', // Green-500
-					'red-primary': 'hsl(142 71% 45%)', // Green-600
-					'red-secondary': 'hsl(142 69% 58%)', // Green-500
-					'orange-primary': 'hsl(142 71% 45%)', // Green-600
-					'orange-secondary': 'hsl(142 69% 58%)', // Green-500
-					'pink-primary': 'hsl(142 71% 45%)', // Green-600
-					'pink-secondary': 'hsl(142 69% 58%)', // Green-500
+					// Color scheme colors - all blue variants
+					'blue-primary': 'hsl(222 84% 30%)', // Site blue #004995
+					'blue-secondary': 'hsl(222 84% 40%)', // Lighter blue
+					'green-primary': 'hsl(222 84% 30%)', // Site blue #004995
+					'green-secondary': 'hsl(222 84% 40%)', // Lighter blue
+					'red-primary': 'hsl(222 84% 30%)', // Site blue #004995
+					'red-secondary': 'hsl(222 84% 40%)', // Lighter blue
+					'orange-primary': 'hsl(222 84% 30%)', // Site blue #004995
+					'orange-secondary': 'hsl(222 84% 40%)', // Lighter blue
+					'pink-primary': 'hsl(222 84% 30%)', // Site blue #004995
+					'pink-secondary': 'hsl(222 84% 40%)', // Lighter blue
 				}
 			},
 			borderRadius: {

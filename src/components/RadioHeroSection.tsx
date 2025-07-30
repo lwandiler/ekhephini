@@ -33,7 +33,7 @@ const RadioHeroSection = () => {
 
         {/* Listen Live Button */}
         <div className="flex">
-          <button className="w-[210px] h-[69px] bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-[50px] backdrop-blur-[45px] flex items-center justify-center transition-all duration-300 cursor-pointer">
+          <button className="w-[210px] h-[69px] bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-[50px] backdrop-blur-[45px] flex items-center justify-center transition-all duration-300 cursor-pointer">
             <div className="flex items-center space-x-4">
               <svg className="w-[39px] h-[39px]" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
