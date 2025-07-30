@@ -76,7 +76,7 @@ const HeroBannerCarousel = () => {
     return (
       <div className="relative h-[400px] sm:h-[500px] w-full bg-gray-900 flex items-center justify-center">
         <div className="text-white text-center">
-          <h2 className="text-2xl font-bold mb-2">Welcome to Moutse Community Radio</h2>
+          <h2 className="text-2xl font-bold mb-2">Welcome to Ekhepini Community Radio</h2>
           <p className="text-gray-300">Your friend to rely on MCRS 96.9 FM</p>
         </div>
       </div>

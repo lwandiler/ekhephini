@@ -24,7 +24,7 @@ export const sampleRadioBanners = [
   },
   {
     title: "Community Events & Updates",
-    subtitle: "Stay connected with local happenings in Moutse",
+    subtitle: "Stay connected with local happenings in Ekhepini",
     media_type: "image",
     media_url: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1200&h=600&fit=crop",
     url: "#",
