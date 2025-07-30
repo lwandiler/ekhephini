@@ -4,7 +4,7 @@ const RadioContentSections = () => {
       <section className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px]">
         <div className="flex items-start space-x-16">
           {/* Left Content */}
-          <div className="flex-1">
+          <div className="flex-1 mt-8">
             {/* Play Icon */}
             
 
