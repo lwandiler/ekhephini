@@ -4,7 +4,7 @@ import { RadioStation } from '@/hooks/audio/types';
 export const defaultStations: RadioStation[] = [
   {
     id: "mcr-969",
-    name: "MCRS 96.9 FM",
+    name: "Ekhepini 96.9 FM",
     url: "https://streamlive-edge-01.broadsmart-streaming.co.za:5443/mdda/streams/mcr128kbps.m3u8",
     fallbackUrl: "https://ice2.somafm.com/groovesalad-128-mp3", // Different fallback URL
     description: "Ekhepini Community Radio Station - Your trusted voice in the community",

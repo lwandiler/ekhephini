@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export const sampleRadioBanners = [
   {
-    title: "Listen Live - MCRS 96.9 FM",
+    title: "Listen Live - Ekhepini 96.9 FM",
     subtitle: "Your favorite music, news, and entertainment 24/7",
     media_type: "image",
     media_url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1200&h=600&fit=crop",
