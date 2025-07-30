@@ -9,25 +9,39 @@ import AdRequestModal from '@/components/AdRequestModal';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { advertisementData } from '@/data/mockData';
-import { fetchAllShows, ShowWithFormattedTime } from '@/services/api/showsService';
+import { fetchShowsWithPagination, ShowWithFormattedTime } from '@/services/api/showsService';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 const Shows = () => {
   const [shows, setShows] = useState<ShowWithFormattedTime[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 6;
+
+  const loadShows = async (page: number) => {
+    setLoading(true);
+    try {
+      const result = await fetchShowsWithPagination(page, pageSize);
+      setShows(result.shows);
+      setTotalPages(result.totalPages);
+      setTotalCount(result.totalCount);
+    } catch (error) {
+      console.error('Error loading shows:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadShows = async () => {
-      try {
-        const fetchedShows = await fetchAllShows();
-        setShows(fetchedShows);
-      } catch (error) {
-        console.error('Error loading shows:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    loadShows(currentPage);
+  }, [currentPage]);
 
-    loadShows();
-  }, []);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of shows section
+    document.getElementById('shows-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
   return <div className="w-full min-h-screen bg-white font-asap">
       {/* Navigation */}
       <RadioNavigation />
@@ -52,13 +66,18 @@ const Shows = () => {
       </section>
       
       {/* Shows Grid Section */}
-      <section className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px] bg-white">
+      <section id="shows-section" className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px] bg-white">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[40px] font-bold leading-normal mb-4 text-center">
             Featured Shows
           </h2>
           <p className="text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal mb-16 text-center max-w-3xl mx-auto">
             From morning talk to late-night music, we've got something for everyone throughout the day.
+            {totalCount > 0 && (
+              <span className="block mt-2 text-base">
+                Showing {((currentPage - 1) * pageSize) + 1}-{Math.min(currentPage * pageSize, totalCount)} of {totalCount} shows
+              </span>
+            )}
           </p>
           
           {/* Shows Grid */}
@@ -108,6 +127,44 @@ const Shows = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+          
+          {/* Pagination Controls */}
+          {!loading && totalPages > 1 && (
+            <div className="flex justify-center items-center mt-12 space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="flex items-center space-x-1"
+              >
+                <ChevronLeft size={16} />
+                <span>Previous</span>
+              </Button>
+              
+              <div className="flex space-x-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? "default" : "outline"}
+                    onClick={() => handlePageChange(page)}
+                    className="w-10 h-10"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="flex items-center space-x-1"
+              >
+                <span>Next</span>
+                <ChevronRight size={16} />
+              </Button>
             </div>
           )}
         </div>

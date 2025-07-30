@@ -105,3 +105,61 @@ export async function fetchAllShows(): Promise<ShowWithFormattedTime[]> {
     return [];
   }
 }
+
+// Fetch shows with pagination
+export async function fetchShowsWithPagination(page: number = 1, pageSize: number = 6): Promise<{ shows: ShowWithFormattedTime[], totalCount: number, totalPages: number }> {
+  try {
+    // Get total count first
+    const { count, error: countError } = await supabase
+      .from('shows')
+      .select('*', { count: 'exact', head: true })
+      .eq('active', true);
+
+    if (countError) {
+      console.error('Error fetching shows count:', countError);
+      throw countError;
+    }
+
+    const totalCount = count || 0;
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    // Calculate offset
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // Fetch paginated shows
+    const { data: shows, error } = await supabase
+      .from('shows')
+      .select('*')
+      .eq('active', true)
+      .order('day_of_week')
+      .order('start_time')
+      .range(from, to);
+
+    if (error) {
+      console.error('Error fetching shows:', error);
+      throw error;
+    }
+
+    const formattedShows = shows?.map(show => ({
+      ...show,
+      time: show.day_of_week ? `${show.day_of_week} ${formatTimeRange(show.start_time, show.end_time)}` : formatTimeRange(show.start_time, show.end_time),
+      start_time: show.start_time,
+      end_time: show.end_time
+    })) || [];
+
+    return {
+      shows: formattedShows,
+      totalCount,
+      totalPages
+    };
+
+  } catch (error) {
+    console.error('Failed to fetch shows with pagination:', error);
+    return {
+      shows: [],
+      totalCount: 0,
+      totalPages: 0
+    };
+  }
+}
