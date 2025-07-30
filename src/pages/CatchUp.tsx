@@ -1,395 +1,115 @@
-import React, { useState, useEffect } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import RadioNavigation from '@/components/RadioNavigation';
+import NewsletterFooter from '@/components/NewsletterFooter';
 import RadioPlayer from '@/components/RadioPlayer';
-import { CatchUpPlayer } from '@/components/CatchUpPlayer';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Play, Clock, Calendar } from 'lucide-react';
-import { toast } from 'sonner';
-import { formatDistanceToNow, format } from 'date-fns';
-import { filterAvailableRecordings, getTimeUntilExpired } from '@/utils/recordingUtils';
+import ShowSchedule from '@/components/ShowSchedule';
+import PresentersTestimonialsSection from '@/components/PresentersTestimonialsSection';
 
-interface RecordedShow {
-  id: string;
-  title: string;
-  description: string | null;
-  recorded_at: string;
-  audio_url: string;
-  duration_seconds: number | null;
-  expires_at: string;
-  show_id: string | null;
-  shows?: {
-    title: string;
-    host: string;
-    day_of_week: string;
-    start_time: string;
-    end_time: string;
-    description?: string | null;
-    image_url?: string | null;
-  } | null;
-}
-
-interface CurrentlyPlayingShow {
-  id: string;
-  audioUrl: string;
-  title: string;
-  showTitle: string;
-}
-
-export const CatchUp: React.FC = () => {
-  const [recordedShows, setRecordedShows] = useState<RecordedShow[]>([]);
-  const [allShows, setAllShows] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<CurrentlyPlayingShow | null>(null);
-
-  // Format time from database format (HH:MM:SS) to display format (H:MM AM/PM)
-  const formatTimeRange = (startTime: string, endTime: string): string => {
-    const formatTime = (time: string) => {
-      const [hours, minutes] = time.split(':');
-      const hour = parseInt(hours);
-      const minute = minutes;
-      
-      if (hour === 0) return `12:${minute} AM`;
-      if (hour < 12) return `${hour}:${minute} AM`;
-      if (hour === 12) return `12:${minute} PM`;
-      return `${hour - 12}:${minute} PM`;
-    };
-
-    return `${formatTime(startTime)} - ${formatTime(endTime)}`;
-  };
-
-  useEffect(() => {
-    const fetchRecordedShows = async () => {
-      try {
-        // Fetch recordings with show details joined
-        const { data: recordings, error: recordingError } = await supabase
-          .from('recorded_shows')
-          .select(`
-            *,
-            shows (
-              title,
-              host,
-              day_of_week,
-              start_time,
-              end_time,
-              description,
-              image_url
-            )
-          `)
-          .order('recorded_at', { ascending: false });
-
-        if (recordingError) {
-          console.error('Error fetching recordings:', recordingError);
-          toast.error('Failed to load recordings');
-          return;
-        }
-
-        // Fetch all shows for filtering logic
-        const { data: allShowsData, error: showsError } = await supabase
-          .from('shows')
-          .select('*')
-          .eq('active', true);
-
-        if (showsError) {
-          console.error('Error fetching shows:', showsError);
-        }
-
-        // Filter recordings based on 24-hour + 1-hour availability window
-        const availableRecordings = filterAvailableRecordings(recordings || [], allShowsData || []);
-
-        setRecordedShows(availableRecordings);
-        setAllShows(allShowsData || []);
-      } catch (error) {
-        console.error('Error fetching recorded shows:', error);
-        toast.error('Failed to load catch up shows');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecordedShows();
-
-    // Set up real-time subscription for new recordings
-    const channel = supabase
-      .channel('recorded_shows_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'recorded_shows'
-        },
-        (payload) => {
-          console.log('Recorded show change detected:', payload);
-          
-          if (payload.eventType === 'INSERT') {
-            toast.success('New catch-up recording available!');
-            // Refresh the data
-            fetchRecordedShows();
-          } else if (payload.eventType === 'DELETE') {
-            // Remove from local state
-            setRecordedShows(prev => prev.filter(show => show.id !== payload.old.id));
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const playRecordedShow = (recording: RecordedShow) => {
-    // Check if the URL is a placeholder or invalid
-    if (recording.audio_url.includes('example.com')) {
-      toast.error('This is a demo recording - audio file not available');
-      return;
-    }
-    
-    // Verify this is a catch-up URL (should contain index- and timestamp with 10800 duration)
-    if (!recording.audio_url.includes('/index-')) {
-      console.warn('Warning: URL does not appear to be a catch-up recording URL');
-      toast.error('Invalid recording URL format');
-      return;
-    }
-
-    // Stop any currently playing recording first
-    if (currentlyPlaying) {
-      setCurrentlyPlaying(null);
-      // Small delay to ensure cleanup before starting new player
-      setTimeout(() => {
-        setCurrentlyPlaying({
-          id: recording.id,
-          audioUrl: recording.audio_url,
-          title: recording.title,
-          showTitle: recording.shows?.title || 'Unknown Show'
-        });
-      }, 100);
-    } else {
-      setCurrentlyPlaying({
-        id: recording.id,
-        audioUrl: recording.audio_url,
-        title: recording.title,
-        showTitle: recording.shows?.title || 'Unknown Show'
-      });
-    }
-  };
-
-  const stopPlayer = () => {
-    setCurrentlyPlaying(null);
-  };
-
-  const formatDuration = (seconds: number | null) => {
-    if (!seconds) return 'Unknown duration';
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-  };
-
-  const getRecordingExpiry = (recording: RecordedShow) => {
-    if (!recording.shows) return 'Unknown';
-    
-    const show = {
-      id: recording.show_id || '',
-      title: recording.shows.title,
-      host: recording.shows.host,
-      day_of_week: recording.shows.day_of_week,
-      start_time: recording.shows.start_time,
-      end_time: recording.shows.end_time,
-      description: recording.shows.description,
-      image_url: recording.shows.image_url
-    };
-    
-    return getTimeUntilExpired(show);
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background/50 to-primary/5">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-muted rounded w-48 mb-4"></div>
-            <div className="grid gap-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-48 bg-muted rounded-lg"></div>
-              ))}
-            </div>
-          </div>
-        </main>
-        <RadioPlayer />
-        <Footer />
-      </div>
-    );
-  }
-
+const CatchUp = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/50 to-primary/5">
-      <Header />
+    <div className="w-full min-h-screen bg-white font-asap">
+      {/* Navigation */}
+      <RadioNavigation />
       
-      <main className="container mx-auto px-4 py-8 space-y-8 pb-32">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-foreground">
+      {/* Hero Section */}
+      <section className="relative w-full h-[400px] overflow-hidden">
+        {/* Background Image */}
+        <img
+          src="https://api.builder.io/api/v1/image/assets/TEMP/e154fb9d1aed06944969aa7592132dfc209c4bc2?width=2928"
+          alt="Catch Up Background"
+          className="absolute -left-3 top-0 w-full h-full object-cover backdrop-blur-[50px]"
+        />
+
+        {/* Blue Gradient Overlay */}
+        <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-transparent via-transparent to-[#004995] opacity-78 backdrop-blur-[50px]"></div>
+
+        {/* Content */}
+        <div className="relative z-10 px-4 md:px-8 lg:px-16 xl:px-[185px] py-8 md:py-16 lg:py-24 h-full flex flex-col justify-center">
+          <h1 className="max-w-[600px] text-white font-asap text-4xl md:text-6xl lg:text-7xl xl:text-[72px] font-bold leading-normal mb-6">
             Catch Up
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Listen to shows you missed. Recordings are available for 3 days after broadcast.
+          <p className="max-w-[575px] text-white font-asap text-lg md:text-xl lg:text-2xl xl:text-[20px] font-normal leading-normal">
+            Missed your favorite show? No worries! Listen to previous episodes and catch up on all the content you love from our talented presenters.
           </p>
         </div>
-
-        {recordedShows.length === 0 ? (
-          <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-            <CardContent className="text-center py-12">
-              <div className="text-muted-foreground mb-4">
-                <Clock className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                <h3 className="text-xl font-semibold mb-2">No recordings available</h3>
-                <p>Check back later for recent show recordings.</p>
+      </section>
+      
+      {/* Featured Content Section */}
+      <section className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px] bg-white">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[40px] font-bold leading-normal mb-4 text-center">
+            Recent Episodes
+          </h2>
+          <p className="text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal mb-16 text-center max-w-3xl mx-auto">
+            Listen to the latest episodes from all your favorite shows and discover new content you might have missed.
+          </p>
+          
+          {/* Recent Episodes Grid - Placeholder for now */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3, 4, 5, 6].map((episode) => (
+              <div key={episode} className="bg-white rounded-[30px] shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div className="relative">
+                  <img
+                    src={`https://images.unsplash.com/photo-${1520000000000 + episode}?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80`}
+                    alt={`Episode ${episode}`}
+                    className="w-full h-[200px] object-cover"
+                  />
+                  <div className="absolute top-4 left-4 bg-[#F99300] text-white px-3 py-1 rounded-[20px] font-asap text-[12px] font-bold">
+                    RECORDED
+                  </div>
+                </div>
+                
+                <div className="p-6">
+                  <h3 className="text-black font-asap text-[24px] font-bold leading-normal mb-2">
+                    Episode {episode} - Morning Show
+                  </h3>
+                  <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal mb-2">
+                    Host: Sarah Johnson
+                  </p>
+                  <p className="text-[#5F5F5F] font-asap text-[14px] font-normal leading-normal mb-4">
+                    Aired: {new Date(Date.now() - episode * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                  </p>
+                  <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal mb-6">
+                    Great music, interesting discussions, and the latest news to start your day right.
+                  </p>
+                  
+                  <div className="flex items-center space-x-2">
+                    <span className="text-black font-asap text-[14px] font-normal leading-normal">Listen Now</span>
+                    <svg className="w-3 h-4 rotate-90" viewBox="0 0 17 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M9.13655 11.4911L13.5123 6.70738H1.0198C0.74933 6.70738 0.489941 6.61907 0.298691 6.46189C0.107442 6.3047 -1.26765e-06 6.09152 -1.26765e-06 5.86923C-1.26765e-06 5.64693 0.107442 5.43375 0.298691 5.27656C0.489941 5.11938 0.74933 5.03107 1.0198 5.03107H13.5123L9.13655 1.4333C8.94497 1.27584 8.83734 1.06228 8.83734 0.839607C8.83734 0.61693 8.94497 0.403372 9.13655 0.245915C9.32813 0.0884585 9.58797 2.34629e-09 9.8589 0C10.1298 -2.34629e-09 10.3897 0.0884585 10.5813 0.245915L16.7001 5.27483C16.7951 5.3527 16.8706 5.44523 16.922 5.54711C16.9735 5.64899 17 5.75821 17 5.86853C17 5.97884 16.9735 6.08807 16.922 6.18995C16.8706 6.29183 16.7951 6.38435 16.7001 6.46222L10.5813 11.4911C10.4865 11.5693 10.3739 11.6313 10.25 11.6736C10.126 11.7159 9.99312 11.7377 9.8589 11.7377C9.72468 11.7377 9.59178 11.7159 9.46783 11.6736C9.34387 11.6313 9.23129 11.5693 9.13655 11.4911Z"
+                        fill="black"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-6">
-            {(() => {
-              // Group recordings by show
-              const groupedRecordings = recordedShows.reduce((acc, recording) => {
-                const showId = recording.show_id || 'unknown';
-                if (!acc[showId]) {
-                  acc[showId] = [];
-                }
-                acc[showId].push(recording);
-                return acc;
-              }, {} as Record<string, typeof recordedShows>);
-
-              return Object.entries(groupedRecordings).map(([showId, recordings]) => {
-                const firstRecording = recordings[0];
-                const show = firstRecording.shows;
-                // Sort recordings by hour (extract hour number from title)
-                const sortedRecordings = recordings.sort((a, b) => {
-                  const hourA = parseInt(a.title.match(/Hour (\d+)/)?.[1] || '1');
-                  const hourB = parseInt(b.title.match(/Hour (\d+)/)?.[1] || '1');
-                  return hourA - hourB;
-                });
-
-                return (
-                  <Card key={showId} className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-600 to-green-800 border-green-500">
-                    <div className="flex flex-col md:flex-row">
-                      <div className="md:w-1/3 relative group">
-                        <div className="w-full h-48 md:h-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center relative overflow-hidden">
-                          {show?.image_url ? (
-                            <>
-                              <img 
-                                src={show.image_url} 
-                                alt={show.title}
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            </>
-                          ) : (
-                            <div className="text-center">
-                              <Clock className="w-12 h-12 text-white mx-auto mb-2" />
-                              <div className="text-white font-semibold text-sm">CATCH UP</div>
-                            </div>
-                          )}
-                          <div className="absolute top-3 left-3">
-                            <Badge className="bg-black text-white text-xs">
-                              {sortedRecordings.length} Episode{sortedRecordings.length > 1 ? 's' : ''}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="md:w-2/3 p-6">
-                        <div className="flex items-center mb-3">
-                          <Badge className="bg-black text-white mr-3">
-                            AVAILABLE
-                          </Badge>
-                          {show && (
-                            <span className="text-xs text-white font-medium">
-                              {formatTimeRange(show.start_time, show.end_time)} • {show.day_of_week}
-                            </span>
-                          )}
-                        </div>
-                        
-                        <h3 className="text-2xl font-bold mb-2 text-white">
-                          {show?.title || 'Unknown Show'}
-                        </h3>
-                        
-                        <p className="text-white/90 mb-3 font-medium">
-                          {show?.host && `Hosted by ${show.host}`}
-                        </p>
-                        
-                        {show?.description && (
-                          <p className="text-white/80 mb-4 line-clamp-2 text-sm">
-                            {show.description}
-                          </p>
-                        )}
-
-                        <div className="space-y-3">
-                          <h4 className="font-semibold text-sm text-white flex items-center">
-                            <Play className="w-4 h-4 mr-2 text-white" />
-                            Available Episodes:
-                          </h4>
-                          <div className="grid gap-2 max-h-40 overflow-y-auto">
-                            {sortedRecordings.map((recording) => {
-                              const isPlaying = currentlyPlaying?.id === recording.id;
-                              
-                              return (
-                                <div key={recording.id} className="flex items-center justify-between p-3 bg-black/20 rounded-lg border border-white/20 hover:border-white/40 transition-all duration-200">
-                                  <div className="flex-1 min-w-0">
-                                    <h5 className="font-medium text-sm text-white truncate">{recording.title}</h5>
-                                    <div className="flex items-center gap-3 mt-1 text-xs text-white/70">
-                                      <span className="flex items-center">
-                                        <Calendar className="w-3 h-3 mr-1" />
-                                        {format(new Date(recording.recorded_at), 'MMM dd')}
-                                      </span>
-                                      <span className="flex items-center">
-                                        <Clock className="w-3 h-3 mr-1" />
-                                        {formatDuration(recording.duration_seconds || 0)}
-                                      </span>
-                                      <span className="text-white/90 text-xs">
-                                        {getRecordingExpiry(recording)}
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <Button
-                                    variant={isPlaying ? "secondary" : "outline"}
-                                    size="sm"
-                                    onClick={() => playRecordedShow(recording)}
-                                    className={`ml-3 ${isPlaying ? 'bg-black text-white hover:bg-black/80' : 'border-white/50 text-white hover:bg-white/20'}`}
-                                  >
-                                    <Play className="h-4 w-4" />
-                                    <span className="ml-1 hidden sm:inline">Play</span>
-                                  </Button>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              });
-            })()}
+            ))}
           </div>
-        )}
-      </main>
+        </div>
+      </section>
+      
+      {/* Weekly Schedule Section */}
+      <section className="py-16 bg-[#F8F9FA]">
+        <div className="container mx-auto px-4 md:px-8 lg:px-16">
+          <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[40px] font-bold leading-normal mb-4 text-center">
+            Weekly Schedule
+          </h2>
+          <p className="text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal mb-12 text-center">
+            Plan your listening with our complete weekly programming schedule.
+          </p>
+          <ShowSchedule />
+        </div>
+      </section>
 
-      {/* Catch Up Player */}
-      {currentlyPlaying && (
-        <CatchUpPlayer
-          audioUrl={currentlyPlaying.audioUrl}
-          title={currentlyPlaying.title}
-          showTitle={currentlyPlaying.showTitle}
-          onClose={stopPlayer}
-        />
-      )}
-
+      {/* Presenters & Testimonials */}
+      <PresentersTestimonialsSection />
+      
+      {/* Newsletter Footer */}
+      <NewsletterFooter />
+      
       <RadioPlayer />
-      <Footer />
     </div>
   );
 };
+
+export default CatchUp;
