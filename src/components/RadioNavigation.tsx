@@ -75,8 +75,8 @@ const RadioNavigation = () => {
             {isPlaying ? (
               // Pause icon
               <div className="absolute top-[18px] left-[22px] flex space-x-1">
-                <div className="w-[3px] h-[17px] bg-[#004995]"></div>
-                <div className="w-[3px] h-[17px] bg-[#004995]"></div>
+                <div className="w-[3px] h-[17px] bg-black"></div>
+                <div className="w-[3px] h-[17px] bg-black"></div>
               </div>
             ) : (
               // Play triangle
