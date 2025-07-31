@@ -256,7 +256,8 @@ const AdminDashboard = () => {
         const line = dataLines[i];
         console.log(`Processing line ${i + 2}:`, line);
         
-        // Better CSV parsing - handle quoted fields
+        // Better CSV parsing - handle quoted fields and detect delimiter
+        const delimiter = line.includes(';') ? ';' : ',';
         const csvValues = [];
         let currentValue = '';
         let inQuotes = false;
@@ -265,7 +266,7 @@ const AdminDashboard = () => {
           const char = line[j];
           if (char === '"') {
             inQuotes = !inQuotes;
-          } else if (char === ',' && !inQuotes) {
+          } else if (char === delimiter && !inQuotes) {
             csvValues.push(currentValue.trim());
             currentValue = '';
           } else {
