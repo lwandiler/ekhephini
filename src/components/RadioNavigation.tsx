@@ -24,7 +24,7 @@ const RadioNavigation = () => {
               to="/"
               className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
             >
-              Homes
+              Home
             </Link>
             {/* Active underline for Homes */}
             {location.pathname === '/' && (

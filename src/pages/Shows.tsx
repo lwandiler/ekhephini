@@ -1,13 +1,13 @@
 import React from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import RadioNavigation from '@/components/RadioNavigation';
+import NewsletterFooter from '@/components/NewsletterFooter';
 import ShowSchedule from '@/components/ShowSchedule';
 import UpcomingShows from '@/components/UpcomingShows';
 
 const Shows = () => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="w-full min-h-screen bg-white font-asap">
+      <RadioNavigation />
       
       <main className="flex-1">
         {/* Hero Section */}
@@ -37,7 +37,7 @@ const Shows = () => {
         <UpcomingShows />
       </main>
       
-      <Footer />
+      <NewsletterFooter />
     </div>
   );
 };

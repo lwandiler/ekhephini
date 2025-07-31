@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import RadioNavigation from '@/components/RadioNavigation';
+import NewsletterFooter from '@/components/NewsletterFooter';
 import AdminDashboard from '@/components/AdminDashboard';
 import ThemeSelector from '@/components/ThemeSelector';
 import { Button } from '@/components/ui/button';
@@ -63,8 +63,8 @@ const Admin = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="w-full min-h-screen bg-white font-asap">
+      <RadioNavigation />
       
       <main className="flex-1 bg-gray-50">
         {isLoggedIn ? (
@@ -145,7 +145,7 @@ const Admin = () => {
         )}
       </main>
       
-      <Footer />
+      <NewsletterFooter />
       
     </div>
   );
