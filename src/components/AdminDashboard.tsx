@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 import { 
   LayoutDashboard,
   Users, 
@@ -41,67 +43,225 @@ import {
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   
-  // State for managing data
-  const [shows, setShows] = useState([
-    { id: 1, title: "Morning Drive", host: "John Smith", time: "06:00 - 09:00", status: "Live" },
-    { id: 2, title: "Lunch Break", host: "Sarah Johnson", time: "12:00 - 14:00", status: "Upcoming" },
-    { id: 3, title: "Evening Mix", host: "Mike Davis", time: "18:00 - 20:00", status: "Scheduled" },
-  ]);
-  
-  const [users, setUsers] = useState([
-    { id: 1, name: "John Smith", email: "john@station.com", role: "DJ", status: "Active" },
-    { id: 2, name: "Sarah Johnson", email: "sarah@station.com", role: "Host", status: "Active" },
-    { id: 3, name: "Mike Davis", email: "mike@station.com", role: "Producer", status: "Inactive" },
-  ]);
+  // State for managing data from Supabase
+  const [shows, setShows] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [settings, setSettings] = useState<any>({
+    station_name: '',
+    tagline: '',
+    description: '',
+    stream_url: '',
+    backup_stream_url: '',
+    bitrate: ''
+  });
+  const [loading, setLoading] = useState(true);
 
   // State for forms
   const [showNewShowForm, setShowNewShowForm] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
-  const [newShow, setNewShow] = useState({ title: '', host: '', time: '' });
+  const [newShow, setNewShow] = useState({ title: '', host: '', time_slot: '' });
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'DJ' });
 
+  // Load data from Supabase
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      // Load shows
+      const { data: showsData } = await supabase
+        .from('shows')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      // Load user profiles
+      const { data: usersData } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      // Load station settings
+      const { data: settingsData } = await supabase
+        .from('station_settings')
+        .select('*')
+        .limit(1)
+        .single();
+
+      if (showsData) setShows(showsData);
+      if (usersData) setUsers(usersData);
+      if (settingsData) setSettings(settingsData);
+    } catch (error) {
+      console.error('Error loading data:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load data from database."
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Handlers
-  const handleAddShow = () => {
-    if (newShow.title && newShow.host && newShow.time) {
-      const show = {
-        id: shows.length + 1,
-        title: newShow.title,
-        host: newShow.host,
-        time: newShow.time,
-        status: 'Scheduled'
-      };
-      setShows([...shows, show]);
-      setNewShow({ title: '', host: '', time: '' });
-      setShowNewShowForm(false);
+  const handleAddShow = async () => {
+    if (newShow.title && newShow.host && newShow.time_slot) {
+      try {
+        const { data, error } = await supabase
+          .from('shows')
+          .insert([{
+            title: newShow.title,
+            host: newShow.host,
+            time_slot: newShow.time_slot,
+            status: 'Scheduled'
+          }])
+          .select();
+
+        if (error) throw error;
+
+        if (data) {
+          setShows([data[0], ...shows]);
+          setNewShow({ title: '', host: '', time_slot: '' });
+          setShowNewShowForm(false);
+          toast({
+            title: "Success",
+            description: "Show added successfully!"
+          });
+        }
+      } catch (error) {
+        console.error('Error adding show:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to add show."
+        });
+      }
     }
   };
 
-  const handleDeleteShow = (id: number) => {
-    setShows(shows.filter(show => show.id !== id));
+  const handleDeleteShow = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('shows')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setShows(shows.filter(show => show.id !== id));
+      toast({
+        title: "Success",
+        description: "Show deleted successfully!"
+      });
+    } catch (error) {
+      console.error('Error deleting show:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete show."
+      });
+    }
   };
 
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     if (newUser.name && newUser.email) {
-      const user = {
-        id: users.length + 1,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-        status: 'Active'
-      };
-      setUsers([...users, user]);
-      setNewUser({ name: '', email: '', role: 'DJ' });
-      setShowNewUserForm(false);
+      try {
+        const { data, error } = await supabase
+          .from('user_profiles')
+          .insert([{
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
+            status: 'Active'
+          }])
+          .select();
+
+        if (error) throw error;
+
+        if (data) {
+          setUsers([data[0], ...users]);
+          setNewUser({ name: '', email: '', role: 'DJ' });
+          setShowNewUserForm(false);
+          toast({
+            title: "Success",
+            description: "User added successfully!"
+          });
+        }
+      } catch (error) {
+        console.error('Error adding user:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to add user."
+        });
+      }
     }
   };
 
-  const handleDeleteUser = (id: number) => {
-    setUsers(users.filter(user => user.id !== id));
+  const handleDeleteUser = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setUsers(users.filter(user => user.id !== id));
+      toast({
+        title: "Success",
+        description: "User deleted successfully!"
+      });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete user."
+      });
+    }
   };
 
-  const handleSaveSettings = () => {
-    alert('Settings saved successfully!');
+  const handleSaveSettings = async () => {
+    try {
+      const { error } = await supabase
+        .from('station_settings')
+        .update({
+          station_name: settings.station_name,
+          tagline: settings.tagline,
+          description: settings.description,
+          stream_url: settings.stream_url,
+          backup_stream_url: settings.backup_stream_url,
+          bitrate: settings.bitrate
+        })
+        .eq('id', settings.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Settings saved successfully!"
+      });
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save settings."
+      });
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Mock data
   const stats = [
@@ -205,7 +365,7 @@ const AdminDashboard = () => {
                 <div key={show.id} className="flex items-center justify-between p-3 border rounded">
                   <div>
                     <p className="font-medium">{show.title}</p>
-                    <p className="text-sm text-muted-foreground">{show.host} • {show.time}</p>
+                    <p className="text-sm text-muted-foreground">{show.host} • {show.time_slot}</p>
                   </div>
                   <Badge variant={show.status === 'Live' ? 'default' : 'secondary'}>
                     {show.status}
@@ -284,8 +444,8 @@ const AdminDashboard = () => {
               <Label htmlFor="show-time">Time</Label>
               <Input 
                 id="show-time" 
-                value={newShow.time}
-                onChange={(e) => setNewShow({...newShow, time: e.target.value})}
+                value={newShow.time_slot}
+                onChange={(e) => setNewShow({...newShow, time_slot: e.target.value})}
                 placeholder="e.g., 06:00 - 09:00" 
               />
             </div>
@@ -309,7 +469,7 @@ const AdminDashboard = () => {
                   <div>
                     <p className="font-semibold">{show.title}</p>
                     <p className="text-sm text-muted-foreground">Host: {show.host}</p>
-                    <p className="text-sm text-muted-foreground">Time: {show.time}</p>
+                    <p className="text-sm text-muted-foreground">Time: {show.time_slot}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -490,15 +650,27 @@ const AdminDashboard = () => {
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="station-name">Station Name</Label>
-              <Input id="station-name" defaultValue="Your Radio Station" />
+              <Input 
+                id="station-name" 
+                value={settings.station_name}
+                onChange={(e) => setSettings({...settings, station_name: e.target.value})}
+              />
             </div>
             <div>
               <Label htmlFor="tagline">Tagline</Label>
-              <Input id="tagline" defaultValue="The best music, all day long" />
+              <Input 
+                id="tagline" 
+                value={settings.tagline}
+                onChange={(e) => setSettings({...settings, tagline: e.target.value})}
+              />
             </div>
             <div>
               <Label htmlFor="description">Description</Label>
-              <Textarea id="description" defaultValue="Your favorite radio station..." />
+              <Textarea 
+                id="description" 
+                value={settings.description}
+                onChange={(e) => setSettings({...settings, description: e.target.value})}
+              />
             </div>
             <Button onClick={handleSaveSettings}>Save Changes</Button>
           </CardContent>
@@ -511,15 +683,27 @@ const AdminDashboard = () => {
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="stream-url">Stream URL</Label>
-              <Input id="stream-url" defaultValue="https://stream.yourstation.com/live" />
+              <Input 
+                id="stream-url" 
+                value={settings.stream_url}
+                onChange={(e) => setSettings({...settings, stream_url: e.target.value})}
+              />
             </div>
             <div>
               <Label htmlFor="backup-url">Backup Stream URL</Label>
-              <Input id="backup-url" defaultValue="https://backup.yourstation.com/live" />
+              <Input 
+                id="backup-url" 
+                value={settings.backup_stream_url || ''}
+                onChange={(e) => setSettings({...settings, backup_stream_url: e.target.value})}
+              />
             </div>
             <div>
               <Label htmlFor="bitrate">Bitrate</Label>
-              <Input id="bitrate" defaultValue="128kbps" />
+              <Input 
+                id="bitrate" 
+                value={settings.bitrate}
+                onChange={(e) => setSettings({...settings, bitrate: e.target.value})}
+              />
             </div>
             <Button onClick={handleSaveSettings}>Update Stream</Button>
           </CardContent>
