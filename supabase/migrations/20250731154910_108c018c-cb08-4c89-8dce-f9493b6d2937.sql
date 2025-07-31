@@ -1,0 +1,31 @@
+-- Create a test user account
+-- Note: This creates the user directly in the auth system
+INSERT INTO auth.users (
+    instance_id,
+    id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    created_at,
+    updated_at,
+    confirmation_token,
+    email_change,
+    email_change_token_new,
+    recovery_token
+) VALUES (
+    '00000000-0000-0000-0000-000000000000',
+    gen_random_uuid(),
+    'authenticated',
+    'authenticated',
+    'admin@test.com',
+    crypt('password123', gen_salt('bf')),
+    now(),
+    now(),
+    now(),
+    '',
+    '',
+    '',
+    ''
+);
