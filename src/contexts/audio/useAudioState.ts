@@ -23,13 +23,12 @@ export function useAudioState() {
   // Extract stream URL from MCRS website
   const { extractedUrl, isExtracting, extractionError } = useStreamUrlExtractor();
 
-  // Update the first station with the stream URL from settings (prioritize settings over extracted URL)
+  // Update the first station with the stream URL from settings or extracted URL
   useEffect(() => {
-    // Prioritize settings stream URL over extracted URL
     const streamUrl = settings?.streamUrl || extractedUrl;
     
     if (streamUrl && stations.length > 0) {
-      console.log("Setting stream URL from settings:", streamUrl);
+      console.log("Setting stream URL:", streamUrl);
       
       const updatedStations = [...stations];
       updatedStations[0] = {
