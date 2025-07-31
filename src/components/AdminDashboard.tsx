@@ -236,7 +236,11 @@ const AdminDashboard = () => {
 
     try {
       const text = await bulkUploadFile.text();
+      console.log('CSV text content:', text.substring(0, 500)); // Debug: first 500 chars
+      
       const lines = text.split('\n').filter(line => line.trim());
+      console.log('Total lines found:', lines.length);
+      console.log('First few lines:', lines.slice(0, 3));
       
       // Skip header line
       const dataLines = lines.slice(1);
@@ -250,36 +254,95 @@ const AdminDashboard = () => {
 
       for (let i = 0; i < dataLines.length; i++) {
         const line = dataLines[i];
-        const [title, host, day_of_week, start_time, end_time, description, image_url] = line.split(',').map(item => item.trim().replace(/"/g, ''));
+        console.log(`Processing line ${i + 2}:`, line);
+        
+        // Better CSV parsing - handle quoted fields
+        const csvValues = [];
+        let currentValue = '';
+        let inQuotes = false;
+        
+        for (let j = 0; j < line.length; j++) {
+          const char = line[j];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === ',' && !inQuotes) {
+            csvValues.push(currentValue.trim());
+            currentValue = '';
+          } else {
+            currentValue += char;
+          }
+        }
+        csvValues.push(currentValue.trim()); // Add the last value
+        
+        console.log('Parsed values:', csvValues);
+        
+        const [title, host, day_of_week, start_time, end_time, description, image_url] = csvValues;
+        
+        console.log('Extracted fields:', {
+          title,
+          host,
+          day_of_week,
+          start_time,
+          end_time,
+          description,
+          image_url
+        });
         
         if (title && host && day_of_week && start_time && end_time) {
           try {
+            const showData = {
+              title,
+              host,
+              day_of_week,
+              start_time,
+              end_time,
+              description: description || '',
+              image_url: image_url || '',
+              time_slot: `${start_time} - ${end_time}`, // Keep for backward compatibility
+              status: 'Scheduled'
+            };
+            
+            console.log('Inserting show data:', showData);
+            
             const { data, error } = await supabase
               .from('shows')
-              .insert([{
-                title,
-                host,
-                day_of_week,
-                start_time,
-                end_time,
-                description: description || '',
-                image_url: image_url || '',
-                time_slot: `${start_time} - ${end_time}`, // Keep for backward compatibility
-                status: 'Scheduled'
-              }])
+              .insert([showData])
               .select();
 
-            if (error) throw error;
-            if (data) successfulShows.push(data[0]);
+            if (error) {
+              console.error('Supabase error:', error);
+              throw error;
+            }
+            
+            if (data) {
+              console.log('Successfully inserted:', data[0]);
+              successfulShows.push(data[0]);
+            }
           } catch (error) {
+            console.error(`Error inserting show on line ${i + 2}:`, error);
             failedShows.push({ line: i + 2, title, error: error.message });
           }
         } else {
-          failedShows.push({ line: i + 2, title: title || 'Unknown', error: 'Missing required fields: title, host, day_of_week, start_time, end_time' });
+          const missingFields = [];
+          if (!title) missingFields.push('title');
+          if (!host) missingFields.push('host');
+          if (!day_of_week) missingFields.push('day_of_week');
+          if (!start_time) missingFields.push('start_time');
+          if (!end_time) missingFields.push('end_time');
+          
+          console.log(`Line ${i + 2} missing fields:`, missingFields);
+          failedShows.push({ 
+            line: i + 2, 
+            title: title || 'Unknown', 
+            error: `Missing required fields: ${missingFields.join(', ')}` 
+          });
         }
 
         setBulkUploadProgress(((i + 1) / dataLines.length) * 100);
       }
+
+      console.log('Upload complete. Successful:', successfulShows.length, 'Failed:', failedShows.length);
+      console.log('Failed shows:', failedShows);
 
       // Update local state with successful shows
       if (successfulShows.length > 0) {
@@ -298,7 +361,7 @@ const AdminDashboard = () => {
           description: `${successfulShows.length} shows uploaded successfully, ${failedShows.length} failed.`,
           variant: "destructive"
         });
-        console.log('Failed shows:', failedShows);
+        console.log('Failed shows details:', failedShows);
       }
 
       setShowBulkUploadDialog(false);
