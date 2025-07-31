@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ShowSchedule from '@/components/ShowSchedule';
 import ShowCard from '@/components/ShowCard';
 import NewsList from '@/components/NewsList';
-import AdBanner from '@/components/AdBanner';
+// AdBanner removed
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import EditableText from '@/components/EditableText';
 import EditableImage from '@/components/EditableImage';
@@ -70,7 +70,7 @@ const ClassicTemplate = ({
         </section>
         
         {/* Ad Banner */}
-        <AdBanner position="top" />
+        {/* Ad banner removed */}
         
         
         {/* Featured Podcasts */}
@@ -145,8 +145,7 @@ const ClassicTemplate = ({
                   as="h2"
                   className="text-3xl font-bold text-purple-300 mb-8"
                 />
-                <AdBanner position="sidebar" />
-                <AdBanner position="sidebar" />
+                {/* Ad banners removed */}
               </div>
             </div>
           </div>

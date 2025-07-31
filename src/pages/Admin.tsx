@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import AdminDashboard from '@/components/AdminDashboard';
@@ -9,140 +9,53 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
-import { StationContext } from '@/contexts/StationContext';
-import { useHomeTheme } from '@/hooks/useHomeTheme';
-import { supabase } from '@/integrations/supabase/client';
-import { adminService, AdminUser } from '@/services/api/adminService';
 
-// Define banner interface for type consistency across components
-export interface Banner {
-  id: number;
-  title: string;
-  image: string;
-  url: string;
-}
 
 const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(false);
-  const { settings, setSettings } = useContext(StationContext);
-  const { themeOptions, handleThemeChange, handleThemeOptionsChange } = useHomeTheme();
 
-  // Authentication logic
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     
-    try {
-      const result = await adminService.login({ username, password });
-      
-      if (result.success && result.user) {
-        setIsLoggedIn(true);
-        setCurrentUser(result.user);
-        
-        // Store in session storage so refresh doesn't log user out
-        sessionStorage.setItem('radioAdminLoggedIn', 'true');
-        sessionStorage.setItem('radioAdminUser', JSON.stringify(result.user));
-        
-        // Also sign in to Supabase with anonymous auth to enable storage uploads
-        try {
-          const { data, error } = await supabase.auth.signInAnonymously();
-          if (error) {
-            console.error("Supabase auth error:", error);
-          } else {
-            console.log("Anonymous auth successful:", data.session?.user.id);
-          }
-        } catch (error) {
-          console.error("Failed to authenticate with Supabase:", error);
-        }
-        
-        toast({
-          title: "Login successful",
-          description: `Welcome back, ${result.user.name}!`,
-        });
-      } else {
-        setError(result.error || 'Invalid username or password.');
-        toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: result.error || "Invalid username or password.",
-        });
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      setError('Login failed. Please try again.');
+    // Simple authentication - replace with your actual auth logic
+    if (username === 'admin' && password === 'password') {
+      setIsLoggedIn(true);
+      localStorage.setItem('adminLoggedIn', 'true');
+      toast({
+        title: "Login successful",
+        description: "Welcome to the admin dashboard!",
+      });
+    } else {
+      setError('Invalid credentials. Use admin/password');
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "An unexpected error occurred.",
+        description: "Invalid username or password.",
       });
-    } finally {
-      setLoading(false);
     }
+    
+    setLoading(false);
   };
 
   useEffect(() => {
-    // Check if user is already logged in
-    const checkLoginStatus = async () => {
-      if (sessionStorage.getItem('radioAdminLoggedIn') === 'true') {
-        setIsLoggedIn(true);
-        const storedUser = sessionStorage.getItem('radioAdminUser');
-        if (storedUser) {
-          try {
-            setCurrentUser(JSON.parse(storedUser));
-          } catch {
-            // Fallback for old format
-            setCurrentUser({ name: storedUser } as AdminUser);
-          }
-        }
-        
-        // Check Supabase auth status
-        const { data } = await supabase.auth.getSession();
-        if (!data.session) {
-          // If no active session, create anonymous session
-          try {
-            const { data, error } = await supabase.auth.signInAnonymously();
-            if (error) {
-              console.error("Supabase auth error:", error);
-            } else {
-              console.log("Anonymous auth refreshed:", data.session?.user.id);
-            }
-          } catch (authError) {
-            console.error("Failed to authenticate with Supabase:", authError);
-          }
-        } else {
-          console.log("Existing Supabase session found:", data.session.user.id);
-        }
-      }
-      
-      console.log('Admin: Login state check:', { 
-        isLoggedIn: sessionStorage.getItem('radioAdminLoggedIn') === 'true',
-        user: currentUser
-      });
-    };
-    
-    checkLoginStatus();
+    const adminLoggedIn = localStorage.getItem('adminLoggedIn');
+    if (adminLoggedIn === 'true') {
+      setIsLoggedIn(true);
+    }
   }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setIsLoggedIn(false);
-    setCurrentUser(null);
-    sessionStorage.removeItem('radioAdminLoggedIn');
-    sessionStorage.removeItem('radioAdminUser');
-    
-    // Also sign out from Supabase
-    try {
-      await supabase.auth.signOut();
-      console.log("Signed out of Supabase");
-    } catch (error) {
-      console.error("Failed to sign out from Supabase:", error);
-    }
-    
+    localStorage.removeItem('adminLoggedIn');
+    setUsername('');
+    setPassword('');
+    setError('');
     toast({
       title: "Logged out",
       description: "You have been logged out successfully.",
@@ -157,13 +70,8 @@ const Admin = () => {
         {isLoggedIn ? (
           <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-8">
-              <div>
-                <h1 className="text-3xl font-bold text-purple-800">Admin Dashboard</h1>
-                {currentUser && (
-                  <p className="text-gray-600">Logged in as: {currentUser.name}</p>
-                )}
-              </div>
-              <Button onClick={handleLogout} variant="outline" className="text-red-500 border-red-500 hover:bg-red-50">
+              <h1 className="text-3xl font-bold">Radio Station Admin</h1>
+              <Button onClick={handleLogout} variant="outline">
                 Log Out
               </Button>
             </div>
@@ -218,12 +126,8 @@ const Admin = () => {
                   
                   <div className="pt-2">
                     <p className="text-sm text-black">
-                      Demo accounts:
+                      Demo account: admin / password
                     </p>
-                    <ul className="text-xs text-black list-disc pl-5 mt-1">
-                      <li>Username: admin / Password: password123</li>
-                      <li>Username: manager / Password: manager456</li>
-                    </ul>
                   </div>
                 </CardContent>
                 <CardFooter className="bg-white">
@@ -243,25 +147,6 @@ const Admin = () => {
       
       <Footer />
       
-      {/* Add ThemeSelector for admin users with explicit check */}
-      {isLoggedIn && (
-        <>
-          {console.log('Admin: Rendering ThemeSelector, user is logged in')}
-          <ThemeSelector 
-            currentTheme={themeOptions.type} 
-            onThemeChange={handleThemeChange}
-            themeOptions={themeOptions}
-            onThemeOptionsChange={handleThemeOptionsChange} 
-          />
-        </>
-      )}
-      
-      {/* Always render the theme selector when in development mode */}
-      {process.env.NODE_ENV === 'development' && !isLoggedIn && (
-        <div className="fixed bottom-4 right-4 bg-red-100 p-2 text-xs rounded">
-          Dev mode: Theme selector would appear here when logged in
-        </div>
-      )}
     </div>
   );
 };

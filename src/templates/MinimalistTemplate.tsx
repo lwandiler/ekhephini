@@ -1,7 +1,7 @@
 import ShowCard from '@/components/ShowCard';
 import ShowSchedule from '@/components/ShowSchedule';
 import NewsList from '@/components/NewsList';
-import AdBanner from '@/components/AdBanner';
+// AdBanner removed
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import { Button } from '@/components/ui/button';
 import NewsletterForm from '@/components/NewsletterForm';
@@ -96,7 +96,7 @@ const MinimalistTemplate = ({
         
         {/* Ad Banner - Minimalist Style */}
         <div className="container mx-auto px-4 py-8 bg-black">
-          <AdBanner position="top" />
+          {/* Ad banner removed */}
         </div>
         
         {/* Schedule - Minimalist Style */}
@@ -134,7 +134,7 @@ const MinimalistTemplate = ({
                 
                 <div className="mt-12">
                   <h3 className="text-xl font-bold mb-6 text-white">Sponsors</h3>
-                  <AdBanner position="sidebar" />
+                  {/* Ad banner removed */}
                 </div>
               </div>
             </div>

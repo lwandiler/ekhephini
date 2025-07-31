@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ShowCard from '@/components/ShowCard';
 import ShowSchedule from '@/components/ShowSchedule';
 import NewsList from '@/components/NewsList';
-import AdBanner from '@/components/AdBanner';
+// AdBanner removed
 import PodcastCard, { Podcast } from '@/components/PodcastCard';
 import NowLive from '@/components/NowLive';
 import UpcomingShows from '@/components/UpcomingShows';
@@ -124,7 +124,7 @@ const ModernTemplate = ({
         {/* Ad Banner - Modern Style */}
         <section className="py-12 bg-black">
           <div className="container mx-auto px-4">
-            <AdBanner position="top" />
+            {/* Ad banner removed */}
           </div>
         </section>
         {/* News & Podcasts Split - Modern Style */}
