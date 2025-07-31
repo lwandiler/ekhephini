@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, User, Radio } from 'lucide-react';
+import { Clock, User, Radio, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const ShowSchedule = () => {
@@ -53,6 +53,20 @@ const ShowSchedule = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {shows.map((show) => (
           <Card key={show.id} className="hover:shadow-lg transition-shadow">
+            {show.image_url ? (
+              <div className="h-48 overflow-hidden rounded-t-lg">
+                <img 
+                  src={show.image_url} 
+                  alt={show.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="h-48 bg-gradient-to-br from-green-500 to-blue-600 rounded-t-lg flex items-center justify-center">
+                <Radio className="w-16 h-16 text-white" />
+              </div>
+            )}
+            
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">{show.title}</CardTitle>
@@ -61,20 +75,36 @@ const ShowSchedule = () => {
                 </Badge>
               </div>
             </CardHeader>
+            
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-center text-sm text-gray-600">
                   <User className="w-4 h-4 mr-2" />
                   <span>Host: {show.host}</span>
                 </div>
+                
+                {show.day_of_week && (
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    <span>{show.day_of_week}</span>
+                  </div>
+                )}
+                
                 <div className="flex items-center text-sm text-gray-600">
                   <Clock className="w-4 h-4 mr-2" />
-                  <span>{show.time_slot}</span>
+                  <span>
+                    {show.start_time && show.end_time 
+                      ? `${show.start_time} - ${show.end_time}`
+                      : show.time_slot
+                    }
+                  </span>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <Radio className="w-4 h-4 mr-2" />
-                  <span>Status: {show.status}</span>
-                </div>
+                
+                {show.description && (
+                  <p className="text-sm text-gray-600 line-clamp-3 mt-2">
+                    {show.description}
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -250,17 +250,22 @@ const AdminDashboard = () => {
 
       for (let i = 0; i < dataLines.length; i++) {
         const line = dataLines[i];
-        const [title, host, time_slot, status] = line.split(',').map(item => item.trim().replace(/"/g, ''));
+        const [title, host, day_of_week, start_time, end_time, description, image_url] = line.split(',').map(item => item.trim().replace(/"/g, ''));
         
-        if (title && host && time_slot) {
+        if (title && host && day_of_week && start_time && end_time) {
           try {
             const { data, error } = await supabase
               .from('shows')
               .insert([{
                 title,
                 host,
-                time_slot,
-                status: status || 'Scheduled'
+                day_of_week,
+                start_time,
+                end_time,
+                description: description || '',
+                image_url: image_url || '',
+                time_slot: `${start_time} - ${end_time}`, // Keep for backward compatibility
+                status: 'Scheduled'
               }])
               .select();
 
@@ -270,7 +275,7 @@ const AdminDashboard = () => {
             failedShows.push({ line: i + 2, title, error: error.message });
           }
         } else {
-          failedShows.push({ line: i + 2, title: title || 'Unknown', error: 'Missing required fields' });
+          failedShows.push({ line: i + 2, title: title || 'Unknown', error: 'Missing required fields: title, host, day_of_week, start_time, end_time' });
         }
 
         setBulkUploadProgress(((i + 1) / dataLines.length) * 100);
@@ -511,7 +516,7 @@ const AdminDashboard = () => {
               <DialogHeader>
                 <DialogTitle>Bulk Upload Shows</DialogTitle>
                 <DialogDescription>
-                  Upload a CSV file with show data. Format: Title, Host, Time Slot, Status
+                  Upload a CSV file with show data. Format: title, host, day_of_week, start_time, end_time, description, image_url
                 </DialogDescription>
               </DialogHeader>
               
@@ -526,7 +531,7 @@ const AdminDashboard = () => {
                     className="mt-1"
                   />
                   <p className="text-sm text-gray-500 mt-1">
-                    CSV format: Title, Host, Time Slot, Status (optional)
+                    CSV format: title, host, day_of_week, start_time, end_time, description, image_url
                   </p>
                 </div>
 
@@ -534,9 +539,9 @@ const AdminDashboard = () => {
                 <div className="bg-gray-50 p-3 rounded text-sm">
                   <p className="font-medium mb-1">Sample CSV format:</p>
                   <code className="text-xs">
-                    Title,Host,Time Slot,Status<br/>
-                    Morning Drive,John Smith,06:00 - 09:00,Live<br/>
-                    Afternoon Show,Jane Doe,14:00 - 16:00,Scheduled
+                    title,host,day_of_week,start_time,end_time,description,image_url<br/>
+                    Morning Drive,John Smith,Monday,06:00,09:00,Great morning show with music and news,<br/>
+                    Afternoon Vibes,Jane Doe,Tuesday,14:00,16:00,Relaxing afternoon music and talk,
                   </code>
                 </div>
 

@@ -17,8 +17,13 @@ export type Database = {
       shows: {
         Row: {
           created_at: string
+          day_of_week: string | null
+          description: string | null
+          end_time: string | null
           host: string
           id: string
+          image_url: string | null
+          start_time: string | null
           status: string
           time_slot: string
           title: string
@@ -26,8 +31,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          day_of_week?: string | null
+          description?: string | null
+          end_time?: string | null
           host: string
           id?: string
+          image_url?: string | null
+          start_time?: string | null
           status?: string
           time_slot: string
           title: string
@@ -35,8 +45,13 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          day_of_week?: string | null
+          description?: string | null
+          end_time?: string | null
           host?: string
           id?: string
+          image_url?: string | null
+          start_time?: string | null
           status?: string
           time_slot?: string
           title?: string
