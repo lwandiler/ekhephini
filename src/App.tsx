@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AudioPlayerProvider } from '@/contexts/AudioPlayerContext';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
+import ProtectedRoute from '@/components/ProtectedRoute';
 // Import pages
 import Index from '@/pages/Index';
 import Admin from '@/pages/Admin';
@@ -36,7 +37,7 @@ function App() {
                     <Route path="/shows" element={<Shows />} />
                     <Route path="/catch-up" element={<CatchUp />} />
                     <Route path="/contact" element={<Contact />} />
-                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
                     <Route path="/auth" element={<Auth />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>

@@ -54,10 +54,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  const createUserProfile = async (user: User) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: user.id,
+          name: user.user_metadata?.username || user.email?.split('@')[0] || 'User',
+          role: 'admin'
+        });
+      
+      if (error && !error.message.includes('duplicate key')) {
+        console.error('Error creating profile:', error);
+      }
+    } catch (error) {
+      console.error('Error creating profile:', error);
+    }
+  };
+
   // Sign up with email and password
   const signUp = async (email: string, password: string, username: string, redirectTo = '/') => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -69,6 +87,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) throw error;
+      
+      // Create profile if user was created successfully
+      if (data.user) {
+        await createUserProfile(data.user);
+      }
       
       toast.success('Account created!', {
         description: 'Please check your email to verify your account.'

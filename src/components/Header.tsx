@@ -48,6 +48,9 @@ const Header = () => {
             <Link to="/catchup" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Catch Up</Link>
             <Link to="/announcements" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Announcements</Link>
             <Link to="/news" className="text-gray-700 font-medium hover:text-green-600 transition-colors">News</Link>
+            {user && (
+              <Link to="/admin" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Admin</Link>
+            )}
             
             {user ? (
               <DropdownMenu>
@@ -73,7 +76,9 @@ const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : null}
+            ) : (
+              <Link to="/auth" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Sign In</Link>
+            )}
           </nav>
           
           {/* Mobile menu button */}
@@ -123,6 +128,12 @@ const Header = () => {
             <Link to="/catchup" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Catch Up</Link>
             <Link to="/announcements" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Announcements</Link>
             <Link to="/news" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>News</Link>
+            {user && (
+              <Link to="/admin" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Admin</Link>
+            )}
+            {!user && (
+              <Link to="/auth" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Sign In</Link>
+            )}
           </nav>
         )}
       </div>
