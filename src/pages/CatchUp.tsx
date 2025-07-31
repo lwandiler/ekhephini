@@ -1,8 +1,8 @@
 import RadioNavigation from '@/components/RadioNavigation';
 import NewsletterFooter from '@/components/NewsletterFooter';
-
 import ShowSchedule from '@/components/ShowSchedule';
 import PresentersTestimonialsSection from '@/components/PresentersTestimonialsSection';
+import { RecordedShowsSection } from '@/components/RecordedShowsSection';
 
 const CatchUp = () => {
   return (
@@ -34,6 +34,19 @@ const CatchUp = () => {
       </section>
       
       
+      {/* Recorded Shows Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 md:px-8 lg:px-16">
+          <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[40px] font-bold leading-normal mb-4 text-center">
+            Recent Recordings
+          </h2>
+          <p className="text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal mb-12 text-center">
+            Listen to recent shows and catch up on what you missed. Recordings are available for 3 days after each show.
+          </p>
+          <RecordedShowsSection />
+        </div>
+      </section>
+
       {/* Weekly Schedule Section */}
       <section className="py-16 bg-[#F8F9FA]">
         <div className="container mx-auto px-4 md:px-8 lg:px-16">
