@@ -6,8 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { 
   LayoutDashboard,
   Users, 
@@ -42,6 +43,7 @@ import {
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { toast } = useToast();
   
   // State for managing data from Supabase
   const [shows, setShows] = useState<any[]>([]);
@@ -59,8 +61,12 @@ const AdminDashboard = () => {
   // State for forms
   const [showNewShowForm, setShowNewShowForm] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
+  const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
   const [newShow, setNewShow] = useState({ title: '', host: '', time_slot: '' });
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'DJ' });
+  const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
+  const [bulkUploadProgress, setBulkUploadProgress] = useState(0);
+  const [isProcessingBulk, setIsProcessingBulk] = useState(false);
 
   // Load data from Supabase
   useEffect(() => {
@@ -219,6 +225,89 @@ const AdminDashboard = () => {
         title: "Error",
         description: "Failed to delete user."
       });
+    }
+  };
+
+  const handleBulkUpload = async () => {
+    if (!bulkUploadFile) return;
+
+    setIsProcessingBulk(true);
+    setBulkUploadProgress(0);
+
+    try {
+      const text = await bulkUploadFile.text();
+      const lines = text.split('\n').filter(line => line.trim());
+      
+      // Skip header line
+      const dataLines = lines.slice(1);
+      
+      if (dataLines.length === 0) {
+        throw new Error('No data found in CSV file');
+      }
+
+      const successfulShows = [];
+      const failedShows = [];
+
+      for (let i = 0; i < dataLines.length; i++) {
+        const line = dataLines[i];
+        const [title, host, time_slot, status] = line.split(',').map(item => item.trim().replace(/"/g, ''));
+        
+        if (title && host && time_slot) {
+          try {
+            const { data, error } = await supabase
+              .from('shows')
+              .insert([{
+                title,
+                host,
+                time_slot,
+                status: status || 'Scheduled'
+              }])
+              .select();
+
+            if (error) throw error;
+            if (data) successfulShows.push(data[0]);
+          } catch (error) {
+            failedShows.push({ line: i + 2, title, error: error.message });
+          }
+        } else {
+          failedShows.push({ line: i + 2, title: title || 'Unknown', error: 'Missing required fields' });
+        }
+
+        setBulkUploadProgress(((i + 1) / dataLines.length) * 100);
+      }
+
+      // Update local state with successful shows
+      if (successfulShows.length > 0) {
+        setShows([...successfulShows, ...shows]);
+      }
+
+      // Show results
+      if (failedShows.length === 0) {
+        toast({
+          title: "Bulk upload successful",
+          description: `${successfulShows.length} shows uploaded successfully!`
+        });
+      } else {
+        toast({
+          title: "Bulk upload completed with errors",
+          description: `${successfulShows.length} shows uploaded successfully, ${failedShows.length} failed.`,
+          variant: "destructive"
+        });
+        console.log('Failed shows:', failedShows);
+      }
+
+      setShowBulkUploadDialog(false);
+      setBulkUploadFile(null);
+    } catch (error) {
+      console.error('Error processing bulk upload:', error);
+      toast({
+        variant: "destructive",
+        title: "Upload failed",
+        description: error.message || "Failed to process the uploaded file."
+      });
+    } finally {
+      setIsProcessingBulk(false);
+      setBulkUploadProgress(0);
     }
   };
 
@@ -410,10 +499,87 @@ const AdminDashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-2xl font-bold">Show Management</h3>
-        <Button onClick={() => setShowNewShowForm(!showNewShowForm)}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add New Show
-        </Button>
+        <div className="flex gap-2">
+          <Dialog open={showBulkUploadDialog} onOpenChange={setShowBulkUploadDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Upload className="h-4 w-4 mr-2" />
+                Bulk Upload
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Bulk Upload Shows</DialogTitle>
+                <DialogDescription>
+                  Upload a CSV file with show data. Format: Title, Host, Time Slot, Status
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="csv-file">CSV File</Label>
+                  <Input
+                    id="csv-file"
+                    type="file"
+                    accept=".csv,.txt"
+                    onChange={(e) => setBulkUploadFile(e.target.files?.[0] || null)}
+                    className="mt-1"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    CSV format: Title, Host, Time Slot, Status (optional)
+                  </p>
+                </div>
+
+                {/* Sample CSV format */}
+                <div className="bg-gray-50 p-3 rounded text-sm">
+                  <p className="font-medium mb-1">Sample CSV format:</p>
+                  <code className="text-xs">
+                    Title,Host,Time Slot,Status<br/>
+                    Morning Drive,John Smith,06:00 - 09:00,Live<br/>
+                    Afternoon Show,Jane Doe,14:00 - 16:00,Scheduled
+                  </code>
+                </div>
+
+                {isProcessingBulk && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Processing...</span>
+                      <span>{Math.round(bulkUploadProgress)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${bulkUploadProgress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleBulkUpload} 
+                    disabled={!bulkUploadFile || isProcessingBulk}
+                    className="flex-1"
+                  >
+                    {isProcessingBulk ? 'Processing...' : 'Upload Shows'}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setShowBulkUploadDialog(false)}
+                    disabled={isProcessingBulk}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+          
+          <Button onClick={() => setShowNewShowForm(!showNewShowForm)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add New Show
+          </Button>
+        </div>
       </div>
 
       {showNewShowForm && (
