@@ -78,14 +78,17 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold mb-6 text-purple-300 border-b border-purple-700 pb-2">Contact</h3>
             <address className="not-italic text-gray-300 space-y-3">
+              <p className="flex items-center gap-2 font-semibold text-purple-300">PHUMLANI Xanasi</p>
               <p className="flex items-center gap-2">{settings.stationName}</p>
-              <p className="flex items-center gap-2">Broadcasting Station</p>
-              {settings.contactInfo.email && (
-                <p className="flex items-center gap-2 mt-4"><Mail size={16} className="text-purple-400" /> {settings.contactInfo.email}</p>
-              )}
-              {settings.contactInfo.phone && (
-                <p className="flex items-center gap-2"><Phone size={16} className="text-purple-400" /> {settings.contactInfo.phone}</p>
-              )}
+              <p className="flex items-center gap-2"><Phone size={16} className="text-purple-400" /> 0742578799</p>
+              <p className="flex items-center gap-2"><Mail size={16} className="text-purple-400" /> phumlanichrist@gmail.com</p>
+              <p className="flex items-center gap-2 text-purple-300">www.khephinifm.co.za</p>
+              <div className="mt-4 space-y-1">
+                <p className="text-gray-400">Barkly East</p>
+                <p className="text-gray-400">Joe Gabi District</p>
+                <p className="text-gray-400">Eastern Cape, South Africa</p>
+                <p className="text-purple-300 font-semibold mt-2">96.3 FM</p>
+              </div>
             </address>
           </div>
         </div>
