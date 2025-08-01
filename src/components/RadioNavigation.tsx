@@ -19,18 +19,6 @@ const RadioNavigation = () => {
 
         {/* Navigation Menu */}
         <nav className="flex items-center space-x-[52px]">
-          <div className="relative">
-            <Link
-              to="/"
-              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-            >
-              Home
-            </Link>
-            {/* Active underline for Home */}
-            {location.pathname === '/' && (
-              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
-            )}
-          </div>
         </nav>
 
         {/* Radio Player Controls */}
