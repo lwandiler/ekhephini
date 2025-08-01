@@ -79,7 +79,7 @@ export async function tryAlternativeStreamExtraction(): Promise<string | null> {
   try {
     // Common South African radio streaming services
     const commonStreamingServices = [
-      'https://streamlive-edge-01.broadsmart-streaming.co.za:5443/mdda/streams/mcr128kbps.m3u8',
+      'https://streamlive-edge-flu01.broadsmart-streaming.co.za/ekhephinifm128kbps/index.m3u8',
       'https://streaming.mcrs.co.za/live',
       'https://stream.mcrs.co.za/mcrs',
       'https://mcrs.co.za/stream',
