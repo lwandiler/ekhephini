@@ -8,6 +8,7 @@ import { useStreamUrlExtractor } from '@/hooks/useStreamUrlExtractor';
 
 export function useAudioState() {
   const { settings } = useContext(StationContext);
+  console.log("DEBUG: Full settings object:", settings);
   const [stations, setStations] = useState<RadioStation[]>(defaultStations);
   const [currentStationIndex, setCurrentStationIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -20,15 +21,26 @@ export function useAudioState() {
   const nextSound = useRef<Howl | null>(null);
   const previousSound = useRef<Howl | null>(null);
 
-  // Extract stream URL from MCRS website
-  const { extractedUrl, isExtracting, extractionError } = useStreamUrlExtractor();
+  // Extract stream URL from MCRS website - disabled to use database URL
+  // const { extractedUrl, isExtracting, extractionError } = useStreamUrlExtractor();
+  const extractedUrl = null;
+  const isExtracting = false;
+  const extractionError = null;
+
+  // Force clear localStorage cache and refresh settings on mount
+  useEffect(() => {
+    // Clear cached settings to force fresh load from database
+    localStorage.removeItem('stationSettings');
+    // Trigger settings refresh
+    document.dispatchEvent(new CustomEvent('settingsUpdated'));
+  }, []);
 
   // Update the first station with the stream URL from settings or extracted URL
   useEffect(() => {
-    // Prioritize database settings over extracted URL
+    // Only use database settings, ignore extracted URL
     console.log("DEBUG: settings?.streamUrl =", settings?.streamUrl);
     console.log("DEBUG: extractedUrl =", extractedUrl);
-    const streamUrl = settings?.streamUrl || extractedUrl;
+    const streamUrl = settings?.streamUrl;
     
     if (streamUrl && stations.length > 0) {
       console.log("Setting stream URL:", streamUrl);
