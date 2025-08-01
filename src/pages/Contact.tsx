@@ -23,13 +23,23 @@ const Contact = () => {
               
               <div className="space-y-4">
                 <div>
+                  <h3 className="text-black font-asap text-[18px] font-bold leading-normal">Contact Person</h3>
+                  <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal">PHUMLANI Xanasi</p>
+                </div>
+                
+                <div>
                   <h3 className="text-black font-asap text-[18px] font-bold leading-normal">Phone</h3>
-                  <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal">+27 (0) 45 971 0000</p>
+                  <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal">0742578799</p>
                 </div>
                 
                 <div>
                   <h3 className="text-black font-asap text-[18px] font-bold leading-normal">Email</h3>
-                  <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal">info@ekhephinifm.co.za</p>
+                  <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal">phumlanichrist@gmail.com</p>
+                </div>
+                
+                <div>
+                  <h3 className="text-black font-asap text-[18px] font-bold leading-normal">Website</h3>
+                  <p className="text-[#5F5F5F] font-asap text-[16px] font-normal leading-normal">www.khephinifm.co.za</p>
                 </div>
                 
                 <div>
