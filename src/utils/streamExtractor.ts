@@ -5,7 +5,7 @@ export async function extractMCRSStreamUrl(): Promise<string | null> {
     console.log('Attempting to extract stream URL from MCRS website...');
     
     // Try to fetch the live page
-    const response = await fetch('https://mcrs.co.za/live', {
+    const response = await fetch('https://delivery.broadsmart-streaming.co.za/ekhephinifm128kbps/index.m3u8', {
       mode: 'cors',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -79,10 +79,7 @@ export async function tryAlternativeStreamExtraction(): Promise<string | null> {
   try {
     // Common South African radio streaming services
     const commonStreamingServices = [
-      'https://streamlive-edge-flu01.broadsmart-streaming.co.za/ekhephinifm128kbps/index.m3u8',
-      'https://streaming.mcrs.co.za/live',
-      'https://stream.mcrs.co.za/mcrs',
-      'https://mcrs.co.za/stream',
+      'https://delivery.broadsmart-streaming.co.za/ekhephinifm128kbps/index.m3u8'
     ];
     
     for (const url of commonStreamingServices) {

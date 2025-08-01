@@ -5,7 +5,7 @@ export const defaultStations: RadioStation[] = [
   {
     id: "mcr-969",
     name: "Ekhapini Community Radio",
-    url: "https://streamlive-edge-flu01.broadsmart-streaming.co.za/ekhephinifm128kbps/index.m3u8",
+    url: "https://delivery.broadsmart-streaming.co.za/ekhephinifm128kbps/index.m3u8",
     fallbackUrl: "https://ice2.somafm.com/groovesalad-128-mp3", // Different fallback URL
     description: "Ekhepini Community Radio Station - Your trusted voice in the community",
     genre: "Community Radio",
