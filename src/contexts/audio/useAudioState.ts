@@ -25,6 +25,9 @@ export function useAudioState() {
 
   // Update the first station with the stream URL from settings or extracted URL
   useEffect(() => {
+    // Prioritize database settings over extracted URL
+    console.log("DEBUG: settings?.streamUrl =", settings?.streamUrl);
+    console.log("DEBUG: extractedUrl =", extractedUrl);
     const streamUrl = settings?.streamUrl || extractedUrl;
     
     if (streamUrl && stations.length > 0) {
