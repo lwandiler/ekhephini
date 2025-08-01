@@ -25,6 +25,13 @@ export function useAudioInitialization(
         // Clear any existing errors
         setStreamError(null);
         
+        // Force reload of current station if sound is already loaded and URL changed
+        if (currentSound.current && stations[currentStationIndex]) {
+          console.log('Station URL updated, reinitializing audio player');
+          currentSound.current.unload();
+          currentSound.current = null;
+        }
+        
         // The HLS player will be initialized automatically when needed
         console.log('Audio initialization complete - HLS player ready');
       } catch (error) {
@@ -34,5 +41,5 @@ export function useAudioInitialization(
     };
 
     initializeAudio();
-  }, [setStreamError]);
+  }, [setStreamError, stations, currentStationIndex]);
 }
