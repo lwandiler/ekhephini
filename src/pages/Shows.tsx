@@ -11,7 +11,7 @@ const Shows = () => {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-green-600 to-green-700 text-white py-16">
+        <section className="bg-[#004995] text-white py-16">
           <div className="container mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-4">Our Shows</h1>
             <p className="text-xl text-green-100 max-w-2xl mx-auto">
