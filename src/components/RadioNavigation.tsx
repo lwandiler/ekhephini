@@ -26,52 +26,8 @@ const RadioNavigation = () => {
             >
               Home
             </Link>
-            {/* Active underline for Homes */}
+            {/* Active underline for Home */}
             {location.pathname === '/' && (
-              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
-            )}
-          </div>
-          <div className="relative">
-            <Link
-              to="/shows"
-              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-            >
-              Shows
-            </Link>
-            {location.pathname === '/shows' && (
-              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
-            )}
-          </div>
-          <div className="relative">
-            <Link
-              to="/catch-up"
-              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-            >
-              Catch Up
-            </Link>
-            {location.pathname === '/catch-up' && (
-              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
-            )}
-          </div>
-          <div className="relative">
-            <Link
-              to="/news"
-              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-            >
-              News
-            </Link>
-            {location.pathname === '/news' && (
-              <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
-            )}
-          </div>
-          <div className="relative">
-            <Link
-              to="/contact"
-              className="text-black font-asap text-[25px] font-normal leading-normal hover:text-gray-600 transition-colors"
-            >
-              Contact Us
-            </Link>
-            {location.pathname === '/contact' && (
               <div className="absolute -bottom-[7px] left-0 w-[76px] h-[1px] bg-black"></div>
             )}
           </div>
