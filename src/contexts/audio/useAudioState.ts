@@ -33,6 +33,12 @@ export function useAudioState() {
     if (streamUrl && stations.length > 0) {
       console.log("Setting stream URL:", streamUrl);
       
+      // Force refresh settings when they change to ensure we get latest from DB
+      if (settings?.streamUrl && settings.streamUrl !== streamUrl) {
+        // Trigger a settings refresh
+        document.dispatchEvent(new CustomEvent('settingsUpdated'));
+      }
+      
       const updatedStations = [...stations];
       updatedStations[0] = {
         ...updatedStations[0],
