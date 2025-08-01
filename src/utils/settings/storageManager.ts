@@ -26,8 +26,32 @@ export function saveSettingsToStorage(settings) {
   }
 }
 
+// Clear all audio and settings caches
+export function clearAllAudioCaches() {
+  console.log("Clearing all audio caches");
+  
+  // Clear all possible cache keys
+  const cacheKeys = [
+    'radioSettings',
+    'stationSettings', 
+    'audioPlayerState',
+    'streamUrlCache',
+    'howlerCache'
+  ];
+  
+  cacheKeys.forEach(key => {
+    localStorage.removeItem(key);
+  });
+  
+  // Clear any session storage as well
+  sessionStorage.clear();
+}
+
 // Force a refresh of settings across the application
 export function forceSettingsRefresh() {
+  // Clear all caches first
+  clearAllAudioCaches();
+  
   // Initialize window properties if they don't exist
   if (typeof window._settingsRefreshTimer === 'undefined') {
     window._settingsRefreshTimer = null;

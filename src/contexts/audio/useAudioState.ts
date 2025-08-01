@@ -27,15 +27,37 @@ export function useAudioState() {
   const isExtracting = false;
   const extractionError = null;
 
-  // Force clear localStorage cache and refresh settings on mount
+  // Force clear all caches on mount
   useEffect(() => {
-    // Clear cached settings to force fresh load from database
+    // Clear all possible cached settings
     localStorage.removeItem('stationSettings');
+    localStorage.removeItem('radioSettings');
+    localStorage.removeItem('audioPlayerState');
+    
+    // Clear any Howler cache
+    if (currentSound.current) {
+      currentSound.current.unload();
+      currentSound.current = null;
+    }
+    if (nextSound.current) {
+      nextSound.current.unload();
+      nextSound.current = null;
+    }
+    if (previousSound.current) {
+      previousSound.current.unload();
+      previousSound.current = null;
+    }
+    
+    // Force stop any playing audio
+    setIsPlaying(false);
+    setIsLoading(false);
+    setStreamError(null);
+    
     // Trigger settings refresh
     document.dispatchEvent(new CustomEvent('settingsUpdated'));
   }, []);
 
-  // Update the first station with the stream URL from settings or extracted URL
+  // Update the first station with the stream URL from settings and force audio reload
   useEffect(() => {
     // Only use database settings, ignore extracted URL
     console.log("DEBUG: settings?.streamUrl =", settings?.streamUrl);
@@ -45,12 +67,16 @@ export function useAudioState() {
     if (streamUrl && stations.length > 0) {
       console.log("Setting stream URL:", streamUrl);
       
-      // Force refresh settings when they change to ensure we get latest from DB
-      if (settings?.streamUrl && settings.streamUrl !== streamUrl) {
-        // Trigger a settings refresh
-        document.dispatchEvent(new CustomEvent('settingsUpdated'));
+      // Force cleanup of existing audio before updating
+      if (currentSound.current) {
+        console.log("Cleaning up existing audio instance");
+        currentSound.current.stop();
+        currentSound.current.unload();
+        currentSound.current = null;
+        setIsPlaying(false);
       }
       
+      // Update stations with new URL
       const updatedStations = [...stations];
       updatedStations[0] = {
         ...updatedStations[0],
@@ -60,7 +86,12 @@ export function useAudioState() {
         description: settings?.stationDescription || updatedStations[0].description
       };
       
+      console.log("Updated first station:", updatedStations[0]);
       setStations(updatedStations);
+      
+      // Reset player state
+      setStreamError(null);
+      setIsLoading(false);
     }
   }, [settings?.streamUrl, settings?.stationName, settings?.stationDescription, extractedUrl]);
 
