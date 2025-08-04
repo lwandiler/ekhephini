@@ -87,6 +87,12 @@ const AdminDashboard = () => {
         .select('*')
         .order('created_at', { ascending: false });
       
+      // Load authenticated users (profiles table)
+      const { data: authUsersData } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
       // Load station settings
       const { data: settingsData } = await supabase
         .from('station_settings')
@@ -95,7 +101,17 @@ const AdminDashboard = () => {
         .single();
 
       if (showsData) setShows(showsData);
-      if (usersData) setUsers(usersData);
+      
+      // Combine both user types
+      const allUsers = [];
+      if (usersData) {
+        allUsers.push(...usersData.map(user => ({ ...user, type: 'staff' })));
+      }
+      if (authUsersData) {
+        allUsers.push(...authUsersData.map(user => ({ ...user, type: 'authenticated', email: user.user_id })));
+      }
+      setUsers(allUsers);
+      
       if (settingsData) setSettings(settingsData);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -185,7 +201,7 @@ const AdminDashboard = () => {
         if (error) throw error;
 
         if (data) {
-          setUsers([data[0], ...users]);
+          setUsers([{...data[0], type: 'staff'}, ...users]);
           setNewUser({ name: '', email: '', role: 'DJ' });
           setShowNewUserForm(false);
           toast({
@@ -204,8 +220,18 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteUser = async (id: string) => {
+  const handleDeleteUser = async (id: string, userType: string) => {
     try {
+      // Only allow deletion of staff users (user_profiles), not authenticated users
+      if (userType !== 'staff') {
+        toast({
+          variant: "destructive",
+          title: "Cannot delete",
+          description: "Authenticated users cannot be deleted from this interface."
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('user_profiles')
         .delete()
@@ -789,25 +815,40 @@ const AdminDashboard = () => {
             {users.map((user) => (
               <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                    user.type === 'authenticated' 
+                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600' 
+                      : 'bg-gradient-to-r from-green-500 to-blue-600'
+                  }`}>
                     <Users className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <p className="font-semibold">{user.name}</p>
                     <p className="text-sm text-muted-foreground">{user.email}</p>
-                    <p className="text-sm text-muted-foreground">Role: {user.role}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-muted-foreground">Role: {user.role}</p>
+                      <Badge variant={user.type === 'authenticated' ? 'default' : 'outline'} className="text-xs">
+                        {user.type === 'authenticated' ? 'Auth User' : 'Staff'}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={user.status === 'Active' ? 'default' : 'secondary'}>
-                    {user.status}
+                    {user.status || 'Active'}
                   </Badge>
                   <Button variant="outline" size="sm">
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleDeleteUser(user.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {user.type === 'staff' ? (
+                    <Button variant="outline" size="sm" onClick={() => handleDeleteUser(user.id, user.type || 'staff')}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button variant="outline" size="sm" disabled title="Cannot delete authenticated users">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
