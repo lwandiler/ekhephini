@@ -110,14 +110,32 @@ const AdminDashboard = () => {
       if (currentTime < startTime) {
         return 'Upcoming';
       }
+      
+      // If we're past the end time today, it's completed/scheduled for next week
+      return 'Scheduled';
     }
     
-    // Check if upcoming this week
+    // Check if upcoming this week or next week
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const currentDayIndex = now.getDay();
     const showDayIndex = days.indexOf(show.day_of_week);
     
-    if (showDayIndex > currentDayIndex) {
+    // If show day is valid and later this week
+    if (showDayIndex !== -1 && showDayIndex > currentDayIndex) {
+      return 'Upcoming';
+    }
+    
+    // Calculate next occurrence of this show
+    const nextShowDate = new Date(now);
+    const daysUntilShow = showDayIndex <= currentDayIndex ? 
+      7 - (currentDayIndex - showDayIndex) : 
+      showDayIndex - currentDayIndex;
+    
+    nextShowDate.setDate(now.getDate() + daysUntilShow);
+    
+    // If the next show is within the next 7 days, it's upcoming
+    const diffInDays = Math.ceil((nextShowDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffInDays <= 7 && diffInDays > 0) {
       return 'Upcoming';
     }
     
