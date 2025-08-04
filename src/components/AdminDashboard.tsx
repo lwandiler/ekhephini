@@ -1137,14 +1137,20 @@ const AdminDashboard = () => {
                     <div className="flex-1">
                       <p className="font-semibold">{podcast.name}</p>
                       <p className="text-sm text-muted-foreground mb-2">{podcast.description}</p>
-                      <a 
-                        href={podcast.podcast_link} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 text-sm underline"
-                      >
-                        Listen to episode →
-                      </a>
+                      <div className="space-y-1">
+                        <p className="text-xs text-gray-500">Podcast URL:</p>
+                        <p className="text-xs text-gray-600 break-all bg-gray-50 p-2 rounded border">
+                          {podcast.podcast_link}
+                        </p>
+                        <a 
+                          href={podcast.podcast_link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm underline font-medium"
+                        >
+                          🎧 Listen to episode →
+                        </a>
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
