@@ -88,9 +88,57 @@ const AdminDashboard = () => {
   const [showStartTimeFilter, setShowStartTimeFilter] = useState('');
   const [showEndTimeFilter, setShowEndTimeFilter] = useState('');
 
+  
+  // Utility function to determine show status based on current date/time
+  const getShowStatus = (show: any) => {
+    const now = new Date();
+    const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
+    const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
+    
+    // If show is today
+    if (show.day_of_week === currentDay && show.start_time && show.end_time) {
+      // Convert times for comparison
+      const startTime = show.start_time;
+      const endTime = show.end_time;
+      
+      // Check if currently live
+      if (currentTime >= startTime && currentTime <= endTime) {
+        return 'Live';
+      }
+      
+      // Check if upcoming today
+      if (currentTime < startTime) {
+        return 'Upcoming';
+      }
+    }
+    
+    // Check if upcoming this week
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const currentDayIndex = now.getDay();
+    const showDayIndex = days.indexOf(show.day_of_week);
+    
+    if (showDayIndex > currentDayIndex) {
+      return 'Upcoming';
+    }
+    
+    return 'Scheduled';
+  };
+
   // Load data from Supabase
   useEffect(() => {
     loadData();
+    
+    // Update show statuses every minute
+    const interval = setInterval(() => {
+      setShows(prevShows => 
+        prevShows.map(show => ({
+          ...show,
+          status: getShowStatus(show)
+        }))
+      );
+    }, 60000); // Update every minute
+    
+    return () => clearInterval(interval);
   }, []);
 
   const loadData = async () => {
@@ -126,7 +174,14 @@ const AdminDashboard = () => {
         .limit(1)
         .maybeSingle();
 
-      if (showsData) setShows(showsData);
+      if (showsData) {
+        // Apply dynamic status to each show
+        const showsWithStatus = showsData.map(show => ({
+          ...show,
+          status: getShowStatus(show)
+        }));
+        setShows(showsWithStatus);
+      }
       if (podcastsData) setPodcasts(podcastsData);
       
       // Combine both user types
@@ -909,7 +964,18 @@ const AdminDashboard = () => {
                     <p className="font-medium">{show.title}</p>
                     <p className="text-sm text-muted-foreground">{show.host} • {show.time_slot}</p>
                   </div>
-                  <Badge variant={show.status === 'Live' ? 'default' : 'secondary'}>
+                  <Badge 
+                    variant={
+                      show.status === 'Live' ? 'destructive' : 
+                      show.status === 'Upcoming' ? 'default' : 
+                      'secondary'
+                    }
+                    className={
+                      show.status === 'Live' ? 'bg-red-500 text-white animate-pulse' :
+                      show.status === 'Upcoming' ? 'bg-green-500 text-white' :
+                      'bg-gray-500 text-white'
+                    }
+                  >
                     {show.status}
                   </Badge>
                 </div>
@@ -1287,7 +1353,18 @@ const AdminDashboard = () => {
                    </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant={show.status === 'Live' ? 'default' : 'secondary'}>
+                  <Badge 
+                    variant={
+                      show.status === 'Live' ? 'destructive' : 
+                      show.status === 'Upcoming' ? 'default' : 
+                      'secondary'
+                    }
+                    className={
+                      show.status === 'Live' ? 'bg-red-500 text-white animate-pulse' :
+                      show.status === 'Upcoming' ? 'bg-green-500 text-white' :
+                      'bg-gray-500 text-white'
+                    }
+                  >
                     {show.status}
                   </Badge>
                   <Button variant="outline" size="sm" onClick={() => handleEditShow(show)}>
