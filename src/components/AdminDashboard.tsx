@@ -85,6 +85,7 @@ const AdminDashboard = () => {
   const [showFilter, setShowFilter] = useState('');
   const [showStatusFilter, setShowStatusFilter] = useState('all');
   const [showDayFilter, setShowDayFilter] = useState('all');
+  const [showTimeFilter, setShowTimeFilter] = useState('');
 
   // Load data from Supabase
   useEffect(() => {
@@ -576,7 +577,12 @@ const AdminDashboard = () => {
     const matchesStatus = showStatusFilter === 'all' || show.status === showStatusFilter;
     const matchesDay = showDayFilter === 'all' || show.day_of_week === showDayFilter;
     
-    return matchesSearch && matchesStatus && matchesDay;
+    // Time filter logic
+    const matchesTime = showTimeFilter === '' || 
+      (show.start_time && show.start_time.includes(showTimeFilter)) ||
+      (show.end_time && show.end_time.includes(showTimeFilter));
+    
+    return matchesSearch && matchesStatus && matchesDay && matchesTime;
   });
 
   const handleBulkUpload = async () => {
@@ -1059,6 +1065,13 @@ const AdminDashboard = () => {
                 <option value="Saturday">Saturday</option>
                 <option value="Sunday">Sunday</option>
               </select>
+              
+              <Input
+                placeholder="Filter by time (e.g., 06:00)"
+                value={showTimeFilter}
+                onChange={(e) => setShowTimeFilter(e.target.value)}
+                className="w-32"
+              />
             </div>
           </div>
           
@@ -1161,7 +1174,7 @@ const AdminDashboard = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Shows ({filteredShows.length})</CardTitle>
-            {showFilter || showStatusFilter !== 'all' || showDayFilter !== 'all' ? (
+            {showFilter || showStatusFilter !== 'all' || showDayFilter !== 'all' || showTimeFilter ? (
               <Button
                 variant="outline"
                 size="sm"
@@ -1169,6 +1182,7 @@ const AdminDashboard = () => {
                   setShowFilter('');
                   setShowStatusFilter('all');
                   setShowDayFilter('all');
+                  setShowTimeFilter('');
                 }}
               >
                 Clear Filters
