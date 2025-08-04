@@ -64,7 +64,14 @@ const AdminDashboard = () => {
   const [showNewUserForm, setShowNewUserForm] = useState(false);
   const [showNewPodcastForm, setShowNewPodcastForm] = useState(false);
   const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
-  const [newShow, setNewShow] = useState({ title: '', host: '', time_slot: '' });
+  const [newShow, setNewShow] = useState({ 
+    title: '', 
+    host: '', 
+    day_of_week: '', 
+    start_time: '', 
+    end_time: '', 
+    description: '' 
+  });
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'DJ' });
   const [newPodcast, setNewPodcast] = useState({ name: '', podcast_link: '', description: '', thumbnail: null as File | null });
   const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
@@ -139,14 +146,18 @@ const AdminDashboard = () => {
 
   // Handlers
   const handleAddShow = async () => {
-    if (newShow.title && newShow.host && newShow.time_slot) {
+    if (newShow.title && newShow.host && newShow.day_of_week && newShow.start_time && newShow.end_time) {
       try {
         const { data, error } = await supabase
           .from('shows')
           .insert([{
             title: newShow.title,
             host: newShow.host,
-            time_slot: newShow.time_slot,
+            day_of_week: newShow.day_of_week,
+            start_time: newShow.start_time,
+            end_time: newShow.end_time,
+            description: newShow.description,
+            time_slot: `${newShow.start_time} - ${newShow.end_time}`, // Keep for backward compatibility
             status: 'Scheduled'
           }])
           .select();
@@ -155,7 +166,14 @@ const AdminDashboard = () => {
 
         if (data) {
           setShows([data[0], ...shows]);
-          setNewShow({ title: '', host: '', time_slot: '' });
+          setNewShow({ 
+            title: '', 
+            host: '', 
+            day_of_week: '', 
+            start_time: '', 
+            end_time: '', 
+            description: '' 
+          });
           setShowNewShowForm(false);
           toast({
             title: "Success",
@@ -856,30 +874,71 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="show-title">Show Title</Label>
+              <Label htmlFor="show-title">Show Name</Label>
               <Input 
                 id="show-title" 
                 value={newShow.title}
                 onChange={(e) => setNewShow({...newShow, title: e.target.value})}
-                placeholder="Enter show title" 
+                placeholder="Enter show name" 
               />
             </div>
             <div>
-              <Label htmlFor="show-host">Host</Label>
+              <Label htmlFor="show-host">Presenter Name</Label>
               <Input 
                 id="show-host" 
                 value={newShow.host}
                 onChange={(e) => setNewShow({...newShow, host: e.target.value})}
-                placeholder="Enter host name" 
+                placeholder="Enter presenter name" 
               />
             </div>
             <div>
-              <Label htmlFor="show-time">Time</Label>
-              <Input 
-                id="show-time" 
-                value={newShow.time_slot}
-                onChange={(e) => setNewShow({...newShow, time_slot: e.target.value})}
-                placeholder="e.g., 06:00 - 09:00" 
+              <Label htmlFor="show-day">Day</Label>
+              <select 
+                id="show-day" 
+                value={newShow.day_of_week}
+                onChange={(e) => setNewShow({...newShow, day_of_week: e.target.value})}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select day</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="show-start">Start Time</Label>
+                <Input 
+                  id="show-start" 
+                  type="time"
+                  value={newShow.start_time}
+                  onChange={(e) => setNewShow({...newShow, start_time: e.target.value})}
+                  placeholder="e.g., 06:00" 
+                />
+              </div>
+              <div>
+                <Label htmlFor="show-end">End Time</Label>
+                <Input 
+                  id="show-end" 
+                  type="time"
+                  value={newShow.end_time}
+                  onChange={(e) => setNewShow({...newShow, end_time: e.target.value})}
+                  placeholder="e.g., 09:00" 
+                />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="show-description">Description</Label>
+              <Textarea 
+                id="show-description" 
+                value={newShow.description}
+                onChange={(e) => setNewShow({...newShow, description: e.target.value})}
+                placeholder="Enter show description..."
+                rows={3}
               />
             </div>
             <div className="flex gap-2">
@@ -899,11 +958,16 @@ const AdminDashboard = () => {
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                     <Radio className="h-6 w-6 text-white" />
                   </div>
-                  <div>
-                    <p className="font-semibold">{show.title}</p>
-                    <p className="text-sm text-muted-foreground">Host: {show.host}</p>
-                    <p className="text-sm text-muted-foreground">Time: {show.time_slot}</p>
-                  </div>
+                   <div>
+                     <p className="font-semibold">{show.title}</p>
+                     <p className="text-sm text-muted-foreground">Presenter: {show.host}</p>
+                     <p className="text-sm text-muted-foreground">
+                       {show.day_of_week} • {show.start_time} - {show.end_time}
+                     </p>
+                     {show.description && (
+                       <p className="text-xs text-gray-500 mt-1">{show.description}</p>
+                     )}
+                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant={show.status === 'Live' ? 'default' : 'secondary'}>
