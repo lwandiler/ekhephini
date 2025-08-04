@@ -79,6 +79,7 @@ const AdminDashboard = () => {
   const [isProcessingBulk, setIsProcessingBulk] = useState(false);
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [editingPodcast, setEditingPodcast] = useState<any>(null);
+  const [editingShow, setEditingShow] = useState<any>(null);
 
   // Load data from Supabase
   useEffect(() => {
@@ -443,6 +444,66 @@ const AdminDashboard = () => {
       });
     } finally {
       setIsUploadingThumbnail(false);
+    }
+  };
+
+  const handleEditShow = (show: any) => {
+    setEditingShow(show);
+    setNewShow({
+      title: show.title,
+      host: show.host || '',
+      day_of_week: show.day_of_week,
+      start_time: show.start_time,
+      end_time: show.end_time,
+      description: show.description || ''
+    });
+    setShowNewShowForm(true);
+  };
+
+  const handleUpdateShow = async () => {
+    if (!editingShow || !newShow.title || !newShow.day_of_week || !newShow.start_time || !newShow.end_time) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('shows')
+        .update({
+          title: newShow.title,
+          host: newShow.host,
+          day_of_week: newShow.day_of_week,
+          start_time: newShow.start_time,
+          end_time: newShow.end_time,
+          description: newShow.description,
+          time_slot: `${newShow.start_time} - ${newShow.end_time}` // Keep for backward compatibility
+        })
+        .eq('id', editingShow.id)
+        .select();
+
+      if (error) throw error;
+
+      if (data) {
+        setShows(shows.map(s => s.id === editingShow.id ? data[0] : s));
+        setNewShow({ 
+          title: '', 
+          host: '', 
+          day_of_week: '', 
+          start_time: '', 
+          end_time: '', 
+          description: '' 
+        });
+        setEditingShow(null);
+        setShowNewShowForm(false);
+        toast({
+          title: "Success",
+          description: "Show updated successfully!"
+        });
+      }
+    } catch (error) {
+      console.error('Error updating show:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update show."
+      });
     }
   };
 
@@ -896,7 +957,7 @@ const AdminDashboard = () => {
       {showNewShowForm && (
         <Card>
           <CardHeader>
-            <CardTitle>Add New Show</CardTitle>
+            <CardTitle>{editingShow ? 'Edit Show' : 'Add New Show'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -968,8 +1029,14 @@ const AdminDashboard = () => {
               />
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleAddShow}>Add Show</Button>
-              <Button variant="outline" onClick={() => setShowNewShowForm(false)}>Cancel</Button>
+              <Button onClick={editingShow ? handleUpdateShow : handleAddShow}>
+                {editingShow ? 'Update Show' : 'Add Show'}
+              </Button>
+              <Button variant="outline" onClick={() => {
+                setShowNewShowForm(false);
+                setEditingShow(null);
+                setNewShow({ title: '', host: '', day_of_week: '', start_time: '', end_time: '', description: '' });
+              }}>Cancel</Button>
             </div>
           </CardContent>
         </Card>
@@ -999,7 +1066,7 @@ const AdminDashboard = () => {
                   <Badge variant={show.status === 'Live' ? 'default' : 'secondary'}>
                     {show.status}
                   </Badge>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => handleEditShow(show)}>
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => handleDeleteShow(show.id)}>
