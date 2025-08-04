@@ -13,7 +13,7 @@ const RadioHeroSection = () => {
       />
 
       {/* Blue Gradient Overlay */}
-      <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-l from-transparent via-transparent to-[#004995] opacity-78 backdrop-blur-[50px]"></div>
+      <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-transparent via-transparent to-[#004995] opacity-78 "></div>
 
       {/* Logo Overlay */}
       <img
