@@ -9,11 +9,11 @@ const RadioHeroSection = () => {
       <img
         src="https://api.builder.io/api/v1/image/assets/TEMP/e154fb9d1aed06944969aa7592132dfc209c4bc2?width=2928"
         alt="Radio Station Background"
-        className="absolute -left-3 top-0 w-[1464px] h-[823px] object-cover"
+        className="absolute -left-3 top-0 w-[1464px] h-[823px] object-cover backdrop-blur-[50px]"
       />
 
       {/* Blue Gradient Overlay */}
-      <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-transparent via-transparent to-[#004995] opacity-78 "></div>
+      <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-transparent via-transparent to-[#004995] opacity-78 backdrop-blur-[50px]"></div>
 
       {/* Logo Overlay */}
       <img
