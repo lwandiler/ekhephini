@@ -453,49 +453,69 @@ const AdminDashboard = () => {
     setBulkUploadProgress(0);
 
     try {
-      const text = await bulkUploadFile.text();
-      console.log('CSV text content:', text.substring(0, 500)); // Debug: first 500 chars
+      let data: any[][] = [];
       
-      const lines = text.split('\n').filter(line => line.trim());
-      console.log('Total lines found:', lines.length);
-      console.log('First few lines:', lines.slice(0, 3));
+      // Check if file is Excel or CSV
+      const fileName = bulkUploadFile.name.toLowerCase();
+      const isExcel = fileName.endsWith('.xlsx') || fileName.endsWith('.xls');
       
-      // Skip header line
-      const dataLines = lines.slice(1);
+      if (isExcel) {
+        // Handle Excel files
+        const XLSX = await import('xlsx');
+        const buffer = await bulkUploadFile.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+        
+        // Skip first row (headers) and convert to data array
+        data = jsonData.slice(1).filter(row => row && row.length > 0);
+      } else {
+        // Handle CSV files
+        const text = await bulkUploadFile.text();
+        const lines = text.split('\n').filter(line => line.trim());
+        
+        // Skip header line and parse CSV
+        const dataLines = lines.slice(1);
+        data = dataLines.map(line => {
+          const delimiter = line.includes(';') ? ';' : ',';
+          const csvValues = [];
+          let currentValue = '';
+          let inQuotes = false;
+          
+          for (let j = 0; j < line.length; j++) {
+            const char = line[j];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === delimiter && !inQuotes) {
+              csvValues.push(currentValue.trim());
+              currentValue = '';
+            } else {
+              currentValue += char;
+            }
+          }
+          csvValues.push(currentValue.trim()); // Add the last value
+          return csvValues;
+        });
+      }
       
-      if (dataLines.length === 0) {
-        throw new Error('No data found in CSV file');
+      if (data.length === 0) {
+        throw new Error('No data found in file');
       }
 
       const successfulShows = [];
       const failedShows = [];
 
-      for (let i = 0; i < dataLines.length; i++) {
-        const line = dataLines[i];
-        console.log(`Processing line ${i + 2}:`, line);
+      for (let i = 0; i < data.length; i++) {
+        const row = data[i] as any[];
+        console.log(`Processing row ${i + 2}:`, row);
         
-        // Better CSV parsing - handle quoted fields and detect delimiter
-        const delimiter = line.includes(';') ? ';' : ',';
-        const csvValues = [];
-        let currentValue = '';
-        let inQuotes = false;
-        
-        for (let j = 0; j < line.length; j++) {
-          const char = line[j];
-          if (char === '"') {
-            inQuotes = !inQuotes;
-          } else if (char === delimiter && !inQuotes) {
-            csvValues.push(currentValue.trim());
-            currentValue = '';
-          } else {
-            currentValue += char;
-          }
-        }
-        csvValues.push(currentValue.trim()); // Add the last value
-        
-        console.log('Parsed values:', csvValues);
-        
-        const [title, host, day_of_week, start_time, end_time, description, image_url] = csvValues;
+        // Map columns according to specification:
+        // Column 1: show name, Column 2: presenter, Column 3: day, 
+        // Column 4: start time, Column 5: end time, Column 6: description, Column 7: image url
+        const [title, host, day_of_week, start_time, end_time, description, image_url] = row.map(cell => 
+          cell ? String(cell).trim() : ''
+        );
         
         console.log('Extracted fields:', {
           title,
@@ -557,7 +577,7 @@ const AdminDashboard = () => {
           });
         }
 
-        setBulkUploadProgress(((i + 1) / dataLines.length) * 100);
+        setBulkUploadProgress(((i + 1) / data.length) * 100);
       }
 
       console.log('Upload complete. Successful:', successfulShows.length, 'Failed:', failedShows.length);
@@ -798,17 +818,21 @@ const AdminDashboard = () => {
               <DialogHeader>
                 <DialogTitle>Bulk Upload Shows</DialogTitle>
                 <DialogDescription>
-                  Upload a CSV file with show data. Format: title, host, day_of_week, start_time, end_time, description, image_url
+                  Upload an Excel (.xlsx/.xls) or CSV file with show data. 
+                  <br />
+                  <strong>Column order:</strong> Show Name, Presenter, Day, Start Time, End Time, Description, Image URL
+                  <br />
+                  <strong>Note:</strong> First row should contain headers and will be skipped.
                 </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="csv-file">CSV File</Label>
+                  <Label htmlFor="file">Excel/CSV File</Label>
                   <Input
-                    id="csv-file"
+                    id="file"
                     type="file"
-                    accept=".csv,.txt"
+                    accept=".csv,.txt,.xlsx,.xls"
                     onChange={(e) => setBulkUploadFile(e.target.files?.[0] || null)}
                     className="mt-1"
                   />
