@@ -112,26 +112,37 @@ const Auth = () => {
             </CardDescription>
           </CardHeader>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+              <TabsTrigger 
+                value="signin" 
+                className="data-[state=active]:bg-[#004995] data-[state=active]:text-white text-gray-700"
+              >
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger 
+                value="signup"
+                className="data-[state=active]:bg-[#004995] data-[state=active]:text-white text-gray-700"
+              >
+                Sign Up
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="signin">
               <Form {...signInForm}>
                 <form onSubmit={signInForm.handleSubmit(handleSignIn)}>
-                  <CardContent className="space-y-4 pt-4">
+                  <CardContent className="space-y-6 pt-6">
                     <FormField
                       control={signInForm.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel className="text-gray-700 font-medium">Email</FormLabel>
                           <FormControl>
                             <Input 
                               {...field} 
                               placeholder="you@example.com" 
                               type="email" 
                               autoComplete="email"
+                              className="border-gray-300 focus:border-[#004995] focus:ring-[#004995] bg-white"
                             />
                           </FormControl>
                           <FormMessage />
@@ -143,13 +154,14 @@ const Auth = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
                           <FormControl>
                             <Input 
                               {...field} 
                               placeholder="••••••••" 
                               type="password"
                               autoComplete="current-password"
+                              className="border-gray-300 focus:border-[#004995] focus:ring-[#004995] bg-white"
                             />
                           </FormControl>
                           <FormMessage />
@@ -158,7 +170,11 @@ const Auth = () => {
                     />
                   </CardContent>
                   <CardFooter>
-                    <Button type="submit" className="w-full" disabled={loading}>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gradient-to-r from-[#004995] to-[#003366] hover:from-[#003366] hover:to-[#002244] text-white font-bold py-3 rounded-lg transition-all duration-300" 
+                      disabled={loading}
+                    >
                       {loading ? "Signing in..." : "Sign In"}
                     </Button>
                   </CardFooter>
@@ -168,15 +184,19 @@ const Auth = () => {
             <TabsContent value="signup">
               <Form {...signUpForm}>
                 <form onSubmit={signUpForm.handleSubmit(handleSignUp)}>
-                  <CardContent className="space-y-4 pt-4">
+                  <CardContent className="space-y-6 pt-6">
                     <FormField
                       control={signUpForm.control}
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel className="text-gray-700 font-medium">Username</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="username" />
+                            <Input 
+                              {...field} 
+                              placeholder="username" 
+                              className="border-gray-300 focus:border-[#004995] focus:ring-[#004995] bg-white"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -187,13 +207,14 @@ const Auth = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel className="text-gray-700 font-medium">Email</FormLabel>
                           <FormControl>
                             <Input 
                               {...field} 
                               placeholder="you@example.com" 
                               type="email"
                               autoComplete="email"
+                              className="border-gray-300 focus:border-[#004995] focus:ring-[#004995] bg-white"
                             />
                           </FormControl>
                           <FormMessage />
@@ -205,13 +226,14 @@ const Auth = () => {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
                           <FormControl>
                             <Input 
                               {...field} 
                               placeholder="••••••••" 
                               type="password"
                               autoComplete="new-password"
+                              className="border-gray-300 focus:border-[#004995] focus:ring-[#004995] bg-white"
                             />
                           </FormControl>
                           <FormMessage />
@@ -223,13 +245,14 @@ const Auth = () => {
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
+                          <FormLabel className="text-gray-700 font-medium">Confirm Password</FormLabel>
                           <FormControl>
                             <Input 
                               {...field} 
                               placeholder="••••••••" 
                               type="password"
                               autoComplete="new-password"
+                              className="border-gray-300 focus:border-[#004995] focus:ring-[#004995] bg-white"
                             />
                           </FormControl>
                           <FormMessage />
@@ -238,7 +261,11 @@ const Auth = () => {
                     />
                   </CardContent>
                   <CardFooter>
-                    <Button type="submit" className="w-full" disabled={loading}>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-gradient-to-r from-[#004995] to-[#003366] hover:from-[#003366] hover:to-[#002244] text-white font-bold py-3 rounded-lg transition-all duration-300" 
+                      disabled={loading}
+                    >
                       {loading ? "Signing up..." : "Sign Up"}
                     </Button>
                   </CardFooter>
