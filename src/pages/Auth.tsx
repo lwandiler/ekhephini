@@ -84,13 +84,30 @@ const Auth = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
-        <Card className="w-full max-w-md shadow-lg">
+    <div className="relative w-full min-h-screen overflow-hidden bg-white font-asap">
+      {/* Background Image */}
+      <img
+        src="https://api.builder.io/api/v1/image/assets/TEMP/e154fb9d1aed06944969aa7592132dfc209c4bc2?width=2928"
+        alt="Radio Station Background"
+        className="absolute -left-3 top-0 w-[1464px] h-[823px] object-cover backdrop-blur-[50px]"
+      />
+
+      {/* Blue Gradient Overlay */}
+      <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-transparent via-transparent to-[#004995] opacity-78 backdrop-blur-[50px]"></div>
+
+      {/* Logo Overlay */}
+      <img
+        src="/lovable-uploads/38150e55-823d-433a-8672-ae40d2fcf2da.png"
+        alt="Ekhapini Community Radio Logo"
+        className="absolute right-[160px] top-[100px] w-[200px] h-[125px] object-contain"
+      />
+
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
+        <Card className="w-full max-w-md shadow-2xl bg-white/95 backdrop-blur-sm border-0">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome to Click Radio</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl text-[#004995] font-bold">Welcome to Ekhapini Community Radio</CardTitle>
+            <CardDescription className="text-gray-700">
               Sign in to your account or create a new one
             </CardDescription>
           </CardHeader>
@@ -230,8 +247,7 @@ const Auth = () => {
             </TabsContent>
           </Tabs>
         </Card>
-      </main>
-      <Footer />
+      </div>
     </div>
   );
 };
