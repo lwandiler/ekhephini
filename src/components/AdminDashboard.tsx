@@ -172,12 +172,20 @@ const AdminDashboard = () => {
     
     // Update show statuses every minute
     const interval = setInterval(() => {
-      setShows(prevShows => 
-        prevShows.map(show => ({
-          ...show,
-          status: getShowStatus(show)
-        }))
-      );
+      console.log('Running scheduled status update...');
+      setShows(prevShows => {
+        const updatedShows = prevShows.map(show => {
+          const newStatus = getShowStatus(show);
+          if (show.status !== newStatus) {
+            console.log(`Status changed for "${show.title}": ${show.status} -> ${newStatus}`);
+          }
+          return {
+            ...show,
+            status: newStatus
+          };
+        });
+        return updatedShows;
+      });
     }, 60000); // Update every minute
     
     return () => clearInterval(interval);
@@ -217,11 +225,17 @@ const AdminDashboard = () => {
         .maybeSingle();
 
       if (showsData) {
+        console.log('Raw shows data from database:', showsData);
         // Apply dynamic status to each show
-        const showsWithStatus = showsData.map(show => ({
-          ...show,
-          status: getShowStatus(show)
-        }));
+        const showsWithStatus = showsData.map(show => {
+          const calculatedStatus = getShowStatus(show);
+          console.log(`Show "${show.title}" calculated status:`, calculatedStatus);
+          return {
+            ...show,
+            status: calculatedStatus
+          };
+        });
+        console.log('Shows with calculated status:', showsWithStatus);
         setShows(showsWithStatus);
       }
       if (podcastsData) setPodcasts(podcastsData);
