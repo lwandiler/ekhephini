@@ -453,130 +453,71 @@ const AdminDashboard = () => {
     setBulkUploadProgress(0);
 
     try {
-      let data: any[][] = [];
+      const text = await bulkUploadFile.text();
+      console.log('CSV text content:', text.substring(0, 500)); // Debug: first 500 chars
       
-      // Check if it's an Excel file
-      if (bulkUploadFile.name.endsWith('.xlsx') || bulkUploadFile.name.endsWith('.xls')) {
-        // Dynamic import of xlsx for Excel files
-        const XLSX = await import('xlsx');
-        const arrayBuffer = await bulkUploadFile.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      } else {
-        // Handle CSV files
-        const text = await bulkUploadFile.text();
-        const lines = text.split('\n').filter(line => line.trim());
-        data = lines.map(line => {
-          // Better CSV parsing - handle quoted fields and detect delimiter
-          const delimiter = line.includes(';') ? ';' : ',';
-          const csvValues = [];
-          let currentValue = '';
-          let inQuotes = false;
-          
-          for (let j = 0; j < line.length; j++) {
-            const char = line[j];
-            if (char === '"') {
-              inQuotes = !inQuotes;
-            } else if (char === delimiter && !inQuotes) {
-              csvValues.push(currentValue.trim());
-              currentValue = '';
-            } else {
-              currentValue += char;
-            }
-          }
-          csvValues.push(currentValue.trim());
-          return csvValues;
-        });
-      }
+      const lines = text.split('\n').filter(line => line.trim());
+      console.log('Total lines found:', lines.length);
+      console.log('First few lines:', lines.slice(0, 3));
       
-      console.log('Parsed data:', data.slice(0, 3));
+      // Skip header line
+      const dataLines = lines.slice(1);
       
-      if (data.length === 0) {
-        throw new Error('No data found in file');
-      }
-
-      // Skip header row
-      const dataRows = data.slice(1);
-      
-      if (dataRows.length === 0) {
-        throw new Error('No data rows found in file');
+      if (dataLines.length === 0) {
+        throw new Error('No data found in CSV file');
       }
 
       const successfulShows = [];
       const failedShows = [];
 
-      // Helper function to parse time format
-      const parseTime = (timeStr: string) => {
-        if (!timeStr) return '';
+      for (let i = 0; i < dataLines.length; i++) {
+        const line = dataLines[i];
+        console.log(`Processing line ${i + 2}:`, line);
         
-        // Handle different time formats
-        const cleanTime = timeStr.toString().trim();
+        // Better CSV parsing - handle quoted fields and detect delimiter
+        const delimiter = line.includes(';') ? ';' : ',';
+        const csvValues = [];
+        let currentValue = '';
+        let inQuotes = false;
         
-        // If already in HH:MM format, return as is
-        if (/^\d{1,2}:\d{2}$/.test(cleanTime)) {
-          return cleanTime;
-        }
-        
-        // Handle HH:MM:SS AM/PM format
-        if (cleanTime.includes('AM') || cleanTime.includes('PM')) {
-          const timePart = cleanTime.replace(/\s*(AM|PM)\s*/i, '').split(':');
-          let hours = parseInt(timePart[0]);
-          const minutes = timePart[1] || '00';
-          
-          if (cleanTime.toUpperCase().includes('PM') && hours !== 12) {
-            hours += 12;
-          } else if (cleanTime.toUpperCase().includes('AM') && hours === 12) {
-            hours = 0;
+        for (let j = 0; j < line.length; j++) {
+          const char = line[j];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === delimiter && !inQuotes) {
+            csvValues.push(currentValue.trim());
+            currentValue = '';
+          } else {
+            currentValue += char;
           }
-          
-          return `${hours.toString().padStart(2, '0')}:${minutes}`;
         }
+        csvValues.push(currentValue.trim()); // Add the last value
         
-        return cleanTime;
-      };
-
-      for (let i = 0; i < dataRows.length; i++) {
-        const row = dataRows[i];
-        console.log(`Processing row ${i + 2}:`, row);
+        console.log('Parsed values:', csvValues);
         
-        // Map Excel columns to show fields
-        // Expected columns: title, Date (DD-MM-YYYY), start time (HH:MM:SS AM/PM), end time (HH:MM:SS AM/PM), Tags (Comma Separated), ...
-        const title = row[0]?.toString().trim() || '';
-        const date = row[1]?.toString().trim() || '';
-        const startTimeRaw = row[2]?.toString().trim() || '';
-        const endTimeRaw = row[3]?.toString().trim() || '';
-        const tags = row[4]?.toString().trim() || '';
-        
-        // Parse times
-        const start_time = parseTime(startTimeRaw);
-        const end_time = parseTime(endTimeRaw);
-        
-        // Use tags as day_of_week (mapping tags -> day)
-        const day_of_week = tags;
+        const [title, host, day_of_week, start_time, end_time, description, image_url] = csvValues;
         
         console.log('Extracted fields:', {
           title,
+          host,
+          day_of_week,
           start_time,
           end_time,
-          day_of_week,
-          originalStartTime: startTimeRaw,
-          originalEndTime: endTimeRaw
+          description,
+          image_url
         });
         
-        // Only require title, start_time, end_time as specified
-        if (title && start_time && end_time) {
+        if (title && host && day_of_week && start_time && end_time) {
           try {
             const showData = {
               title,
-              host: '', // Optional
+              host,
               day_of_week,
               start_time,
               end_time,
-              description: '', // Optional
-              image_url: '',
-              time_slot: `${start_time} - ${end_time}`,
+              description: description || '',
+              image_url: image_url || '',
+              time_slot: `${start_time} - ${end_time}`, // Keep for backward compatibility
               status: 'Scheduled'
             };
             
@@ -597,24 +538,26 @@ const AdminDashboard = () => {
               successfulShows.push(data[0]);
             }
           } catch (error) {
-            console.error(`Error inserting show on row ${i + 2}:`, error);
-            failedShows.push({ row: i + 2, title, error: error.message });
+            console.error(`Error inserting show on line ${i + 2}:`, error);
+            failedShows.push({ line: i + 2, title, error: error.message });
           }
         } else {
           const missingFields = [];
           if (!title) missingFields.push('title');
+          if (!host) missingFields.push('host');
+          if (!day_of_week) missingFields.push('day_of_week');
           if (!start_time) missingFields.push('start_time');
           if (!end_time) missingFields.push('end_time');
           
-          console.log(`Row ${i + 2} missing required fields:`, missingFields);
+          console.log(`Line ${i + 2} missing fields:`, missingFields);
           failedShows.push({ 
-            row: i + 2, 
+            line: i + 2, 
             title: title || 'Unknown', 
             error: `Missing required fields: ${missingFields.join(', ')}` 
           });
         }
 
-        setBulkUploadProgress(((i + 1) / dataRows.length) * 100);
+        setBulkUploadProgress(((i + 1) / dataLines.length) * 100);
       }
 
       console.log('Upload complete. Successful:', successfulShows.length, 'Failed:', failedShows.length);
@@ -855,17 +798,17 @@ const AdminDashboard = () => {
               <DialogHeader>
                 <DialogTitle>Bulk Upload Shows</DialogTitle>
                 <DialogDescription>
-                  Upload an Excel (.xlsx) or CSV file with show data. Required fields: title, start time, end time, tags (for day). Excel format: title, Date (DD-MM-YYYY), start time (HH:MM:SS AM/PM), end time (HH:MM:SS AM/PM), Tags (Comma Separated), Is AD, title en, Thumbnail, Digital Rights, Schedule Geo, End Date (DD-MM-YYYY), Page (News), Show id, Source id, description, Is Hidden, Language, PG
+                  Upload a CSV file with show data. Format: title, host, day_of_week, start_time, end_time, description, image_url
                 </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="csv-file">Excel or CSV File</Label>
+                  <Label htmlFor="csv-file">CSV File</Label>
                   <Input
                     id="csv-file"
                     type="file"
-                    accept=".xlsx,.xls,.csv,.txt"
+                    accept=".csv,.txt"
                     onChange={(e) => setBulkUploadFile(e.target.files?.[0] || null)}
                     className="mt-1"
                   />
