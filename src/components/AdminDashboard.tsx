@@ -85,7 +85,8 @@ const AdminDashboard = () => {
   const [showFilter, setShowFilter] = useState('');
   const [showStatusFilter, setShowStatusFilter] = useState('all');
   const [showDayFilter, setShowDayFilter] = useState('all');
-  const [showTimeFilter, setShowTimeFilter] = useState('');
+  const [showStartTimeFilter, setShowStartTimeFilter] = useState('');
+  const [showEndTimeFilter, setShowEndTimeFilter] = useState('');
 
   // Load data from Supabase
   useEffect(() => {
@@ -578,11 +579,13 @@ const AdminDashboard = () => {
     const matchesDay = showDayFilter === 'all' || show.day_of_week === showDayFilter;
     
     // Time filter logic
-    const matchesTime = showTimeFilter === '' || 
-      (show.start_time && show.start_time.includes(showTimeFilter)) ||
-      (show.end_time && show.end_time.includes(showTimeFilter));
+    const matchesStartTime = showStartTimeFilter === '' || 
+      (show.start_time && show.start_time.includes(showStartTimeFilter));
     
-    return matchesSearch && matchesStatus && matchesDay && matchesTime;
+    const matchesEndTime = showEndTimeFilter === '' || 
+      (show.end_time && show.end_time.includes(showEndTimeFilter));
+    
+    return matchesSearch && matchesStatus && matchesDay && matchesStartTime && matchesEndTime;
   });
 
   const handleBulkUpload = async () => {
@@ -1067,11 +1070,43 @@ const AdminDashboard = () => {
               </select>
               
               <select
-                value={showTimeFilter}
-                onChange={(e) => setShowTimeFilter(e.target.value)}
+                value={showStartTimeFilter}
+                onChange={(e) => setShowStartTimeFilter(e.target.value)}
                 className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
               >
-                <option value="">All Times</option>
+                <option value="">Start Time</option>
+                <option value="00:00">12:00 AM</option>
+                <option value="01:00">1:00 AM</option>
+                <option value="02:00">2:00 AM</option>
+                <option value="03:00">3:00 AM</option>
+                <option value="04:00">4:00 AM</option>
+                <option value="05:00">5:00 AM</option>
+                <option value="06:00">6:00 AM</option>
+                <option value="07:00">7:00 AM</option>
+                <option value="08:00">8:00 AM</option>
+                <option value="09:00">9:00 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="13:00">1:00 PM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="15:00">3:00 PM</option>
+                <option value="16:00">4:00 PM</option>
+                <option value="17:00">5:00 PM</option>
+                <option value="18:00">6:00 PM</option>
+                <option value="19:00">7:00 PM</option>
+                <option value="20:00">8:00 PM</option>
+                <option value="21:00">9:00 PM</option>
+                <option value="22:00">10:00 PM</option>
+                <option value="23:00">11:00 PM</option>
+              </select>
+              
+              <select
+                value={showEndTimeFilter}
+                onChange={(e) => setShowEndTimeFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+              >
+                <option value="">End Time</option>
                 <option value="00:00">12:00 AM</option>
                 <option value="01:00">1:00 AM</option>
                 <option value="02:00">2:00 AM</option>
@@ -1199,7 +1234,7 @@ const AdminDashboard = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Shows ({filteredShows.length})</CardTitle>
-            {showFilter || showStatusFilter !== 'all' || showDayFilter !== 'all' || showTimeFilter ? (
+            {showFilter || showStatusFilter !== 'all' || showDayFilter !== 'all' || showStartTimeFilter || showEndTimeFilter ? (
               <Button
                 variant="outline"
                 size="sm"
@@ -1207,7 +1242,8 @@ const AdminDashboard = () => {
                   setShowFilter('');
                   setShowStatusFilter('all');
                   setShowDayFilter('all');
-                  setShowTimeFilter('');
+                  setShowStartTimeFilter('');
+                  setShowEndTimeFilter('');
                 }}
               >
                 Clear Filters
