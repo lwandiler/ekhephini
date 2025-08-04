@@ -507,6 +507,60 @@ const AdminDashboard = () => {
     }
   };
 
+  // Helper function to parse and format time consistently
+  const parseTime = (timeStr: string): string => {
+    if (!timeStr) return '';
+    
+    // Handle different time formats from Excel
+    const timeString = String(timeStr).trim();
+    
+    // If it's already in HH:MM format, return as is
+    if (/^\d{1,2}:\d{2}$/.test(timeString)) {
+      return timeString;
+    }
+    
+    // Handle HH:MM:SS format - remove seconds
+    if (/^\d{1,2}:\d{2}:\d{2}$/.test(timeString)) {
+      return timeString.substring(0, 5);
+    }
+    
+    // Handle HH:MM:SS AM/PM format
+    if (/^\d{1,2}:\d{2}:\d{2}\s*(AM|PM)$/i.test(timeString)) {
+      const timePart = timeString.replace(/\s*(AM|PM)$/i, '');
+      const isPM = /PM$/i.test(timeString);
+      const [hours, minutes] = timePart.split(':');
+      let hour24 = parseInt(hours);
+      
+      if (isPM && hour24 !== 12) {
+        hour24 += 12;
+      } else if (!isPM && hour24 === 12) {
+        hour24 = 0;
+      }
+      
+      return `${hour24.toString().padStart(2, '0')}:${minutes}`;
+    }
+    
+    // Handle HH:MM AM/PM format
+    if (/^\d{1,2}:\d{2}\s*(AM|PM)$/i.test(timeString)) {
+      const timePart = timeString.replace(/\s*(AM|PM)$/i, '');
+      const isPM = /PM$/i.test(timeString);
+      const [hours, minutes] = timePart.split(':');
+      let hour24 = parseInt(hours);
+      
+      if (isPM && hour24 !== 12) {
+        hour24 += 12;
+      } else if (!isPM && hour24 === 12) {
+        hour24 = 0;
+      }
+      
+      return `${hour24.toString().padStart(2, '0')}:${minutes}`;
+    }
+    
+    // If none of the formats match, try to extract just the time part
+    const timeMatch = timeString.match(/\d{1,2}:\d{2}/);
+    return timeMatch ? timeMatch[0] : timeString;
+  };
+
   const handleBulkUpload = async () => {
     if (!bulkUploadFile) return;
 
@@ -571,12 +625,16 @@ const AdminDashboard = () => {
         const row = data[i] as any[];
         console.log(`Processing row ${i + 2}:`, row);
         
-        // Map columns according to specification:
+        // Map columns according to specification and format times properly:
         // Column 1: show name, Column 2: presenter, Column 3: day, 
         // Column 4: start time, Column 5: end time, Column 6: description, Column 7: image url
-        const [title, host, day_of_week, start_time, end_time, description, image_url] = row.map(cell => 
+        const [title, host, day_of_week, start_time_raw, end_time_raw, description, image_url] = row.map(cell => 
           cell ? String(cell).trim() : ''
         );
+        
+        // Parse and format times to HH:MM format
+        const start_time = parseTime(start_time_raw);
+        const end_time = parseTime(end_time_raw);
         
         console.log('Extracted fields:', {
           title,
