@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      podcasts: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          podcast_link: string
+          thumbnail_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          podcast_link: string
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          podcast_link?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

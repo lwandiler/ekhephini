@@ -48,6 +48,7 @@ const AdminDashboard = () => {
   // State for managing data from Supabase
   const [shows, setShows] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [podcasts, setPodcasts] = useState<any[]>([]);
   const [settings, setSettings] = useState<any>({
     station_name: '',
     tagline: '',
@@ -61,12 +62,15 @@ const AdminDashboard = () => {
   // State for forms
   const [showNewShowForm, setShowNewShowForm] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
+  const [showNewPodcastForm, setShowNewPodcastForm] = useState(false);
   const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
   const [newShow, setNewShow] = useState({ title: '', host: '', time_slot: '' });
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'DJ' });
+  const [newPodcast, setNewPodcast] = useState({ name: '', podcast_link: '', description: '', thumbnail: null as File | null });
   const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
   const [bulkUploadProgress, setBulkUploadProgress] = useState(0);
   const [isProcessingBulk, setIsProcessingBulk] = useState(false);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
 
   // Load data from Supabase
   useEffect(() => {
@@ -93,14 +97,21 @@ const AdminDashboard = () => {
         .select('*')
         .order('created_at', { ascending: false });
       
+      // Load podcasts
+      const { data: podcastsData } = await supabase
+        .from('podcasts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
       // Load station settings
       const { data: settingsData } = await supabase
         .from('station_settings')
         .select('*')
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (showsData) setShows(showsData);
+      if (podcastsData) setPodcasts(podcastsData);
       
       // Combine both user types
       const allUsers = [];
@@ -250,6 +261,92 @@ const AdminDashboard = () => {
         variant: "destructive",
         title: "Error",
         description: "Failed to delete user."
+      });
+    }
+  };
+
+  // Podcast handlers
+  const handleAddPodcast = async () => {
+    if (newPodcast.name && newPodcast.podcast_link) {
+      setIsUploadingThumbnail(true);
+      
+      try {
+        let thumbnailUrl = '';
+        
+        // Upload thumbnail if provided
+        if (newPodcast.thumbnail) {
+          const fileExt = newPodcast.thumbnail.name.split('.').pop();
+          const fileName = `${Date.now()}.${fileExt}`;
+          
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('podcast-thumbnails')
+            .upload(fileName, newPodcast.thumbnail);
+
+          if (uploadError) throw uploadError;
+
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('podcast-thumbnails')
+            .getPublicUrl(fileName);
+          
+          thumbnailUrl = publicUrl;
+        }
+
+        // Insert podcast data
+        const { data, error } = await supabase
+          .from('podcasts')
+          .insert([{
+            name: newPodcast.name,
+            podcast_link: newPodcast.podcast_link,
+            description: newPodcast.description,
+            thumbnail_url: thumbnailUrl
+          }])
+          .select();
+
+        if (error) throw error;
+
+        if (data) {
+          setPodcasts([data[0], ...podcasts]);
+          setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null });
+          setShowNewPodcastForm(false);
+          toast({
+            title: "Success",
+            description: "Podcast added successfully!"
+          });
+        }
+      } catch (error) {
+        console.error('Error adding podcast:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to add podcast."
+        });
+      } finally {
+        setIsUploadingThumbnail(false);
+      }
+    }
+  };
+
+  const handleDeletePodcast = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('podcasts')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setPodcasts(podcasts.filter(podcast => podcast.id !== id));
+      toast({
+        title: "Success",
+        description: "Podcast deleted successfully!"
+      });
+    } catch (error) {
+      console.error('Error deleting podcast:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete podcast."
       });
     }
   };
@@ -465,7 +562,7 @@ const AdminDashboard = () => {
     },
     {
       title: "Podcasts",
-      value: "128",
+      value: podcasts.length.toString(),
       change: "+8",
       icon: Music,
       color: "text-purple-600"
@@ -858,6 +955,137 @@ const AdminDashboard = () => {
     </div>
   );
 
+  const renderPodcasts = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-2xl font-bold">Podcast Management</h3>
+        <Button onClick={() => setShowNewPodcastForm(!showNewPodcastForm)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add New Podcast
+        </Button>
+      </div>
+
+      {showNewPodcastForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Add New Podcast</CardTitle>
+            <CardDescription>Add a new podcast episode to your collection</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="podcast-name">Show Name</Label>
+              <Input 
+                id="podcast-name" 
+                value={newPodcast.name}
+                onChange={(e) => setNewPodcast({...newPodcast, name: e.target.value})}
+                placeholder="Enter podcast show name" 
+              />
+            </div>
+            <div>
+              <Label htmlFor="podcast-link">Podcast Link</Label>
+              <Input 
+                id="podcast-link" 
+                type="url"
+                value={newPodcast.podcast_link}
+                onChange={(e) => setNewPodcast({...newPodcast, podcast_link: e.target.value})}
+                placeholder="https://example.com/podcast-episode" 
+              />
+            </div>
+            <div>
+              <Label htmlFor="podcast-description">Description</Label>
+              <Textarea 
+                id="podcast-description" 
+                value={newPodcast.description}
+                onChange={(e) => setNewPodcast({...newPodcast, description: e.target.value})}
+                placeholder="Enter podcast description..."
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label htmlFor="podcast-thumbnail">Thumbnail (Optional)</Label>
+              <Input 
+                id="podcast-thumbnail" 
+                type="file"
+                accept="image/*"
+                onChange={(e) => setNewPodcast({...newPodcast, thumbnail: e.target.files?.[0] || null})}
+                className="mt-1"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Upload a thumbnail image for the podcast episode
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleAddPodcast} 
+                disabled={isUploadingThumbnail || !newPodcast.name || !newPodcast.podcast_link}
+              >
+                {isUploadingThumbnail ? 'Uploading...' : 'Add Podcast'}
+              </Button>
+              <Button variant="outline" onClick={() => setShowNewPodcastForm(false)}>
+                Cancel
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      <Card>
+        <CardContent className="p-6">
+          {podcasts.length === 0 ? (
+            <div className="text-center py-8">
+              <Music className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No podcasts added yet</p>
+              <p className="text-sm text-gray-400">Start by adding your first podcast episode</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {podcasts.map((podcast) => (
+                <div key={podcast.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg flex items-center justify-center overflow-hidden">
+                      {podcast.thumbnail_url ? (
+                        <img 
+                          src={podcast.thumbnail_url} 
+                          alt={podcast.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Music className="h-8 w-8 text-white" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold">{podcast.name}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{podcast.description}</p>
+                      <a 
+                        href={podcast.podcast_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 text-sm underline"
+                      >
+                        Listen to episode →
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">
+                      Episode
+                    </Badge>
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDeletePodcast(podcast.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   const renderContent = () => (
     <div className="space-y-6">
       <h3 className="text-2xl font-bold">Content Management</h3>
@@ -1048,7 +1276,7 @@ const AdminDashboard = () => {
 
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
@@ -1060,6 +1288,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Users
+            </TabsTrigger>
+            <TabsTrigger value="podcasts" className="flex items-center gap-2">
+              <Music className="h-4 w-4" />
+              Podcasts
             </TabsTrigger>
             <TabsTrigger value="content" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
@@ -1078,6 +1310,7 @@ const AdminDashboard = () => {
           <TabsContent value="dashboard">{renderDashboard()}</TabsContent>
           <TabsContent value="shows">{renderShows()}</TabsContent>
           <TabsContent value="users">{renderUsers()}</TabsContent>
+          <TabsContent value="podcasts">{renderPodcasts()}</TabsContent>
           <TabsContent value="content">{renderContent()}</TabsContent>
           <TabsContent value="analytics">{renderAnalytics()}</TabsContent>
           <TabsContent value="settings">{renderSettings()}</TabsContent>
