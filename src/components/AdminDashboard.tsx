@@ -93,25 +93,49 @@ const AdminDashboard = () => {
   const getShowStatus = (show: any) => {
     const now = new Date();
     const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
-    const currentTime = now.toTimeString().slice(0, 5); // HH:MM format
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+    
+    console.log('Show status check:', {
+      showTitle: show.title,
+      showDay: show.day_of_week,
+      currentDay,
+      showStartTime: show.start_time,
+      showEndTime: show.end_time,
+      currentTime: `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`,
+      currentTimeInMinutes
+    });
     
     // If show is today
     if (show.day_of_week === currentDay && show.start_time && show.end_time) {
-      // Convert times for comparison
-      const startTime = show.start_time;
-      const endTime = show.end_time;
+      // Parse start and end times into minutes
+      const [startHour, startMin] = show.start_time.split(':').map(Number);
+      const [endHour, endMin] = show.end_time.split(':').map(Number);
+      const startTimeInMinutes = startHour * 60 + startMin;
+      const endTimeInMinutes = endHour * 60 + endMin;
+      
+      console.log('Time comparison:', {
+        startTimeInMinutes,
+        endTimeInMinutes,
+        currentTimeInMinutes,
+        isLive: currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes
+      });
       
       // Check if currently live
-      if (currentTime >= startTime && currentTime <= endTime) {
+      if (currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes) {
+        console.log('Show is LIVE:', show.title);
         return 'Live';
       }
       
       // Check if upcoming today
-      if (currentTime < startTime) {
+      if (currentTimeInMinutes < startTimeInMinutes) {
+        console.log('Show is UPCOMING:', show.title);
         return 'Upcoming';
       }
       
       // If we're past the end time today, it's completed/scheduled for next week
+      console.log('Show is SCHEDULED (past end time):', show.title);
       return 'Scheduled';
     }
     
