@@ -80,6 +80,11 @@ const AdminDashboard = () => {
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [editingPodcast, setEditingPodcast] = useState<any>(null);
   const [editingShow, setEditingShow] = useState<any>(null);
+  
+  // Filter states
+  const [showFilter, setShowFilter] = useState('');
+  const [showStatusFilter, setShowStatusFilter] = useState('all');
+  const [showDayFilter, setShowDayFilter] = useState('all');
 
   // Load data from Supabase
   useEffect(() => {
@@ -561,6 +566,19 @@ const AdminDashboard = () => {
     return timeMatch ? timeMatch[0] : timeString;
   };
 
+  // Filter shows based on search criteria
+  const filteredShows = shows.filter(show => {
+    const matchesSearch = showFilter === '' || 
+      show.title.toLowerCase().includes(showFilter.toLowerCase()) ||
+      (show.host && show.host.toLowerCase().includes(showFilter.toLowerCase())) ||
+      (show.description && show.description.toLowerCase().includes(showFilter.toLowerCase()));
+    
+    const matchesStatus = showStatusFilter === 'all' || show.status === showStatusFilter;
+    const matchesDay = showDayFilter === 'all' || show.day_of_week === showDayFilter;
+    
+    return matchesSearch && matchesStatus && matchesDay;
+  });
+
   const handleBulkUpload = async () => {
     if (!bulkUploadFile) return;
 
@@ -1005,6 +1023,45 @@ const AdminDashboard = () => {
             </DialogContent>
           </Dialog>
           
+          {/* Filter Controls */}
+          <div className="flex flex-col sm:flex-row gap-3 flex-1">
+            <div className="flex-1">
+              <Input
+                placeholder="Search shows by title, host, or description..."
+                value={showFilter}
+                onChange={(e) => setShowFilter(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="flex gap-2">
+              <select
+                value={showStatusFilter}
+                onChange={(e) => setShowStatusFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+              >
+                <option value="all">All Status</option>
+                <option value="Scheduled">Scheduled</option>
+                <option value="Live">Live</option>
+                <option value="Completed">Completed</option>
+              </select>
+              
+              <select
+                value={showDayFilter}
+                onChange={(e) => setShowDayFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+              >
+                <option value="all">All Days</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+              </select>
+            </div>
+          </div>
+          
           <Button onClick={() => setShowNewShowForm(!showNewShowForm)}>
             <Plus className="h-4 w-4 mr-2" />
             Add New Show
@@ -1101,9 +1158,43 @@ const AdminDashboard = () => {
       )}
       
       <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Shows ({filteredShows.length})</CardTitle>
+            {showFilter || showStatusFilter !== 'all' || showDayFilter !== 'all' ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setShowFilter('');
+                  setShowStatusFilter('all');
+                  setShowDayFilter('all');
+                }}
+              >
+                Clear Filters
+              </Button>
+            ) : null}
+          </div>
+        </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-4">
-            {shows.map((show) => (
+            {filteredShows.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                {shows.length === 0 ? (
+                  <>
+                    <Radio className="mx-auto h-12 w-12 mb-4 text-gray-300" />
+                    <p className="text-lg font-medium mb-2">No shows yet</p>
+                    <p>Add your first show to get started.</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-lg font-medium mb-2">No shows match your filters</p>
+                    <p>Try adjusting your search criteria.</p>
+                  </>
+                )}
+              </div>
+            ) : (
+              filteredShows.map((show) => (
               <div key={show.id} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
@@ -1132,7 +1223,8 @@ const AdminDashboard = () => {
                   </Button>
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </CardContent>
       </Card>
