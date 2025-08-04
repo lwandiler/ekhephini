@@ -371,6 +371,7 @@ const AdminDashboard = () => {
   };
 
   const handleEditPodcast = (podcast: any) => {
+    console.log('Edit button clicked for podcast:', podcast);
     setEditingPodcast(podcast);
     setNewPodcast({
       name: podcast.name,
@@ -379,6 +380,7 @@ const AdminDashboard = () => {
       thumbnail: null
     });
     setShowNewPodcastForm(true);
+    console.log('Edit form should now be visible');
   };
 
   const handleUpdatePodcast = async () => {
