@@ -71,6 +71,7 @@ const AdminDashboard = () => {
   const [bulkUploadProgress, setBulkUploadProgress] = useState(0);
   const [isProcessingBulk, setIsProcessingBulk] = useState(false);
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+  const [editingPodcast, setEditingPodcast] = useState<any>(null);
 
   // Load data from Supabase
   useEffect(() => {
@@ -348,6 +349,80 @@ const AdminDashboard = () => {
         title: "Error",
         description: "Failed to delete podcast."
       });
+    }
+  };
+
+  const handleEditPodcast = (podcast: any) => {
+    setEditingPodcast(podcast);
+    setNewPodcast({
+      name: podcast.name,
+      podcast_link: podcast.podcast_link,
+      description: podcast.description || '',
+      thumbnail: null
+    });
+    setShowNewPodcastForm(true);
+  };
+
+  const handleUpdatePodcast = async () => {
+    if (!editingPodcast || !newPodcast.name || !newPodcast.podcast_link) return;
+
+    setIsUploadingThumbnail(true);
+    
+    try {
+      let thumbnailUrl = editingPodcast.thumbnail_url;
+      
+      // Upload new thumbnail if provided
+      if (newPodcast.thumbnail) {
+        const fileExt = newPodcast.thumbnail.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('podcast-thumbnails')
+          .upload(fileName, newPodcast.thumbnail);
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('podcast-thumbnails')
+          .getPublicUrl(fileName);
+        
+        thumbnailUrl = publicUrl;
+      }
+
+      // Update podcast data
+      const { data, error } = await supabase
+        .from('podcasts')
+        .update({
+          name: newPodcast.name,
+          podcast_link: newPodcast.podcast_link,
+          description: newPodcast.description,
+          thumbnail_url: thumbnailUrl
+        })
+        .eq('id', editingPodcast.id)
+        .select();
+
+      if (error) throw error;
+
+      if (data) {
+        setPodcasts(podcasts.map(p => p.id === editingPodcast.id ? data[0] : p));
+        setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null });
+        setEditingPodcast(null);
+        setShowNewPodcastForm(false);
+        toast({
+          title: "Success",
+          description: "Podcast updated successfully!"
+        });
+      }
+    } catch (error) {
+      console.error('Error updating podcast:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update podcast."
+      });
+    } finally {
+      setIsUploadingThumbnail(false);
     }
   };
 
@@ -968,8 +1043,10 @@ const AdminDashboard = () => {
       {showNewPodcastForm && (
         <Card>
           <CardHeader>
-            <CardTitle>Add New Podcast</CardTitle>
-            <CardDescription>Add a new podcast episode to your collection</CardDescription>
+            <CardTitle>{editingPodcast ? 'Edit Podcast' : 'Add New Podcast'}</CardTitle>
+            <CardDescription>
+              {editingPodcast ? 'Update podcast episode details' : 'Add a new podcast episode to your collection'}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -1016,12 +1093,16 @@ const AdminDashboard = () => {
             </div>
             <div className="flex gap-2">
               <Button 
-                onClick={handleAddPodcast} 
+                onClick={editingPodcast ? handleUpdatePodcast : handleAddPodcast} 
                 disabled={isUploadingThumbnail || !newPodcast.name || !newPodcast.podcast_link}
               >
-                {isUploadingThumbnail ? 'Uploading...' : 'Add Podcast'}
+                {isUploadingThumbnail ? 'Uploading...' : (editingPodcast ? 'Update Podcast' : 'Add Podcast')}
               </Button>
-              <Button variant="outline" onClick={() => setShowNewPodcastForm(false)}>
+              <Button variant="outline" onClick={() => {
+                setShowNewPodcastForm(false);
+                setEditingPodcast(null);
+                setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null });
+              }}>
                 Cancel
               </Button>
             </div>
@@ -1070,7 +1151,7 @@ const AdminDashboard = () => {
                     <Badge variant="outline">
                       Episode
                     </Badge>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => handleEditPodcast(podcast)}>
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleDeletePodcast(podcast.id)}>
