@@ -81,7 +81,7 @@ const AdminDashboard = () => {
   const [editingPodcast, setEditingPodcast] = useState<any>(null);
   const [editingShow, setEditingShow] = useState<any>(null);
   
-  // Filter states
+  // Filter states for shows
   const [showFilter, setShowFilter] = useState('');
   const [showStatusFilter, setShowStatusFilter] = useState('all');
   const [showDayFilter, setShowDayFilter] = useState('all');
