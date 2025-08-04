@@ -146,7 +146,7 @@ const AdminDashboard = () => {
 
   // Handlers
   const handleAddShow = async () => {
-    if (newShow.title && newShow.host && newShow.day_of_week && newShow.start_time && newShow.end_time) {
+    if (newShow.title && newShow.day_of_week && newShow.start_time && newShow.end_time) {
       try {
         const { data, error } = await supabase
           .from('shows')
@@ -885,12 +885,12 @@ const AdminDashboard = () => {
               />
             </div>
             <div>
-              <Label htmlFor="show-host">Presenter Name</Label>
+              <Label htmlFor="show-host">Presenter Name (Optional)</Label>
               <Input 
                 id="show-host" 
                 value={newShow.host}
                 onChange={(e) => setNewShow({...newShow, host: e.target.value})}
-                placeholder="Enter presenter name" 
+                placeholder="Enter presenter name (optional)" 
               />
             </div>
             <div>
@@ -934,12 +934,12 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div>
-              <Label htmlFor="show-description">Description</Label>
+              <Label htmlFor="show-description">Description (Optional)</Label>
               <Textarea 
                 id="show-description" 
                 value={newShow.description}
                 onChange={(e) => setNewShow({...newShow, description: e.target.value})}
-                placeholder="Enter show description..."
+                placeholder="Enter show description (optional)..."
                 rows={3}
               />
             </div>
