@@ -11,7 +11,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 // Import pages
 import Index from '@/pages/Index';
 import Admin from '@/pages/Admin';
-import Auth from '@/pages/Auth';
+
 import NotFound from '@/pages/NotFound';
 import CatchUp from '@/pages/CatchUp';
 import Contact from '@/pages/Contact';
@@ -38,7 +38,6 @@ function App() {
                     <Route path="/catch-up" element={<CatchUp />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-                    <Route path="/auth" element={<Auth />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </div>
