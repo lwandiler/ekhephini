@@ -2,6 +2,7 @@ import RadioNavigation from './RadioNavigation';
 import RadioHeroSection from './RadioHeroSection';
 import RadioPlayerSection from './RadioPlayerSection';
 import RadioContentSections from './RadioContentSections';
+import ShowScheduleSection from './ShowScheduleSection';
 import PresentersTestimonialsSection from './PresentersTestimonialsSection';
 import NewsletterFooter from './NewsletterFooter';
 
@@ -19,6 +20,9 @@ const RadioHomePage = () => {
 
       {/* Content Sections */}
       <RadioContentSections />
+
+      {/* Show Schedule Section */}
+      <ShowScheduleSection />
 
       {/* Presenters & Testimonials */}
       <PresentersTestimonialsSection />
