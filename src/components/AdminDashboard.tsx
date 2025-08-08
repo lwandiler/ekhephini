@@ -49,6 +49,7 @@ const AdminDashboard = () => {
   const [shows, setShows] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [podcasts, setPodcasts] = useState<any[]>([]);
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
   const [settings, setSettings] = useState<any>({
     station_name: '',
     tagline: '',
@@ -80,6 +81,9 @@ const AdminDashboard = () => {
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [editingPodcast, setEditingPodcast] = useState<any>(null);
   const [editingShow, setEditingShow] = useState<any>(null);
+  const [showNewSocialLinkForm, setShowNewSocialLinkForm] = useState(false);
+  const [newSocialLink, setNewSocialLink] = useState({ platform: '', url: '', display_name: '', icon_name: '' });
+  const [editingSocialLink, setEditingSocialLink] = useState<any>(null);
   
   // Filter states for shows
   const [showFilter, setShowFilter] = useState('');
@@ -224,6 +228,12 @@ const AdminDashboard = () => {
         .limit(1)
         .maybeSingle();
 
+      // Load social links
+      const { data: socialLinksData } = await supabase
+        .from('social_links')
+        .select('*')
+        .order('platform');
+
       if (showsData) {
         console.log('Raw shows data from database:', showsData);
         // Apply dynamic status to each show
@@ -239,6 +249,7 @@ const AdminDashboard = () => {
         setShows(showsWithStatus);
       }
       if (podcastsData) setPodcasts(podcastsData);
+      if (socialLinksData) setSocialLinks(socialLinksData);
       
       // Combine both user types
       const allUsers = [];
@@ -903,6 +914,117 @@ const AdminDashboard = () => {
         description: "Failed to save settings."
       });
     }
+  };
+
+  // Social Links handlers
+  const handleAddSocialLink = async () => {
+    if (newSocialLink.platform && newSocialLink.url) {
+      try {
+        const { data, error } = await supabase
+          .from('social_links')
+          .insert([{
+            platform: newSocialLink.platform,
+            url: newSocialLink.url,
+            display_name: newSocialLink.display_name || newSocialLink.platform,
+            icon_name: newSocialLink.icon_name || newSocialLink.platform,
+            is_active: true
+          }])
+          .select();
+
+        if (error) throw error;
+
+        if (data) {
+          setSocialLinks([...socialLinks, data[0]]);
+          setNewSocialLink({ platform: '', url: '', display_name: '', icon_name: '' });
+          setShowNewSocialLinkForm(false);
+          toast({
+            title: "Success",
+            description: "Social media link added successfully!"
+          });
+        }
+      } catch (error) {
+        console.error('Error adding social link:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to add social media link."
+        });
+      }
+    }
+  };
+
+  const handleUpdateSocialLink = async () => {
+    if (editingSocialLink && newSocialLink.platform && newSocialLink.url) {
+      try {
+        const { data, error } = await supabase
+          .from('social_links')
+          .update({
+            platform: newSocialLink.platform,
+            url: newSocialLink.url,
+            display_name: newSocialLink.display_name || newSocialLink.platform,
+            icon_name: newSocialLink.icon_name || newSocialLink.platform
+          })
+          .eq('id', editingSocialLink.id)
+          .select();
+
+        if (error) throw error;
+
+        if (data) {
+          setSocialLinks(socialLinks.map(link => 
+            link.id === editingSocialLink.id ? data[0] : link
+          ));
+          setEditingSocialLink(null);
+          setNewSocialLink({ platform: '', url: '', display_name: '', icon_name: '' });
+          setShowNewSocialLinkForm(false);
+          toast({
+            title: "Success",
+            description: "Social media link updated successfully!"
+          });
+        }
+      } catch (error) {
+        console.error('Error updating social link:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to update social media link."
+        });
+      }
+    }
+  };
+
+  const handleDeleteSocialLink = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('social_links')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setSocialLinks(socialLinks.filter(link => link.id !== id));
+      toast({
+        title: "Success",
+        description: "Social media link deleted successfully!"
+      });
+    } catch (error) {
+      console.error('Error deleting social link:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete social media link."
+      });
+    }
+  };
+
+  const handleEditSocialLink = (link: any) => {
+    setEditingSocialLink(link);
+    setNewSocialLink({
+      platform: link.platform,
+      url: link.url,
+      display_name: link.display_name || '',
+      icon_name: link.icon_name || ''
+    });
+    setShowNewSocialLinkForm(true);
   };
 
   if (loading) {
@@ -1815,6 +1937,126 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Social Media Links Management */}
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>Social Media Links</CardTitle>
+              <CardDescription>Manage your station's social media presence</CardDescription>
+            </div>
+            <Button onClick={() => setShowNewSocialLinkForm(!showNewSocialLinkForm)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Social Link
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {showNewSocialLinkForm && (
+            <div className="p-4 border rounded-lg bg-muted/50 space-y-4">
+              <h4 className="font-semibold">{editingSocialLink ? 'Edit Social Link' : 'Add New Social Link'}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="platform">Platform</Label>
+                  <Input 
+                    id="platform" 
+                    value={newSocialLink.platform}
+                    onChange={(e) => setNewSocialLink({...newSocialLink, platform: e.target.value})}
+                    placeholder="e.g., facebook, twitter, instagram"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="social-url">URL</Label>
+                  <Input 
+                    id="social-url" 
+                    type="url"
+                    value={newSocialLink.url}
+                    onChange={(e) => setNewSocialLink({...newSocialLink, url: e.target.value})}
+                    placeholder="https://facebook.com/yourstation"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="display-name">Display Name (Optional)</Label>
+                  <Input 
+                    id="display-name" 
+                    value={newSocialLink.display_name}
+                    onChange={(e) => setNewSocialLink({...newSocialLink, display_name: e.target.value})}
+                    placeholder="Facebook Page"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="icon-name">Icon Name (Optional)</Label>
+                  <Input 
+                    id="icon-name" 
+                    value={newSocialLink.icon_name}
+                    onChange={(e) => setNewSocialLink({...newSocialLink, icon_name: e.target.value})}
+                    placeholder="Facebook"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={editingSocialLink ? handleUpdateSocialLink : handleAddSocialLink}
+                  disabled={!newSocialLink.platform || !newSocialLink.url}
+                >
+                  {editingSocialLink ? 'Update Link' : 'Add Link'}
+                </Button>
+                <Button variant="outline" onClick={() => {
+                  setShowNewSocialLinkForm(false);
+                  setEditingSocialLink(null);
+                  setNewSocialLink({ platform: '', url: '', display_name: '', icon_name: '' });
+                }}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {socialLinks.length === 0 ? (
+              <div className="text-center py-8">
+                <Globe className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">No social media links added yet</p>
+                <p className="text-sm text-gray-400">Add your first social media link to get started</p>
+              </div>
+            ) : (
+              socialLinks.map((link) => (
+                <div key={link.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <Globe className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="font-semibold capitalize">{link.platform}</p>
+                      <p className="text-sm text-muted-foreground">{link.display_name || link.platform}</p>
+                      <a 
+                        href={link.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-600 hover:text-blue-800 underline"
+                      >
+                        {link.url}
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={link.is_active ? 'default' : 'secondary'}>
+                      {link.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                    <Button variant="outline" size="sm" onClick={() => handleEditSocialLink(link)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDeleteSocialLink(link.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 
