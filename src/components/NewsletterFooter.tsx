@@ -1,7 +1,7 @@
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import PrivacyLegalModal from '@/components/PrivacyLegalModal';
 
 interface SocialLink {
   id: string;
@@ -69,12 +69,11 @@ const NewsletterFooter = () => {
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Privacy & Legal Link */}
         <div>
-          <Link 
-            to="/privacy-legal"
-            className="text-white hover:text-blue-200 transition-colors font-asap text-[16px] underline"
-          >
-            Privacy & Legal
-          </Link>
+          <PrivacyLegalModal>
+            <button className="text-white hover:text-blue-200 transition-colors font-asap text-[16px] underline bg-transparent border-none cursor-pointer">
+              Privacy & Legal
+            </button>
+          </PrivacyLegalModal>
         </div>
 
         {/* Social Media Links */}
