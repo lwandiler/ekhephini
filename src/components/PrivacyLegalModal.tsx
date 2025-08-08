@@ -14,7 +14,7 @@ const PrivacyLegalModal = ({ children }: PrivacyLegalModalProps) => {
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] bg-blue-50 dark:bg-blue-950">
+      <DialogContent className="max-w-4xl max-h-[90vh] bg-blue-50 dark:bg-blue-950 text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl">Privacy & Legal</DialogTitle>
         </DialogHeader>
