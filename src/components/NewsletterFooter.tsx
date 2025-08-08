@@ -1,5 +1,6 @@
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface SocialLink {
@@ -65,7 +66,18 @@ const NewsletterFooter = () => {
 
   return (
     <section className="w-full bg-[#004995] py-16">
-      <div className="container mx-auto px-4 flex justify-end">
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        {/* Privacy & Legal Link */}
+        <div>
+          <Link 
+            to="/privacy-legal"
+            className="text-white hover:text-blue-200 transition-colors font-asap text-[16px] underline"
+          >
+            Privacy & Legal
+          </Link>
+        </div>
+
+        {/* Social Media Links */}
         <div className="flex items-center gap-6">
           <h3 className="text-white font-asap text-[18px] font-bold">Follow Us</h3>
           <div className="flex gap-4">
