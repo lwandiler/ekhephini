@@ -118,7 +118,7 @@ const WeeklyScheduleGrid = () => {
               <table className="w-full min-w-[1200px]">
                 <thead>
                   <tr className="border-b-2 border-primary/20">
-                    <th className="p-6 text-left font-bold text-lg w-[140px] bg-gradient-to-b from-primary/10 to-primary/5 sticky left-0 z-30 border-r-2 border-primary/30 shadow-lg">
+                    <th className="p-6 text-left font-bold text-lg w-[140px] bg-primary text-primary-foreground sticky left-0 z-30 border-r-2 border-primary/30 shadow-lg">
                       Day
                     </th>
                     {timeSlots.map(time => (
