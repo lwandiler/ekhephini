@@ -7,20 +7,21 @@ const RadioHeroSection = () => {
     <section className="relative w-full h-[814px] overflow-hidden">
       {/* Background Image */}
       <img
-        src="https://api.builder.io/api/v1/image/assets/TEMP/e154fb9d1aed06944969aa7592132dfc209c4bc2?width=2928"
+        // src="https://api.builder.io/api/v1/image/assets/TEMP/e154fb9d1aed06944969aa7592132dfc209c4bc2?width=2928"
+        src="/lovable-uploads/EFM Cover Image.png"
         alt="Radio Station Background"
-        className="absolute -left-3 top-0 w-[1464px] h-[823px] object-cover backdrop-blur-[50px]"
+        className="absolute -left-3 top-0 w-[100%] h-[823px] object-cover backdrop-blur-[50px]"
       />
 
       {/* Blue Gradient Overlay */}
-      <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-transparent via-transparent to-[#004995] opacity-78 backdrop-blur-[50px]"></div>
+      {/* <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-transparent via-transparent to-[#004995] opacity-78 backdrop-blur-[50px]"></div> */}
 
       {/* Logo Overlay */}
-      <img
+      {/* <img
         src="https://api.builder.io/api/v1/image/assets/TEMP/83493488be7d7e8aac21d19be5cf584126ee0efc?width=660"
         alt="Station Logo"
         className="absolute right-[160px] top-[350px] w-[330px] h-[207px] object-contain"
-      />
+      /> */}
 
       {/* Content */}
       <div className="relative z-10 px-4 md:px-8 lg:px-16 xl:px-[185px] py-8 md:py-16 lg:py-32 xl:py-[209px] h-full flex flex-col justify-start">
