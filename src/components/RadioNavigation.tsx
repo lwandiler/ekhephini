@@ -38,7 +38,7 @@ const RadioNavigation = () => {
                 window.location.href = '/#shows-section';
               }
             }}
-            className="font-asap text-[16px] font-medium text-black"
+            className="font-asap text-[16px] font-medium text-black bg-transparent border-none cursor-pointer hover:bg-transparent"
           >
             Shows
           </button>
