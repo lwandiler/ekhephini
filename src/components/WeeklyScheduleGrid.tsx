@@ -114,11 +114,11 @@ const WeeklyScheduleGrid = () => {
             <CardTitle className="text-center">Programming Schedule</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[800px]">
+            <div className="overflow-x-auto relative">
+              <table className="w-full min-w-[800px] table-fixed">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="p-4 text-left font-semibold min-w-[120px]">Day</th>
+                    <th className="p-4 text-left font-semibold w-[120px] bg-muted/50 sticky left-0 z-10 border-r">Day</th>
                     {timeSlots.map(time => (
                       <th key={time} className="p-4 text-center font-semibold min-w-[140px]">
                         {time}
@@ -129,7 +129,7 @@ const WeeklyScheduleGrid = () => {
                 <tbody>
                   {daysOfWeek.map(day => (
                     <tr key={day} className="border-b hover:bg-muted/30 transition-colors">
-                      <td className="p-4 font-medium bg-muted/20 sticky left-0">
+                      <td className="p-4 font-medium bg-muted/20 sticky left-0 z-10 border-r w-[120px]">
                         {day}
                       </td>
                       {timeSlots.map(timeSlot => {
