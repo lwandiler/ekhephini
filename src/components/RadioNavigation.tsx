@@ -25,7 +25,7 @@ const RadioNavigation = () => {
           >
             Home
           </Link>
-          <button
+          <div
             onClick={() => {
               if (location.pathname === '/') {
                 // Scroll to shows section on home page
@@ -38,16 +38,10 @@ const RadioNavigation = () => {
                 window.location.href = '/#shows-section';
               }
             }}
-            className="font-asap text-[16px] font-medium text-black"
-            style={{ 
-              backgroundColor: 'transparent !important', 
-              border: 'none', 
-              color: 'black !important',
-              background: 'none !important'
-            }}
+            className="font-asap text-[16px] font-medium text-black cursor-pointer"
           >
             Shows
-          </button>
+          </div>
           <Link 
             to="/podcasts" 
             className="font-asap text-[16px] font-medium text-black"
