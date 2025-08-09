@@ -25,6 +25,12 @@ const RadioNavigation = () => {
           >
             Home
           </Link>
+          <Link 
+            to="/about" 
+            className="font-asap text-[16px] font-medium text-black"
+          >
+            About Us
+          </Link>
           <div
             onClick={() => {
               if (location.pathname === '/') {

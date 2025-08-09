@@ -16,6 +16,7 @@ import CatchUp from '@/pages/CatchUp';
 import Contact from '@/pages/Contact';
 import Shows from '@/pages/Shows';
 import Podcasts from '@/pages/Podcasts';
+import About from '@/pages/About';
 
 
 import './App.css';
@@ -35,6 +36,7 @@ function App() {
                 <div className="min-h-screen bg-background">
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/about" element={<About />} />
                     <Route path="/shows" element={<Shows />} />
                     <Route path="/podcasts" element={<Podcasts />} />
                     <Route path="/catch-up" element={<CatchUp />} />
