@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock } from 'lucide-react';
+import { Clock, Calendar, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Show {
@@ -109,59 +109,70 @@ const WeeklyScheduleGrid = () => {
           </p>
         </div>
 
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10">
-            <CardTitle className="text-center">Programming Schedule</CardTitle>
+        <Card className="overflow-hidden shadow-xl border-0 bg-gradient-to-br from-card to-muted/30">
+          <CardHeader className="bg-gradient-to-r from-primary/20 via-secondary/10 to-accent/20 border-b">
+            <CardTitle className="text-center text-2xl font-bold">Programming Schedule</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto relative">
               <table className="w-full min-w-[1200px]">
                 <thead>
-                  <tr className="border-b bg-muted/50">
-                    <th className="p-4 text-left font-semibold w-[120px] bg-background sticky left-0 z-20 border-r-2 border-border">Day</th>
+                  <tr className="border-b-2 border-primary/20">
+                    <th className="p-6 text-left font-bold text-lg w-[140px] bg-gradient-to-b from-primary/10 to-primary/5 sticky left-0 z-20 border-r-2 border-primary/30 shadow-lg">
+                      Day
+                    </th>
                     {timeSlots.map(time => (
-                      <th key={time} className="p-4 text-center font-semibold min-w-[140px]">
+                      <th key={time} className="p-4 text-center font-semibold min-w-[160px] bg-gradient-to-b from-muted/30 to-background text-lg">
                         {time}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {daysOfWeek.map(day => (
-                    <tr key={day} className="border-b hover:bg-muted/30 transition-colors">
-                      <td className="p-4 font-medium bg-background sticky left-0 z-10 border-r-2 border-border w-[120px]">
-                        {day}
+                  {daysOfWeek.map((day, dayIndex) => (
+                    <tr key={day} className={`border-b border-muted/50 hover:bg-gradient-to-r hover:from-muted/20 hover:to-transparent transition-all duration-200 ${dayIndex % 2 === 0 ? 'bg-muted/10' : 'bg-background'}`}>
+                      <td className="p-6 font-bold text-lg bg-gradient-to-r from-primary/5 to-transparent sticky left-0 z-10 border-r-2 border-primary/20 w-[140px] shadow-md">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-5 w-5 text-primary" />
+                          {day}
+                        </div>
                       </td>
                       {timeSlots.map(timeSlot => {
                         const show = getShowForTimeSlot(day, timeSlot);
                         const isCurrent = show ? isCurrentShow(show) : false;
                         
                         return (
-                          <td key={`${day}-${timeSlot}`} className="p-2 text-center">
+                          <td key={`${day}-${timeSlot}`} className="p-3 text-center">
                             {show ? (
                               <div 
-                                className={`p-3 rounded-lg border transition-all hover:shadow-md hover:scale-105 cursor-pointer ${
+                                className={`p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-lg hover:scale-105 cursor-pointer group ${
                                   isCurrent 
-                                    ? 'bg-gradient-to-br from-primary/20 to-secondary/20 border-primary ring-2 ring-primary/30' 
-                                    : 'bg-gradient-to-br from-muted/50 to-background border-border hover:border-primary/50'
+                                    ? 'bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/20 border-primary ring-2 ring-primary/40 shadow-lg animate-pulse-light' 
+                                    : 'bg-gradient-to-br from-card to-muted/30 border-border hover:border-primary/60 hover:bg-gradient-to-br hover:from-primary/5 hover:to-secondary/5'
                                 }`}
                               >
-                                <div className="flex items-center justify-between mb-1">
-                                  <h4 className="font-semibold text-sm truncate">{show.title}</h4>
+                                <div className="flex items-center justify-between mb-2">
+                                  <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{show.title}</h4>
                                   {isCurrent && (
-                                    <Badge variant="destructive" className="text-xs ml-1">
+                                    <Badge variant="destructive" className="text-xs ml-1 animate-pulse bg-red-500 text-white">
                                       LIVE
                                     </Badge>
                                   )}
                                 </div>
-                                <p className="text-xs text-muted-foreground mb-1">{show.host}</p>
-                                <p className="text-xs font-mono">
-                                  {formatTime(show.start_time)} - {formatTime(show.end_time)}
-                                </p>
+                                <div className="flex items-center gap-1 mb-2">
+                                  <User className="h-3 w-3 text-muted-foreground" />
+                                  <p className="text-xs text-muted-foreground font-medium">{show.host}</p>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3 text-muted-foreground" />
+                                  <p className="text-xs font-mono text-muted-foreground">
+                                    {formatTime(show.start_time)} - {formatTime(show.end_time)}
+                                  </p>
+                                </div>
                               </div>
                             ) : (
-                              <div className="p-3 rounded-lg bg-muted/20 border border-dashed border-muted-foreground/20">
-                                <p className="text-xs text-muted-foreground">No Show</p>
+                              <div className="p-4 rounded-xl bg-gradient-to-br from-muted/10 to-muted/5 border-2 border-dashed border-muted-foreground/20 hover:border-muted-foreground/40 transition-all duration-200">
+                                <p className="text-xs text-muted-foreground font-medium">No Show</p>
                               </div>
                             )}
                           </td>
@@ -175,9 +186,9 @@ const WeeklyScheduleGrid = () => {
           </CardContent>
         </Card>
 
-        <div className="text-center mt-6">
+        <div className="text-center mt-8">
           <p className="text-sm text-muted-foreground">
-            Schedule updates automatically • Live shows highlighted in color
+            Schedule updates automatically • Live shows highlighted in color • Hover for show details
           </p>
         </div>
       </div>
