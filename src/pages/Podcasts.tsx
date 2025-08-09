@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Podcast, PlayCircle, ExternalLink, Search, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import RadioNavigation from '@/components/RadioNavigation';
+import NewsletterFooter from '@/components/NewsletterFooter';
 
 interface PodcastData {
   id: string;
@@ -88,8 +90,13 @@ const Podcasts = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px]">
+    <div className="w-full min-h-screen bg-white font-asap">
+      {/* Navigation */}
+      <RadioNavigation />
+      
+      {/* Main Content */}
+      <div className="bg-gradient-to-b from-background to-muted/20">
+        <div className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px]">
         <div className="container mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
@@ -210,6 +217,10 @@ const Podcasts = () => {
           )}
         </div>
       </div>
+      </div>
+      
+      {/* Newsletter Footer */}
+      <NewsletterFooter />
     </div>
   );
 };
