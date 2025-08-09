@@ -21,9 +21,7 @@ const RadioNavigation = () => {
         <nav className="flex items-center space-x-[52px]">
           <Link 
             to="/" 
-            className={`font-asap text-[16px] font-medium transition-colors hover:text-primary ${
-              location.pathname === '/' ? 'text-primary font-bold' : 'text-black'
-            }`}
+            className="font-asap text-[16px] font-medium text-black"
           >
             Home
           </Link>
@@ -40,15 +38,13 @@ const RadioNavigation = () => {
                 window.location.href = '/#shows-section';
               }
             }}
-            className="font-asap text-[16px] font-medium transition-colors hover:text-primary text-black"
+            className="font-asap text-[16px] font-medium text-black"
           >
             Shows
           </button>
           <Link 
             to="/podcasts" 
-            className={`font-asap text-[16px] font-medium transition-colors hover:text-primary ${
-              location.pathname === '/podcasts' ? 'text-primary font-bold' : 'text-black'
-            }`}
+            className="font-asap text-[16px] font-medium text-black"
           >
             Podcasts
           </Link>
