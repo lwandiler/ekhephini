@@ -131,7 +131,7 @@ const WeeklyScheduleGrid = () => {
                 <tbody>
                   {daysOfWeek.map((day, dayIndex) => (
                     <tr key={day} className={`border-b border-muted/50 hover:bg-gradient-to-r hover:from-muted/20 hover:to-transparent transition-all duration-200 ${dayIndex % 2 === 0 ? 'bg-muted/10' : 'bg-background'}`}>
-                      <td className="p-6 font-bold text-lg bg-gradient-to-r from-primary/5 to-transparent sticky left-0 z-20 border-r-2 border-primary/20 w-[140px] shadow-md">
+                      <td className="p-6 font-bold text-lg bg-gradient-to-r from-primary/5 to-transparent sticky left-0 z-50 border-r-2 border-primary/20 w-[140px] shadow-md">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-5 w-5 text-primary" />
                           {day}
