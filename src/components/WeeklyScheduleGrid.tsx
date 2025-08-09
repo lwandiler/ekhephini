@@ -115,7 +115,7 @@ const WeeklyScheduleGrid = () => {
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto relative">
-              <table className="w-full min-w-[800px] table-fixed">
+              <table className="w-full min-w-[1200px]">
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="p-4 text-left font-semibold w-[120px] bg-muted/50 sticky left-0 z-10 border-r">Day</th>
