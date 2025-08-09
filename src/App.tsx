@@ -15,6 +15,7 @@ import NotFound from '@/pages/NotFound';
 import CatchUp from '@/pages/CatchUp';
 import Contact from '@/pages/Contact';
 import Shows from '@/pages/Shows';
+import Podcasts from '@/pages/Podcasts';
 
 
 import './App.css';
@@ -35,6 +36,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/shows" element={<Shows />} />
+                    <Route path="/podcasts" element={<Podcasts />} />
                     <Route path="/catch-up" element={<CatchUp />} />
                     <Route path="/contact" element={<Contact />} />
                     

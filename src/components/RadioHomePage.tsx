@@ -4,6 +4,7 @@ import RadioPlayerSection from './RadioPlayerSection';
 import RadioContentSections from './RadioContentSections';
 import ShowScheduleSection from './ShowScheduleSection';
 import WeeklyScheduleGrid from './WeeklyScheduleGrid';
+import LatestPodcasts from './LatestPodcasts';
 import PresentersTestimonialsSection from './PresentersTestimonialsSection';
 import NewsletterFooter from './NewsletterFooter';
 
@@ -27,6 +28,9 @@ const RadioHomePage = () => {
 
       {/* Weekly Schedule Grid */}
       <WeeklyScheduleGrid />
+
+      {/* Latest Podcasts */}
+      <LatestPodcasts />
 
       {/* Presenters & Testimonials */}
       <PresentersTestimonialsSection />
