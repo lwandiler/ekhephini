@@ -16,14 +16,17 @@ const RadioContentSections = () => {
 
             {/* Title */}
             <h2 className="max-w-[328px] text-black font-asap text-2xl md:text-3xl lg:text-[40px] font-bold leading-normal mb-8">
-              Best place to find design inspiration
+              Welcome to Ekhephini FM 107.9 FM – “Izwi Lenkqubela” 
             </h2>
 
             {/* Description */}
             <p className="max-w-[611px] text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal mb-8 text-left">
-              Our Radio is the place to get in-depth insights on a variety of interesting topics, from technology to mental health.
+              Listen Live – Whether you’re in your township or on your farm, the signal is here to connect you. 
               <br /><br />
-              We are committed to delivering high-quality content that inspires, educates and entertains our listeners, featuring experts and leading sources to share their knowledge and experiences.
+              View Today’s Schedule at a Glance – Know what’s airing when so you never miss local conversations that matter. 
+              <br /><br />
+              Join In – Ask questions, share stories, shout out to favourites—on air or via WhatsApp; your voice belongs here. 
+              <br /><br />
             </p>
 
           </div>
