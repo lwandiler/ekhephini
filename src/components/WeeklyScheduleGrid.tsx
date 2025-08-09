@@ -110,7 +110,7 @@ const WeeklyScheduleGrid = () => {
         </div>
 
         <Card className="overflow-hidden shadow-xl border-0 bg-gradient-to-br from-card to-muted/30">
-          <CardHeader className="bg-gradient-to-r from-primary/20 via-secondary/10 to-accent/20 border-b">
+          <CardHeader className="bg-yellow border-b">
             <CardTitle className="text-center text-2xl font-bold">Programming Schedule</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
