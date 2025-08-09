@@ -118,7 +118,7 @@ const WeeklyScheduleGrid = () => {
               <table className="w-full min-w-[1200px]">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="p-4 text-left font-semibold w-[120px] bg-muted/50 sticky left-0 z-20 border-r shadow-[2px_0_4px_rgba(0,0,0,0.1)]">Day</th>
+                    <th className="p-4 text-left font-semibold w-[120px] bg-background sticky left-0 z-20 border-r-2 border-border">Day</th>
                     {timeSlots.map(time => (
                       <th key={time} className="p-4 text-center font-semibold min-w-[140px]">
                         {time}
@@ -129,7 +129,7 @@ const WeeklyScheduleGrid = () => {
                 <tbody>
                   {daysOfWeek.map(day => (
                     <tr key={day} className="border-b hover:bg-muted/30 transition-colors">
-                      <td className="p-4 font-medium bg-muted/20 sticky left-0 z-10 border-r w-[120px] shadow-[2px_0_4px_rgba(0,0,0,0.1)]">
+                      <td className="p-4 font-medium bg-background sticky left-0 z-10 border-r-2 border-border w-[120px]">
                         {day}
                       </td>
                       {timeSlots.map(timeSlot => {
