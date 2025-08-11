@@ -73,6 +73,29 @@ const WeeklyScheduleGrid = () => {
     }) || null;
   };
 
+  const getShowSpan = (show: Show): number => {
+    const startTime = show.start_time;
+    const endTime = show.end_time;
+    
+    const startIndex = timeSlots.findIndex(slot => slot >= startTime);
+    const endIndex = timeSlots.findIndex(slot => slot >= endTime);
+    
+    if (startIndex === -1) return 1;
+    if (endIndex === -1) return timeSlots.length - startIndex;
+    
+    return endIndex - startIndex;
+  };
+
+  const shouldRenderShow = (show: Show, day: string, timeSlot: string): boolean => {
+    if (show.day_of_week?.toLowerCase() !== day.toLowerCase()) return false;
+    
+    // Only render the show in its starting time slot
+    const startIndex = timeSlots.findIndex(slot => slot >= show.start_time);
+    const currentIndex = timeSlots.findIndex(slot => slot === timeSlot);
+    
+    return startIndex === currentIndex;
+  };
+
   const isCurrentShow = (show: Show): boolean => {
     const now = new Date();
     const currentDay = daysOfWeek[now.getDay() === 0 ? 6 : now.getDay() - 1]; // Adjust for Monday start
@@ -137,47 +160,54 @@ const WeeklyScheduleGrid = () => {
                           {day}
                         </div>
                       </td>
-                      {timeSlots.map(timeSlot => {
-                        const show = getShowForTimeSlot(day, timeSlot);
-                        const isCurrent = show ? isCurrentShow(show) : false;
-                        
-                        return (
-                          <td key={`${day}-${timeSlot}`} className="p-3 text-center">
-                            {show ? (
-                              <div 
-                                className={`p-4 rounded-xl border-2 transition-all duration-1000 hover:shadow-lg hover:scale-105 cursor-pointer group ${
-                                  isCurrent 
-                                    ? 'bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/20 border-primary ring-2 ring-primary/40 shadow-lg animate-pulse-light' 
-                                    : 'bg-gradient-to-br from-card to-muted/30 border-border hover:border-primary/60 hover:bg-gradient-to-br hover:from-primary/5 hover:to-secondary/5'
-                                }`}
-                              >
-                                <div className="flex items-center justify-between mb-2">
-                                  <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{show.title}</h4>
-                                  {isCurrent && (
-                                    <Badge variant="destructive" className="text-xs ml-1 animate-pulse bg-red-500 text-white">
-                                      LIVE
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-1 mb-2">
-                                  <User className="h-3 w-3 text-muted-foreground" />
-                                  <p className="text-xs text-muted-foreground font-medium">{show.host}</p>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3 text-muted-foreground" />
-                                  <p className="text-xs font-mono text-muted-foreground">
-                                    {formatTime(show.start_time)} - {formatTime(show.end_time)}
-                                  </p>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="p-4 rounded-xl bg-gradient-to-br from-muted/10 to-muted/5 border-2 border-dashed border-muted-foreground/20 hover:border-muted-foreground/40 transition-all duration-200">
-                                <p className="text-xs text-muted-foreground font-medium">No Show</p>
-                              </div>
-                            )}
-                          </td>
-                        );
-                      })}
+                       {timeSlots.map((timeSlot, timeIndex) => {
+                         const show = getShowForTimeSlot(day, timeSlot);
+                         const isCurrent = show ? isCurrentShow(show) : false;
+                         
+                         // Skip cells that are covered by a previous show's colspan
+                         if (show && !shouldRenderShow(show, day, timeSlot)) {
+                           return null;
+                         }
+                         
+                         const colSpan = show ? getShowSpan(show) : 1;
+                         
+                         return (
+                           <td key={`${day}-${timeSlot}`} className="p-3 text-center" colSpan={colSpan}>
+                             {show ? (
+                               <div 
+                                 className={`p-4 rounded-xl border-2 transition-all duration-1000 hover:shadow-lg hover:scale-105 cursor-pointer group ${
+                                   isCurrent 
+                                     ? 'bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/20 border-primary ring-2 ring-primary/40 shadow-lg animate-pulse-light' 
+                                     : 'bg-gradient-to-br from-card to-muted/30 border-border hover:border-primary/60 hover:bg-gradient-to-br hover:from-primary/5 hover:to-secondary/5'
+                                 }`}
+                               >
+                                 <div className="flex items-center justify-between mb-2">
+                                   <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{show.title}</h4>
+                                   {isCurrent && (
+                                     <Badge variant="destructive" className="text-xs ml-1 animate-pulse bg-red-500 text-white">
+                                       LIVE
+                                     </Badge>
+                                   )}
+                                 </div>
+                                 <div className="flex items-center gap-1 mb-2">
+                                   <User className="h-3 w-3 text-muted-foreground" />
+                                   <p className="text-xs text-muted-foreground font-medium">{show.host}</p>
+                                 </div>
+                                 <div className="flex items-center gap-1">
+                                   <Clock className="h-3 w-3 text-muted-foreground" />
+                                   <p className="text-xs font-mono text-muted-foreground">
+                                     {formatTime(show.start_time)} - {formatTime(show.end_time)}
+                                   </p>
+                                 </div>
+                               </div>
+                             ) : (
+                               <div className="p-4 rounded-xl bg-gradient-to-br from-muted/10 to-muted/5 border-2 border-dashed border-muted-foreground/20 hover:border-muted-foreground/40 transition-all duration-200">
+                                 <p className="text-xs text-muted-foreground font-medium">No Show</p>
+                               </div>
+                             )}
+                           </td>
+                         );
+                       }).filter(Boolean)}
                     </tr>
                   ))}
                 </tbody>
