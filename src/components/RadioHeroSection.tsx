@@ -7,7 +7,7 @@ const RadioHeroSection = () => {
     <section className="relative w-full h-[814px] overflow-hidden">
       {/* Background Image */}
       <img
-        src="https://api.builder.io/api/v1/image/assets/TEMP/e154fb9d1aed06944969aa7592132dfc209c4bc2?width=2928"
+        src="/lovable-uploads/47de82cb-61f3-4149-8be9-97f88490213c.png"
         alt="Radio Station Background"
         className="absolute -left-3 top-0 w-[1464px] h-[823px] object-cover backdrop-blur-[50px]"
       />
