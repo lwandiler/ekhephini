@@ -145,7 +145,7 @@ const WeeklyScheduleGrid = () => {
                           <td key={`${day}-${timeSlot}`} className="p-3 text-center">
                             {show ? (
                               <div 
-                                className={`p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-lg hover:scale-105 cursor-pointer group ${
+                                className={`p-4 rounded-xl border-2 transition-all duration-1000 hover:shadow-lg hover:scale-105 cursor-pointer group ${
                                   isCurrent 
                                     ? 'bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/20 border-primary ring-2 ring-primary/40 shadow-lg animate-pulse-light' 
                                     : 'bg-gradient-to-br from-card to-muted/30 border-border hover:border-primary/60 hover:bg-gradient-to-br hover:from-primary/5 hover:to-secondary/5'
