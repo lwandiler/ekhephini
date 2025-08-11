@@ -1,8 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 
 const RadioNavigation = () => {
   const { togglePlayPause, isPlaying } = useAudioPlayer();
+  const { user, signOut } = useAuth();
   const location = useLocation();
 
   return (
@@ -54,6 +57,31 @@ const RadioNavigation = () => {
           >
             About Us
           </Link>
+          {user ? (
+            <div className="flex items-center space-x-4">
+              <Link 
+                to="/admin" 
+                className="font-asap text-[16px] font-medium text-primary"
+              >
+                Admin
+              </Link>
+              <Button 
+                onClick={signOut}
+                variant="outline"
+                size="sm"
+                className="font-asap"
+              >
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <Link 
+              to="/auth" 
+              className="font-asap text-[16px] font-medium text-primary"
+            >
+              Sign In
+            </Link>
+          )}
         </nav>
 
         {/* Radio Player Controls */}

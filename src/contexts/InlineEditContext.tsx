@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { stationService } from '@/services/api/stationService';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface InlineEditContextType {
@@ -17,10 +18,39 @@ const InlineEditContext = createContext<InlineEditContextType | undefined>(undef
 export const InlineEditProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [pageContent, setPageContent] = useState<Record<string, string>>({});
+  const [isAdmin, setIsAdmin] = useState(false);
   const { user } = useAuth();
-  
-  // Check if user is admin
-  const isAdmin = user && sessionStorage.getItem('radioAdminLoggedIn') === 'true';
+
+  // Check if user is admin using proper Supabase auth
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+          return;
+        }
+
+        setIsAdmin(data?.role === 'admin');
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user]);
 
   useEffect(() => {
     // Load existing page content from station settings
