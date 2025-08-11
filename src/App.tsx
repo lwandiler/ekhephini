@@ -8,7 +8,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { InlineEditProvider } from '@/contexts/InlineEditContext';
 import { AudioPlayerProvider } from '@/contexts/AudioPlayerContext';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
-import EditModeToggle from '@/components/EditModeToggle';
+
 // Import pages
 import Index from '@/pages/Index';
 import SecureAdmin from '@/pages/SecureAdmin';
@@ -48,7 +48,7 @@ function App() {
                       <Route path="/admin" element={<SecureAdmin />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
-                    <EditModeToggle />
+                    
                   </div>
                   <Toaster />
                 </Router>
