@@ -187,11 +187,11 @@ const ShowScheduleSection = () => {
   }
 
   return (
-    <section id="shows-section" className="w-full bg-white py-16 px-4 md:px-8 lg:px-16 xl:px-[100px]">
-      <div className="max-w-7xl mx-auto">
+    <section id="shows-section" className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px] bg-gradient-to-b from-background to-muted/20">
+      <div className="container mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-black font-asap text-2xl md:text-3xl lg:text-[40px] font-bold leading-normal mb-8">Show Schedule</h2>
-          <p className="text-[#5F5F5F] font-asap text-lg md:text-xl lg:text-[25px] font-normal leading-normal max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Show Schedule</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             Stay up-to-date with our programming schedule. Here's what was on, what's currently playing, and what's coming up next.
           </p>
         </div>
