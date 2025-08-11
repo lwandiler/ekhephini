@@ -9,7 +9,7 @@ const RadioHeroSection = () => {
       <img
         src="/lovable-uploads/47de82cb-61f3-4149-8be9-97f88490213c.png"
         alt="Radio Station Background"
-        className="absolute -left-3 top-0 w-[1464px] h-[823px] object-cover backdrop-blur-[50px]"
+        className="absolute -left-3 top-0 w-[100%] h-[823px] object-cover backdrop-blur-[50px]"
       />
 
       {/* Blue Gradient Overlay */}
