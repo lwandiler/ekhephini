@@ -1588,20 +1588,10 @@ const AdminDashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-2xl font-bold">User Management</h3>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={handleUpdateAdminPassword}
-            disabled={isUpdatingPassword}
-          >
-            <Shield className="h-4 w-4 mr-2" />
-            {isUpdatingPassword ? 'Updating...' : 'Reset Admin Password'}
-          </Button>
-          <Button onClick={() => setShowNewUserForm(!showNewUserForm)}>
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add New User
-          </Button>
-        </div>
+        <Button onClick={() => setShowNewUserForm(!showNewUserForm)}>
+          <UserPlus className="h-4 w-4 mr-2" />
+          Add New User
+        </Button>
       </div>
 
       {showNewUserForm && (
