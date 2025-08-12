@@ -162,8 +162,35 @@ export function useHlsPlayer({
               break;
             default:
               console.log('HLS: Fatal error, destroying HLS instance');
+
+              // Try fallback URL if available
+              if (station.fallbackUrl) {
+                try {
+                  console.warn('HLS: Fatal error, switching to fallback URL:', station.fallbackUrl);
+                  hls.destroy();
+                  hlsRef.current = null;
+                  audio.src = station.fallbackUrl;
+                  audio.load();
+                  audio.play().then(() => {
+                    setIsPlaying(true);
+                    setIsLoading(false);
+                    setStreamError(null);
+                    toast.success(`Now playing backup: ${station.name}`);
+                  }).catch((e) => {
+                    console.error('Fallback play failed:', e);
+                    setIsLoading(false);
+                    setStreamError('Backup stream failed to play');
+                    toast.error('Backup stream failed to play');
+                  });
+                  return;
+                } catch (e) {
+                  console.error('Fallback switch failed:', e);
+                }
+              }
+
               hls.destroy();
               hlsRef.current = null;
+              setIsLoading(false);
               setStreamError(`HLS playback failed for ${station.name}`);
               toast.error(`Unable to play ${station.name}`);
               break;
