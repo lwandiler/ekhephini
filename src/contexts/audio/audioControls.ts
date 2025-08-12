@@ -22,6 +22,8 @@ export function createAudioControls(
     currentSound: MutableRefObject<Howl | null>;
     nextSound: MutableRefObject<Howl | null>;
     previousSound: MutableRefObject<Howl | null>;
+    currentPodcast: { name: string; thumbnailUrl?: string | null } | null;
+    setCurrentPodcast: (p: { name: string; thumbnailUrl?: string | null } | null) => void;
   }
 ) {
   const {
@@ -38,7 +40,9 @@ export function createAudioControls(
     setStreamError,
     currentSound,
     nextSound,
-    previousSound
+    previousSound,
+    currentPodcast,
+    setCurrentPodcast
   } = audioState;
 
   // Initialize HLS player for current station
@@ -64,6 +68,8 @@ export function createAudioControls(
 
   // Play current station
   const playCurrentStation = () => {
+    // Clear any podcast override when switching to live
+    setCurrentPodcast(null);
     if (!hlsPlayer.audioElement) {
       initializeCurrentStation();
     }
@@ -154,6 +160,9 @@ export function createAudioControls(
     setVolume: setVolumeHandler,
     forceTryPlay,
     getCurrentStationName,
-    playExternalUrl: (name: string, url: string) => hlsPlayer.playExternalUrl(name, url)
+    playExternalUrl: (name: string, url: string, thumbnailUrl?: string | null) => {
+      setCurrentPodcast({ name, thumbnailUrl: thumbnailUrl ?? undefined });
+      return hlsPlayer.playExternalUrl(name, url);
+    }
   };
 }

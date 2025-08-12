@@ -1,6 +1,11 @@
 
 import { RadioStation } from "@/hooks/audio/types";
 
+export interface NowPlayingPodcast {
+  name: string;
+  thumbnailUrl?: string | null;
+}
+
 export interface AudioPlayerContextProps {
   stations: RadioStation[];
   currentStationIndex: number;
@@ -8,6 +13,7 @@ export interface AudioPlayerContextProps {
   isLoading: boolean;
   volume: number;
   streamError: string | null;
+  currentPodcast: NowPlayingPodcast | null;
   playCurrentStation: () => void;
   pauseCurrentStation: () => void;
   togglePlayPause: () => void;
@@ -16,7 +22,7 @@ export interface AudioPlayerContextProps {
   setVolume: (volume: number) => void;
   forceTryPlay: () => void;
   getCurrentStationName: () => string;
-  playExternalUrl: (name: string, url: string) => void;
+  playExternalUrl: (name: string, url: string, thumbnailUrl?: string | null) => void;
 }
 
 export interface AudioState {

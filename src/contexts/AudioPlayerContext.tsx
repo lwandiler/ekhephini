@@ -35,6 +35,7 @@ export const AudioPlayerProvider: React.FC<{ children: React.ReactNode }> = ({ c
     isLoading: audioState.isLoading,
     volume: audioState.volume,
     streamError: audioState.streamError,
+    currentPodcast: audioState.currentPodcast,
     ...controls
   };
   

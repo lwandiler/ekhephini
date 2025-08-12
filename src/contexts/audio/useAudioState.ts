@@ -15,6 +15,7 @@ export function useAudioState() {
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(80);
   const [streamError, setStreamError] = useState<string | null>(null);
+  const [currentPodcast, setCurrentPodcast] = useState<{ name: string; thumbnailUrl?: string | null } | null>(null);
 
   // Audio references
   const currentSound = useRef<Howl | null>(null);
@@ -135,6 +136,8 @@ export function useAudioState() {
     setVolume,
     streamError,
     setStreamError,
+    currentPodcast,
+    setCurrentPodcast,
     currentSound,
     nextSound,
     previousSound,
