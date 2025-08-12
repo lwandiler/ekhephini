@@ -1,14 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { useInlineEdit } from '@/contexts/InlineEditContext';
 import { Button } from '@/components/ui/button';
-import { Settings, LogOut } from 'lucide-react';
 
 const RadioNavigation = () => {
   const { togglePlayPause, isPlaying } = useAudioPlayer();
   const { user, signOut } = useAuth();
-  const { isAdmin } = useInlineEdit();
   const location = useLocation();
 
   return (
@@ -67,37 +64,6 @@ const RadioNavigation = () => {
             About Us
           </Link>
         </nav>
-
-        {/* Auth Controls */}
-        <div className="flex items-center space-x-4">
-          {user ? (
-            <div className="flex items-center space-x-3">
-              {isAdmin && (
-                <Link to="/admin">
-                  <Button variant="outline" size="sm" className="flex items-center space-x-2">
-                    <Settings className="w-4 h-4" />
-                    <span>Admin</span>
-                  </Button>
-                </Link>
-              )}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={signOut}
-                className="flex items-center space-x-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Sign Out</span>
-              </Button>
-            </div>
-          ) : (
-            <Link to="/auth">
-              <Button variant="default" size="sm">
-                Sign In
-              </Button>
-            </Link>
-          )}
-        </div>
 
         {/* Radio Player Controls */}
         <div className="flex items-center space-x-4">
