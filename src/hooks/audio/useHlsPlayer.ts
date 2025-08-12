@@ -91,6 +91,8 @@ export function useHlsPlayer({
       
       hlsRef.current = hls;
 
+      const triedProxyRef = { current: false } as { current: boolean };
+
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         console.log('HLS: Media attached');
       });
@@ -102,6 +104,23 @@ export function useHlsPlayer({
 
       hls.on(Hls.Events.ERROR, (event, data) => {
         console.error('HLS Error:', data);
+
+        // Retry via CORS proxy once if manifest load fails (common CORS issue)
+        if (
+          data.type === Hls.ErrorTypes.NETWORK_ERROR &&
+          (data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR || data.details === Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) &&
+          !triedProxyRef.current
+        ) {
+          triedProxyRef.current = true;
+          const proxied = `https://cors.isomorphic-git.org/${streamUrl}`;
+          console.warn('HLS: Manifest load failed, retrying via CORS proxy:', proxied);
+          try {
+            hls.loadSource(proxied);
+            return; // wait for MANIFEST_PARSED
+          } catch (e) {
+            console.error('HLS proxy retry failed immediately:', e);
+          }
+        }
         
         if (data.fatal) {
           switch (data.type) {
@@ -116,7 +135,9 @@ export function useHlsPlayer({
             default:
               console.log('HLS: Fatal error, destroying HLS instance');
               hls.destroy();
+              hlsRef.current = null;
               setStreamError(`HLS playback failed for ${station.name}`);
+              toast.error(`Unable to play ${station.name}`);
               break;
           }
         }
