@@ -132,7 +132,7 @@ export function useHlsPlayer({
                 station.fallbackUrl
               ) {
                 try {
-                  console.warn('HLS: Switching to fallback URL:', station.fallbackUrl);
+                  console.warn('HLS: Switching to backup URL:', station.fallbackUrl);
                   hls.destroy();
                   hlsRef.current = null;
                   audio.src = station.fallbackUrl;
@@ -141,7 +141,7 @@ export function useHlsPlayer({
                     setIsPlaying(true);
                     setIsLoading(false);
                     setStreamError(null);
-                    toast.success(`Now playing backup: ${station.name}`);
+                    toast.success(`Now playing backup source`);
                   }).catch((e) => {
                     console.error('Fallback play failed:', e);
                     setStreamError('Backup stream failed to play');

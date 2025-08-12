@@ -83,6 +83,7 @@ export function useAudioState() {
         ...updatedStations[0],
         url: streamUrl,
         streamUrl: streamUrl,
+        fallbackUrl: settings?.recordingStreamUrl || undefined,
         name: settings?.stationName || updatedStations[0].name,
         description: settings?.stationDescription || updatedStations[0].description
       };
