@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { updateUserPassword } from '@/services/userService';
 import { 
   LayoutDashboard,
   Users, 
@@ -84,6 +85,7 @@ const AdminDashboard = () => {
   const [showNewSocialLinkForm, setShowNewSocialLinkForm] = useState(false);
   const [newSocialLink, setNewSocialLink] = useState({ platform: '', url: '', display_name: '', icon_name: '' });
   const [editingSocialLink, setEditingSocialLink] = useState<any>(null);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   
   // Filter states for shows
   const [showFilter, setShowFilter] = useState('');
@@ -411,6 +413,27 @@ const AdminDashboard = () => {
         title: "Error",
         description: "Failed to delete user."
       });
+    }
+  };
+
+  const handleUpdateAdminPassword = async () => {
+    setIsUpdatingPassword(true);
+    
+    try {
+      await updateUserPassword('admin@admin.com', 'password123');
+      toast({
+        title: "Success",
+        description: "Admin password updated to 'password123'"
+      });
+    } catch (error) {
+      console.error('Error updating password:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update admin password."
+      });
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -1565,10 +1588,20 @@ const AdminDashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-2xl font-bold">User Management</h3>
-        <Button onClick={() => setShowNewUserForm(!showNewUserForm)}>
-          <UserPlus className="h-4 w-4 mr-2" />
-          Add New User
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleUpdateAdminPassword}
+            disabled={isUpdatingPassword}
+          >
+            <Shield className="h-4 w-4 mr-2" />
+            {isUpdatingPassword ? 'Updating...' : 'Reset Admin Password'}
+          </Button>
+          <Button onClick={() => setShowNewUserForm(!showNewUserForm)}>
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add New User
+          </Button>
+        </div>
       </div>
 
       {showNewUserForm && (
