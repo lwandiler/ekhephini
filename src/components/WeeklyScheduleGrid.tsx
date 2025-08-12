@@ -189,10 +189,6 @@ const WeeklyScheduleGrid = () => {
                                      </Badge>
                                    )}
                                  </div>
-                                 <div className="flex items-center gap-1 mb-2">
-                                   <User className="h-3 w-3 text-muted-foreground" />
-                                   <p className="text-xs text-muted-foreground font-medium">{show.host}</p>
-                                 </div>
                                  <div className="flex items-center gap-1">
                                    <Clock className="h-3 w-3 text-muted-foreground" />
                                    <p className="text-xs font-mono text-muted-foreground">
