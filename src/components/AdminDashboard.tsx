@@ -72,8 +72,12 @@ const AdminDashboard = () => {
     day_of_week: '', 
     start_time: '', 
     end_time: '', 
-    description: '' 
+    description: '',
+    image_url: '' 
   });
+  const [newShowImageMode, setNewShowImageMode] = useState<'url' | 'upload'>('url');
+  const [newShowImageFile, setNewShowImageFile] = useState<File | null>(null);
+  const [isUploadingShowImage, setIsUploadingShowImage] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'DJ' });
   const [newPodcast, setNewPodcast] = useState({ name: '', podcast_link: '', description: '', thumbnail: null as File | null });
   const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
@@ -279,7 +283,22 @@ const AdminDashboard = () => {
   // Handlers
   const handleAddShow = async () => {
     if (newShow.title && newShow.day_of_week && newShow.start_time && newShow.end_time) {
+      setIsUploadingShowImage(true);
       try {
+        let finalImageUrl = newShow.image_url?.trim() || '';
+        if (newShowImageMode === 'upload' && newShowImageFile) {
+          const fileExt = newShowImageFile.name.split('.').pop();
+          const fileName = `show-${Date.now()}.${fileExt}`;
+          const { error: uploadError } = await supabase.storage
+            .from('show-images')
+            .upload(fileName, newShowImageFile);
+          if (uploadError) throw uploadError;
+          const { data: { publicUrl } } = supabase.storage
+            .from('show-images')
+            .getPublicUrl(fileName);
+          finalImageUrl = publicUrl;
+        }
+
         const { data, error } = await supabase
           .from('shows')
           .insert([{
@@ -289,6 +308,7 @@ const AdminDashboard = () => {
             start_time: newShow.start_time,
             end_time: newShow.end_time,
             description: newShow.description,
+            image_url: finalImageUrl,
             time_slot: `${newShow.start_time} - ${newShow.end_time}`, // Keep for backward compatibility
             status: 'Scheduled'
           }])
@@ -304,8 +324,11 @@ const AdminDashboard = () => {
             day_of_week: '', 
             start_time: '', 
             end_time: '', 
-            description: '' 
+            description: '',
+            image_url: '' 
           });
+          setNewShowImageFile(null);
+          setNewShowImageMode('url');
           setShowNewShowForm(false);
           toast({
             title: "Success",
@@ -319,6 +342,8 @@ const AdminDashboard = () => {
           title: "Error",
           description: "Failed to add show."
         });
+      } finally {
+        setIsUploadingShowImage(false);
       }
     }
   };
@@ -352,12 +377,12 @@ const AdminDashboard = () => {
       try {
         const { data, error } = await supabase
           .from('user_profiles')
-          .insert([{
+          .insert([{ 
             name: newUser.name,
             email: newUser.email,
             role: newUser.role,
             status: 'Active'
-          }])
+          } as any])
           .select();
 
         if (error) throw error;
@@ -607,15 +632,35 @@ const AdminDashboard = () => {
       day_of_week: show.day_of_week,
       start_time: show.start_time,
       end_time: show.end_time,
-      description: show.description || ''
+      description: show.description || '',
+      image_url: show.image_url || ''
     });
+    setNewShowImageMode('url');
+    setNewShowImageFile(null);
     setShowNewShowForm(true);
   };
 
   const handleUpdateShow = async () => {
     if (!editingShow || !newShow.title || !newShow.day_of_week || !newShow.start_time || !newShow.end_time) return;
 
+    setIsUploadingShowImage(true);
     try {
+      let finalImageUrl = editingShow.image_url || '';
+      if (newShowImageMode === 'upload' && newShowImageFile) {
+        const fileExt = newShowImageFile.name.split('.').pop();
+        const fileName = `show-${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('show-images')
+          .upload(fileName, newShowImageFile);
+        if (uploadError) throw uploadError;
+        const { data: { publicUrl } } = supabase.storage
+          .from('show-images')
+          .getPublicUrl(fileName);
+        finalImageUrl = publicUrl;
+      } else if ((newShow.image_url?.trim() || '') !== '') {
+        finalImageUrl = newShow.image_url.trim();
+      }
+
       const { data, error } = await supabase
         .from('shows')
         .update({
@@ -625,6 +670,7 @@ const AdminDashboard = () => {
           start_time: newShow.start_time,
           end_time: newShow.end_time,
           description: newShow.description,
+          image_url: finalImageUrl,
           time_slot: `${newShow.start_time} - ${newShow.end_time}` // Keep for backward compatibility
         })
         .eq('id', editingShow.id)
@@ -640,8 +686,11 @@ const AdminDashboard = () => {
           day_of_week: '', 
           start_time: '', 
           end_time: '', 
-          description: '' 
+          description: '',
+          image_url: '' 
         });
+        setNewShowImageFile(null);
+        setNewShowImageMode('url');
         setEditingShow(null);
         setShowNewShowForm(false);
         toast({
@@ -656,6 +705,8 @@ const AdminDashboard = () => {
         title: "Error",
         description: "Failed to update show."
       });
+    } finally {
+      setIsUploadingShowImage(false);
     }
   };
 
@@ -1483,14 +1534,52 @@ const AdminDashboard = () => {
                 rows={3}
               />
             </div>
+            <div>
+              <Label>Image (16:9 recommended)</Label>
+              <div className="flex gap-2 mt-2">
+                <Button type="button" variant={newShowImageMode === 'url' ? 'default' : 'outline'} size="sm" onClick={() => setNewShowImageMode('url')}>Use URL</Button>
+                <Button type="button" variant={newShowImageMode === 'upload' ? 'default' : 'outline'} size="sm" onClick={() => setNewShowImageMode('upload')}>Upload</Button>
+              </div>
+              {newShowImageMode === 'url' ? (
+                <div className="mt-2">
+                  <Input
+                    id="show-image-url"
+                    placeholder="https://example.com/image.jpg"
+                    value={newShow.image_url}
+                    onChange={(e) => setNewShow({ ...newShow, image_url: e.target.value })}
+                  />
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <Input
+                    id="show-image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setNewShowImageFile(e.target.files?.[0] ?? null)}
+                  />
+                </div>
+              )}
+              {(newShow.image_url || newShowImageFile) && (
+                <div className="mt-3 border rounded overflow-hidden" style={{ aspectRatio: '16 / 9' }}>
+                  <img
+                    src={newShowImageFile ? URL.createObjectURL(newShowImageFile) : newShow.image_url}
+                    alt="Show image preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">Use a wide image (16:9), e.g., 1280x720.</p>
+            </div>
             <div className="flex gap-2">
-              <Button onClick={editingShow ? handleUpdateShow : handleAddShow}>
-                {editingShow ? 'Update Show' : 'Add Show'}
+              <Button onClick={editingShow ? handleUpdateShow : handleAddShow} disabled={isUploadingShowImage}>
+                {editingShow ? (isUploadingShowImage ? 'Updating...' : 'Update Show') : (isUploadingShowImage ? 'Adding...' : 'Add Show')}
               </Button>
               <Button variant="outline" onClick={() => {
                 setShowNewShowForm(false);
                 setEditingShow(null);
-                setNewShow({ title: '', host: '', day_of_week: '', start_time: '', end_time: '', description: '' });
+                setNewShow({ title: '', host: '', day_of_week: '', start_time: '', end_time: '', description: '', image_url: '' });
+                setNewShowImageFile(null);
+                setNewShowImageMode('url');
               }}>Cancel</Button>
             </div>
           </CardContent>
