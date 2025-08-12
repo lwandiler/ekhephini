@@ -78,10 +78,6 @@ const ShowSchedule = () => {
             
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center text-sm text-gray-600">
-                  <User className="w-4 h-4 mr-2" />
-                  <span>Host: {show.host}</span>
-                </div>
                 
                 {show.day_of_week && (
                   <div className="flex items-center text-sm text-gray-600">

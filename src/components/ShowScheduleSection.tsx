@@ -145,10 +145,6 @@ const ShowScheduleSection = () => {
         <CardContent className="space-y-4">
           <div>
             <h3 className="font-semibold text-lg mb-2">{show.title}</h3>
-            <div className="flex items-center gap-2 text-muted-foreground mb-2">
-              <User className="h-4 w-4" />
-              <span className="text-sm">{show.host}</span>
-            </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <Clock className="h-4 w-4" />
               <span className="text-sm">

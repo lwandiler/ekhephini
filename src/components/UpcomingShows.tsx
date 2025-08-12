@@ -133,10 +133,6 @@ export default function UpcomingShows() {
                 <CardTitle className="text-xl text-white line-clamp-2">
                   {show.title}
                 </CardTitle>
-                <div className="flex items-center text-green-400 text-sm font-medium">
-                  <User className="w-4 h-4 mr-1" />
-                  {show.host}
-                </div>
               </CardHeader>
 
               <CardContent className="flex-1">
