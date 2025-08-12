@@ -5,7 +5,6 @@ import { Maximize } from 'lucide-react';
 import PlaybackControls from './PlaybackControls';
 import VolumeControl from './VolumeControl';
 import StatusIndicator from './StatusIndicator';
-import ErrorActions from './ErrorActions';
 
 interface PlayerControlsWrapperProps {
   isPlaying: boolean;
@@ -59,12 +58,7 @@ const PlayerControlsWrapper: React.FC<PlayerControlsWrapperProps> = ({
       
       <StatusIndicator isPlaying={isPlaying} />
 
-      {streamError && (
-        <ErrorActions 
-          onSwitchFallback={switchToFallbackMode}
-          onOpenStream={openStreamInNewTab}
-        />
-      )}
+      {/* Error actions removed per request */}
 
       <Button
         variant="ghost"
