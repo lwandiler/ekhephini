@@ -305,33 +305,35 @@ export function useHlsPlayer({
       }
     }
 
-    // Non-HLS: attempt HTTPS upgrade if needed (avoid mixed content on HTTPS site)
+    // Non-HLS: attempt HTTPS upgrade or proxy if needed (avoid mixed content/CORS)
+    const functionsBase = 'https://innpnyojhyedfrtnaxsi.functions.supabase.co';
     const isHttp = url.startsWith('http://');
     const httpsUrl = isHttp ? url.replace(/^http:\/\//, 'https://') : url;
+    const proxiedUrl = `${functionsBase}/stream-proxy?url=${encodeURIComponent(url)}`;
 
-    try {
-      // First try HTTPS (or original if already HTTPS)
-      await tryPlay(httpsUrl);
-      setIsPlaying(true);
-      setIsLoading(false);
-      toast.success(`Now playing: ${name}`);
-    } catch (firstErr) {
-      console.error('Play external URL error (first attempt):', firstErr);
+    // Prefer proxy when original is http (mixed content) otherwise try direct first
+    const candidates: string[] = isHttp ? [proxiedUrl, httpsUrl] : [httpsUrl, proxiedUrl];
 
-      if (isHttp) {
-        // Mixed content likely blocked; inform user/admin
+    for (let i = 0; i < candidates.length; i++) {
+      try {
+        await tryPlay(candidates[i]);
+        setIsPlaying(true);
         setIsLoading(false);
-        const msg = 'This audio link uses http and is blocked on https pages. Please update the podcast link to https.';
-        setStreamError(msg);
-        toast.error(msg);
+        toast.success(`Now playing: ${name}`);
         return;
+      } catch (err) {
+        console.error(`Play external URL error (attempt ${i + 1}):`, err);
+        // continue to next candidate
       }
-
-      // Final fallback: report generic error
-      setIsLoading(false);
-      setStreamError('Unable to play audio');
-      toast.error('Unable to play audio');
     }
+
+    // If all attempts failed, show helpful message
+    setIsLoading(false);
+    const msg = isHttp
+      ? 'This audio link is http and blocked on https. Proxy and https attempts failed. Please provide an https-capable link.'
+      : 'Unable to play this audio (direct and proxy attempts failed).';
+    setStreamError(msg);
+    toast.error(msg);
   }, [setIsLoading, setStreamError, setIsPlaying, volume]);
 
   const pause = useCallback(() => {
