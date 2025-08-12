@@ -1,4 +1,6 @@
+import RadioPlayer from './RadioPlayer';
+
 const RadioPlayerSection = () => {
-  return <div></div>;
+  return <RadioPlayer />;
 };
 export default RadioPlayerSection;
