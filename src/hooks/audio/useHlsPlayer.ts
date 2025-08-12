@@ -126,6 +126,34 @@ export function useHlsPlayer({
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
               console.log('HLS: Fatal network error, trying to recover');
+
+              // If manifest failed, try station fallbackUrl (mp3) if provided
+              if (
+                (data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR || data.details === Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) &&
+                station.fallbackUrl
+              ) {
+                try {
+                  console.warn('HLS: Switching to fallback URL:', station.fallbackUrl);
+                  hls.destroy();
+                  hlsRef.current = null;
+                  audio.src = station.fallbackUrl;
+                  audio.load();
+                  audio.play().then(() => {
+                    setIsPlaying(true);
+                    setIsLoading(false);
+                    setStreamError(null);
+                    toast.success(`Now playing backup: ${station.name}`);
+                  }).catch((e) => {
+                    console.error('Fallback play failed:', e);
+                    setStreamError('Backup stream failed to play');
+                    toast.error('Backup stream failed to play');
+                  });
+                  return;
+                } catch (e) {
+                  console.error('Fallback switch failed:', e);
+                }
+              }
+
               hls.startLoad();
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
