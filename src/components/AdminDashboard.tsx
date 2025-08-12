@@ -16,11 +16,9 @@ import {
   Radio, 
   Settings, 
    
-  FileText, 
   Calendar,
   Music,
   MessageSquare,
-  Image as ImageIcon,
   Activity,
   DollarSign,
   TrendingUp,
@@ -1253,10 +1251,6 @@ const AdminDashboard = () => {
                 <Plus className="h-6 w-6 mb-2" />
                 Add Show
               </Button>
-              <Button variant="outline" className="h-20 flex flex-col" onClick={() => setActiveTab('content')}>
-                <Upload className="h-6 w-6 mb-2" />
-                Upload Media
-              </Button>
               <Button variant="outline" className="h-20 flex flex-col" onClick={() => setActiveTab('users')}>
                 <UserPlus className="h-6 w-6 mb-2" />
                 Add User
@@ -1949,61 +1943,6 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const renderContent = () => (
-    <div className="space-y-6">
-      <h3 className="text-2xl font-bold">Content Management</h3>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Music className="h-5 w-5" />
-              Podcasts
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">128</p>
-            <p className="text-sm text-muted-foreground">Total episodes</p>
-            <Button className="w-full mt-4" variant="outline">
-              Manage Podcasts
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Blog Posts
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">45</p>
-            <p className="text-sm text-muted-foreground">Published articles</p>
-            <Button className="w-full mt-4" variant="outline">
-              Manage Blog
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ImageIcon className="h-5 w-5" />
-              Media Library
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">892</p>
-            <p className="text-sm text-muted-foreground">Files uploaded</p>
-            <Button className="w-full mt-4" variant="outline">
-              Browse Media
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
 
   const renderSettings = () => (
     <div className="space-y-6">
@@ -2228,10 +2167,6 @@ const AdminDashboard = () => {
               <Music className="h-4 w-4" />
               Podcasts
             </TabsTrigger>
-            <TabsTrigger value="content" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Content
-            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Settings
@@ -2242,7 +2177,7 @@ const AdminDashboard = () => {
           <TabsContent value="shows">{renderShows()}</TabsContent>
           <TabsContent value="users">{renderUsers()}</TabsContent>
           <TabsContent value="podcasts">{renderPodcasts()}</TabsContent>
-          <TabsContent value="content">{renderContent()}</TabsContent>
+          
           
           <TabsContent value="settings">{renderSettings()}</TabsContent>
         </Tabs>
