@@ -156,7 +156,7 @@ export function useHlsPlayer({
     }
     const audio = audioRef.current;
 
-    // Destroy HLS if present
+    // Tear down any existing HLS instance
     if (hlsRef.current) {
       hlsRef.current.destroy();
       hlsRef.current = null;
@@ -165,21 +165,71 @@ export function useHlsPlayer({
     setIsLoading(true);
     setStreamError(null);
 
-    audio.src = url;
-    audio.volume = volume / 100;
-    audio.crossOrigin = 'anonymous';
-    audio.preload = 'auto';
-    (audio as any).mozAudioChannelType = 'content';
-    audio.setAttribute('playsinline', '');
-    audio.setAttribute('webkit-playsinline', '');
+    // Helper: try a candidate URL
+    const tryPlay = async (candidate: string) => {
+      audio.src = candidate;
+      audio.volume = volume / 100;
+      audio.crossOrigin = 'anonymous';
+      audio.preload = 'auto';
+      (audio as any).mozAudioChannelType = 'content';
+      audio.setAttribute('playsinline', '');
+      audio.setAttribute('webkit-playsinline', '');
+      audio.load();
+      await audio.play();
+    };
+
+    // If it's an HLS URL, use Hls.js/native path
+    if (url.includes('.m3u8')) {
+      try {
+        if (Hls.isSupported()) {
+          const hls = new Hls({ enableWorker: true, lowLatencyMode: true, backBufferLength: 90 });
+          hlsRef.current = hls;
+          hls.attachMedia(audio);
+          hls.loadSource(url);
+          // small delay to allow manifest
+          await new Promise((res) => setTimeout(res, 200));
+          await audio.play();
+        } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+          await tryPlay(url);
+        } else {
+          throw new Error('HLS not supported by this browser');
+        }
+        setIsPlaying(true);
+        setIsLoading(false);
+        toast.success(`Now playing: ${name}`);
+        return;
+      } catch (err) {
+        console.error('Play external HLS error:', err);
+        setIsLoading(false);
+        setStreamError('Unable to play this HLS source in your browser');
+        toast.error('Unable to play this HLS source');
+        return;
+      }
+    }
+
+    // Non-HLS: attempt HTTPS upgrade if needed (avoid mixed content on HTTPS site)
+    const isHttp = url.startsWith('http://');
+    const httpsUrl = isHttp ? url.replace(/^http:\/\//, 'https://') : url;
 
     try {
-      await audio.play();
+      // First try HTTPS (or original if already HTTPS)
+      await tryPlay(httpsUrl);
       setIsPlaying(true);
       setIsLoading(false);
       toast.success(`Now playing: ${name}`);
-    } catch (error) {
-      console.error('Play external URL error:', error);
+    } catch (firstErr) {
+      console.error('Play external URL error (first attempt):', firstErr);
+
+      if (isHttp) {
+        // Mixed content likely blocked; inform user/admin
+        setIsLoading(false);
+        const msg = 'This audio link uses http and is blocked on https pages. Please update the podcast link to https.';
+        setStreamError(msg);
+        toast.error(msg);
+        return;
+      }
+
+      // Final fallback: report generic error
       setIsLoading(false);
       setStreamError('Unable to play audio');
       toast.error('Unable to play audio');
