@@ -1,7 +1,7 @@
 
 import React, { useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, SkipBack, SkipForward, Radio } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface PlaybackControlsProps {
@@ -61,16 +61,6 @@ const PlaybackControls: React.FC<PlaybackControlsProps> = ({
 
   return (
     <div className="flex items-center space-x-3">
-      <Button
-        variant="outline"
-        size="icon"
-        className="rounded-full bg-transparent border-white/20 hover:bg-white/10 dark:border-gray-700 dark:hover:bg-gray-800"
-        onClick={() => onChangeStation('prev')}
-        title="Previous station"
-      >
-        <SkipBack size={18} />
-      </Button>
-      
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -93,35 +83,6 @@ const PlaybackControls: React.FC<PlaybackControlsProps> = ({
           {isPlaying ? 'Pause' : 'Play'}
         </TooltipContent>
       </Tooltip>
-      
-      <Button
-        variant="outline"
-        size="icon"
-        className="rounded-full bg-transparent border-white/20 hover:bg-white/10 dark:border-gray-700 dark:hover:bg-gray-800"
-        onClick={() => onChangeStation('next')}
-        title="Next station"
-      >
-        <SkipForward size={18} />
-      </Button>
-
-      {onForceTryPlay && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full bg-transparent border-white/20 hover:bg-white/10 dark:border-gray-700 dark:hover:bg-gray-800"
-              onClick={handleForceTryPlay}
-              title="Force play (if stuck)"
-            >
-              <Radio size={16} />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            Force play (if stuck)
-          </TooltipContent>
-        </Tooltip>
-      )}
     </div>
   );
 };
