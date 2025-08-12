@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, Radio, Clock, Calendar } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 
 export default function NowLive() {
   const { currentShow, loading } = useCurrentShow();
+  const { isPlaying, togglePlayPause } = useAudioPlayer();
 
   if (loading) {
     return (
@@ -47,11 +49,7 @@ export default function NowLive() {
                    <Button 
                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white h-16 w-16 rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300"
                      onClick={() => {
-                       const radioPlayer = document.querySelector('[data-radio-player]');
-                       if (radioPlayer) {
-                         const event = new CustomEvent('triggerPlay');
-                         radioPlayer.dispatchEvent(event);
-                       }
+                       if (!isPlaying) togglePlayPause();
                      }}
                    >
                      <Play className="w-8 h-8" fill="currentColor" />
@@ -91,11 +89,7 @@ export default function NowLive() {
                        <Button 
                          className="bg-green-600 hover:bg-green-700 text-white"
                          onClick={() => {
-                           const radioPlayer = document.querySelector('[data-radio-player]');
-                           if (radioPlayer) {
-                             const event = new CustomEvent('triggerPlay');
-                             radioPlayer.dispatchEvent(event);
-                           }
+                           if (!isPlaying) togglePlayPause();
                          }}
                        >
                          <Radio className="mr-2 w-4 h-4" />
@@ -120,11 +114,7 @@ export default function NowLive() {
                    <Button 
                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-muted hover:bg-muted/90 text-muted-foreground h-16 w-16 rounded-full opacity-90 group-hover:opacity-100 transition-all duration-300"
                      onClick={() => {
-                       const radioPlayer = document.querySelector('[data-radio-player]');
-                       if (radioPlayer) {
-                         const event = new CustomEvent('triggerPlay');
-                         radioPlayer.dispatchEvent(event);
-                       }
+                       if (!isPlaying) togglePlayPause();
                      }}
                    >
                      <Play className="w-8 h-8" fill="currentColor" />

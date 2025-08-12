@@ -97,7 +97,8 @@ export function createAudioControls(
     if (isPlaying) {
       pauseCurrentStation();
     } else {
-      playCurrentStation();
+      // Use forceTryPlay to ensure audio contexts are unlocked and player initialized
+      forceTryPlay();
     }
   };
   
