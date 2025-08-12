@@ -1,5 +1,5 @@
 
-import { MutableRefObject } from 'react';
+import { MutableRefObject, useEffect } from 'react';
 import { Howl } from 'howler';
 import { RadioStation } from '@/hooks/audio/types';
 import { useHlsPlayer } from '@/hooks/audio/useHlsPlayer';
@@ -54,6 +54,14 @@ export function createAudioControls(
     setIsLoading,
     setStreamError
   });
+
+  // Reinitialize player when the current station source changes (e.g., DB settings loaded)
+  useEffect(() => {
+    hlsPlayer.initializeHlsPlayer();
+    if (isPlaying) {
+      hlsPlayer.play();
+    }
+  }, [currentStation?.url, (currentStation as any)?.streamUrl]);
 
   // Initialize HLS player when station changes
   const initializeCurrentStation = () => {
