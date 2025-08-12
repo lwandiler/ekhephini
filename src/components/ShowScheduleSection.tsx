@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, User, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Clock, User, Calendar, CalendarDays } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Show {
@@ -200,6 +202,15 @@ const ShowScheduleSection = () => {
           <ShowCard show={previousShow} type="Previous Show" />
           <ShowCard show={currentShow} type="Current Show" isActive={true} />
           <ShowCard show={nextShow} type="Next Show" />
+        </div>
+
+        <div className="text-center mt-12">
+          <Link to="/schedule">
+            <Button variant="outline" size="lg" className="gap-2">
+              <CalendarDays className="h-5 w-5" />
+              View Full Weekly Schedule
+            </Button>
+          </Link>
         </div>
 
         <div className="text-center mt-8">
