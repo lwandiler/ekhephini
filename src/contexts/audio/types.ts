@@ -16,6 +16,7 @@ export interface AudioPlayerContextProps {
   setVolume: (volume: number) => void;
   forceTryPlay: () => void;
   getCurrentStationName: () => string;
+  playExternalUrl: (name: string, url: string) => void;
 }
 
 export interface AudioState {

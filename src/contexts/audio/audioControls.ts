@@ -156,6 +156,7 @@ export function createAudioControls(
     playPreviousStation,
     setVolume: setVolumeHandler,
     forceTryPlay,
-    getCurrentStationName
+    getCurrentStationName,
+    playExternalUrl: (name: string, url: string) => hlsPlayer.playExternalUrl(name, url)
   };
 }

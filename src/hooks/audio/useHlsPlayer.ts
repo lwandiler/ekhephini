@@ -142,7 +142,6 @@ export function useHlsPlayer({
 
   const play = useCallback(async () => {
     if (!audioRef.current) return;
-    
     try {
       await audioRef.current.play();
     } catch (error) {
@@ -150,6 +149,42 @@ export function useHlsPlayer({
       setStreamError('Playback blocked - please interact with the page first');
     }
   }, [setStreamError]);
+
+  const playExternalUrl = useCallback(async (name: string, url: string) => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+    }
+    const audio = audioRef.current;
+
+    // Destroy HLS if present
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+
+    setIsLoading(true);
+    setStreamError(null);
+
+    audio.src = url;
+    audio.volume = volume / 100;
+    audio.crossOrigin = 'anonymous';
+    audio.preload = 'auto';
+    (audio as any).mozAudioChannelType = 'content';
+    audio.setAttribute('playsinline', '');
+    audio.setAttribute('webkit-playsinline', '');
+
+    try {
+      await audio.play();
+      setIsPlaying(true);
+      setIsLoading(false);
+      toast.success(`Now playing: ${name}`);
+    } catch (error) {
+      console.error('Play external URL error:', error);
+      setIsLoading(false);
+      setStreamError('Unable to play audio');
+      toast.error('Unable to play audio');
+    }
+  }, [setIsLoading, setStreamError, setIsPlaying, volume]);
 
   const pause = useCallback(() => {
     if (audioRef.current) {
@@ -196,6 +231,7 @@ export function useHlsPlayer({
   return {
     initializeHlsPlayer,
     play,
+    playExternalUrl,
     pause,
     setVolumeLevel,
     audioElement: audioRef.current

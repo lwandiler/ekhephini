@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import RadioNavigation from '@/components/RadioNavigation';
 import NewsletterFooter from '@/components/NewsletterFooter';
+import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 
 interface PodcastData {
   id: string;
@@ -23,7 +24,8 @@ const Podcasts = () => {
   const [filteredPodcasts, setFilteredPodcasts] = useState<PodcastData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate();
+const navigate = useNavigate();
+const { playExternalUrl } = useAudioPlayer();
 
   useEffect(() => {
     const fetchPodcasts = async () => {
@@ -66,9 +68,9 @@ const Podcasts = () => {
     });
   };
 
-  const handlePodcastClick = (podcastLink: string) => {
-    window.open(podcastLink, '_blank');
-  };
+const handlePodcastClick = (podcastName: string, podcastLink: string) => {
+  playExternalUrl(podcastName, podcastLink);
+};
 
   const handleBackToHome = () => {
     navigate('/');
@@ -158,7 +160,7 @@ const Podcasts = () => {
                 <Card 
                   key={podcast.id} 
                   className="overflow-hidden shadow-xl border-0 bg-gradient-to-br from-card to-muted/30 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group"
-                  onClick={() => handlePodcastClick(podcast.podcast_link)}
+onClick={() => handlePodcastClick(podcast.name, podcast.podcast_link)}
                 >
                   <div className="relative">
                     {podcast.thumbnail_url ? (

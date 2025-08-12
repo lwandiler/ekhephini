@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Podcast, PlayCircle, ExternalLink } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 
 interface PodcastData {
   id: string;
@@ -19,6 +20,7 @@ const LatestPodcasts = () => {
   const [podcasts, setPodcasts] = useState<PodcastData[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { playExternalUrl } = useAudioPlayer();
 
   useEffect(() => {
     const fetchLatestPodcasts = async () => {
@@ -53,9 +55,9 @@ const LatestPodcasts = () => {
     });
   };
 
-  const handlePodcastClick = (podcastLink: string) => {
-    window.open(podcastLink, '_blank');
-  };
+const handlePodcastClick = (podcastName: string, podcastLink: string) => {
+  playExternalUrl(podcastName, podcastLink);
+};
 
   const handleExploreMore = () => {
     navigate('/podcasts');
@@ -97,11 +99,11 @@ const LatestPodcasts = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {podcasts.map((podcast, index) => (
-                <Card 
-                  key={podcast.id} 
-                  className="overflow-hidden shadow-xl border-0 bg-gradient-to-br from-card to-muted/30 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group"
-                  onClick={() => handlePodcastClick(podcast.podcast_link)}
-                >
+<Card 
+  key={podcast.id} 
+  className="overflow-hidden shadow-xl border-0 bg-gradient-to-br from-card to-muted/30 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group"
+  onClick={() => handlePodcastClick(podcast.name, podcast.podcast_link)}
+>
                   <div className="relative">
                     {podcast.thumbnail_url ? (
                       <img
