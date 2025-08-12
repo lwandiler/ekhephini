@@ -3,12 +3,13 @@ import { supabaseApi } from './config';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface StationSettingsResponse {
-  id: number;
+  id: string;
   station_name: string;
-  station_tagline?: string;
-  station_description?: string;
+  tagline?: string;
+  description?: string;
   stream_url?: string;
-  recording_stream_url?: string;
+  backup_stream_url?: string;
+  recording_stream_url?: string; // keep optional for backward compat
   logo_url?: string;
   social_links?: Record<string, string>;
   contact_info?: Record<string, string>;
@@ -20,12 +21,19 @@ export const stationService = {
   // Get station settings
   async getStationSettings(): Promise<StationSettingsResponse | null> {
     try {
-      const response = await supabaseApi.get('/station_settings', {
-        params: {
-          id: 'eq.1'
-        }
-      });
-      return response.data[0] || null;
+      // Use Supabase client to avoid hardcoded REST key issues and wrong IDs
+      const { data, error } = await supabase
+        .from('station_settings')
+        .select('*')
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching station settings (client):', error);
+        return null;
+      }
+
+      return data as unknown as StationSettingsResponse | null;
     } catch (error) {
       console.error('Error fetching station settings:', error);
       return null;

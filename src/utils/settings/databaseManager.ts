@@ -11,14 +11,14 @@ export async function loadSettingsFromDatabase() {
     if (data) {
       return {
         stationName: data.station_name || defaultStationSettings.stationName,
-        stationTagline: data.station_tagline || defaultStationSettings.stationTagline,
-        stationDescription: data.station_description || defaultStationSettings.stationDescription,
+        stationTagline: data.tagline || defaultStationSettings.stationTagline,
+        stationDescription: data.description || defaultStationSettings.stationDescription,
         streamUrl: data.stream_url || defaultStationSettings.streamUrl,
-        recordingStreamUrl: data.recording_stream_url || undefined,
+        recordingStreamUrl: data.backup_stream_url || undefined,
         logoUrl: data.logo_url || defaultStationSettings.logoUrl,
-        socialLinks: extractSocialLinks(data.social_links),
-        contactInfo: extractContactInfo(data.contact_info)
-      };
+        socialLinks: extractSocialLinks((data as any).social_links),
+        contactInfo: extractContactInfo((data as any).contact_info)
+      } as any;
     }
     
     return null;
