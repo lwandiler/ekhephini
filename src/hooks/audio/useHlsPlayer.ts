@@ -83,16 +83,18 @@ export function useHlsPlayer({
     if (Hls.isSupported() && streamUrl.includes('.m3u8')) {
       console.log('Using HLS.js for M3U8 stream:', streamUrl);
       
+      const functionsBase = 'https://innpnyojhyedfrtnaxsi.functions.supabase.co';
       const hls = new Hls({
         enableWorker: true,
         lowLatencyMode: true,
-        backBufferLength: 90
+        backBufferLength: 90,
+        xhrSetup: (xhr: XMLHttpRequest, url: string) => {
+          const proxied = `${functionsBase}/stream-proxy?url=${encodeURIComponent(url)}`;
+          xhr.open('GET', proxied, true);
+        },
       });
       
       hlsRef.current = hls;
-
-      const triedProxyRef = { current: false } as { current: boolean };
-
       hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         console.log('HLS: Media attached');
       });
@@ -104,24 +106,6 @@ export function useHlsPlayer({
 
       hls.on(Hls.Events.ERROR, (event, data) => {
         console.error('HLS Error:', data);
-
-        // Retry via CORS proxy once if manifest load fails (common CORS issue)
-        if (
-          data.type === Hls.ErrorTypes.NETWORK_ERROR &&
-          (data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR || data.details === Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) &&
-          !triedProxyRef.current
-        ) {
-          triedProxyRef.current = true;
-          const proxied = `https://cors.isomorphic-git.org/${streamUrl}`;
-          console.warn('HLS: Manifest load failed, retrying via CORS proxy:', proxied);
-          try {
-            hls.loadSource(proxied);
-            return; // wait for MANIFEST_PARSED
-          } catch (e) {
-            console.error('HLS proxy retry failed immediately:', e);
-          }
-        }
-        
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
