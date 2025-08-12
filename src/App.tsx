@@ -18,6 +18,7 @@ import CatchUp from '@/pages/CatchUp';
 import Contact from '@/pages/Contact';
 import Shows from '@/pages/Shows';
 import Podcasts from '@/pages/Podcasts';
+import Schedule from '@/pages/Schedule';
 import About from '@/pages/About';
 
 
@@ -41,6 +42,7 @@ function App() {
                       <Route path="/" element={<Index />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/shows" element={<Shows />} />
+                      <Route path="/schedule" element={<Schedule />} />
                       <Route path="/podcasts" element={<Podcasts />} />
                       <Route path="/catch-up" element={<CatchUp />} />
                       <Route path="/contact" element={<Contact />} />

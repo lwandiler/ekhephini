@@ -46,6 +46,12 @@ const RadioNavigation = () => {
             Shows
           </div>
           <Link 
+            to="/schedule" 
+            className="font-asap text-[16px] font-medium text-black"
+          >
+            Schedule
+          </Link>
+          <Link 
             to="/podcasts" 
             className="font-asap text-[16px] font-medium text-black"
           >
