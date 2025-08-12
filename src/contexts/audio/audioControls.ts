@@ -66,11 +66,8 @@ export function createAudioControls(
   const playCurrentStation = () => {
     if (!hlsPlayer.audioElement) {
       initializeCurrentStation();
-      setTimeout(() => hlsPlayer.play(), 500);
-    } else {
-      hlsPlayer.play();
     }
-    
+    hlsPlayer.play();
     // Analytics tracking - disabled for now
   };
   

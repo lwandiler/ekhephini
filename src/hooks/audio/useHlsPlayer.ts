@@ -141,14 +141,37 @@ export function useHlsPlayer({
   }, [station, volume, setIsPlaying, setIsLoading, setStreamError]);
 
   const play = useCallback(async () => {
-    if (!audioRef.current) return;
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+    }
+    const audio = audioRef.current;
+
     try {
-      await audioRef.current.play();
+      // If no media is attached yet for an HLS stream, initialize first
+      const isHls = (station.streamUrl || station.url || '').includes('.m3u8');
+      if (isHls && !hlsRef.current) {
+        initializeHlsPlayer();
+      }
+
+      // If the element isn't ready, wait until it can play, then try
+      if (audio.readyState < 2) {
+        await new Promise<void>((resolve) => {
+          const onCanPlay = () => {
+            audio.removeEventListener('canplay', onCanPlay);
+            resolve();
+          };
+          audio.addEventListener('canplay', onCanPlay, { once: true } as any);
+          // As a nudge for some browsers
+          audio.load();
+        });
+      }
+
+      await audio.play();
     } catch (error) {
       console.error('Play error:', error);
-      setStreamError('Playback blocked - please interact with the page first');
+      setStreamError('Playback failed. Please try again.');
     }
-  }, [setStreamError]);
+  }, [initializeHlsPlayer, setStreamError, station.streamUrl, station.url]);
 
   const playExternalUrl = useCallback(async (name: string, url: string) => {
     if (!audioRef.current) {
