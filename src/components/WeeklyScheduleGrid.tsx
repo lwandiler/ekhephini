@@ -119,7 +119,107 @@ const WeeklyScheduleGrid = () => {
     );
   }
 
-  return null;
+  return (
+    <section className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px] bg-gradient-to-b from-background to-muted/20">
+      <div className="container mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 flex items-center justify-center gap-3">
+            <Clock className="h-8 w-8 text-primary" />
+            Weekly Schedule
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Your complete weekly programming guide. All times shown in 24-hour format.
+          </p>
+        </div>
+
+        <Card className="overflow-hidden shadow-xl border-0 bg-gradient-to-br from-card to-muted/30">
+          <CardHeader className="bg-yellow-400 border-b">
+            <CardTitle className="text-center text-2xl font-bold">Programming Schedule</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto relative">
+              <table className="w-full min-w-[1200px]">
+                <thead>
+                  <tr className="border-b-2 border-primary/20">
+                    <th className="p-6 text-left font-bold text-lg w-[140px] bg-primary text-primary-foreground sticky left-0 z-30 border-r-2 border-primary/30 shadow-lg">
+                      Day
+                    </th>
+                    {timeSlots.map(time => (
+                      <th key={time} className="p-4 text-center font-semibold min-w-[160px] bg-gradient-to-b from-muted/30 to-background text-lg z-10">
+                        {time}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {daysOfWeek.map((day, dayIndex) => (
+                    <tr key={day} className={`border-b border-muted/50 hover:bg-gradient-to-r hover:from-muted/20 hover:to-transparent transition-all duration-200 ${dayIndex % 2 === 0 ? 'bg-muted/10' : 'bg-background'}`}>
+                      <td className="p-6 font-bold text-lg bg-primary text-primary-foreground sticky left-0 z-50 border-r-2 border-primary/20 w-[140px] shadow-md">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-5 w-5 text-primary-foreground" />
+                          {day}
+                        </div>
+                      </td>
+                       {timeSlots.map((timeSlot, timeIndex) => {
+                         const show = getShowForTimeSlot(day, timeSlot);
+                         const isCurrent = show ? isCurrentShow(show) : false;
+                         
+                         // Skip cells that are covered by a previous show's colspan
+                         if (show && !shouldRenderShow(show, day, timeSlot)) {
+                           return null;
+                         }
+                         
+                         const colSpan = show ? getShowSpan(show) : 1;
+                         
+                         return (
+                           <td key={`${day}-${timeSlot}`} className="p-3 text-center" colSpan={colSpan}>
+                             {show ? (
+                               <div 
+                                 className={`p-4 rounded-xl border-2 transition-all duration-1000 hover:shadow-lg hover:scale-105 cursor-pointer group ${
+                                   isCurrent 
+                                     ? 'bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/20 border-primary ring-2 ring-primary/40 shadow-lg animate-pulse-light' 
+                                     : 'bg-gradient-to-br from-card to-muted/30 border-border hover:border-primary/60 hover:bg-gradient-to-br hover:from-primary/5 hover:to-secondary/5'
+                                 }`}
+                               >
+                                 <div className="flex items-center justify-between mb-2">
+                                   <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{show.title}</h4>
+                                   {isCurrent && (
+                                     <Badge variant="destructive" className="text-xs ml-1 animate-pulse bg-red-500 text-white">
+                                       LIVE
+                                     </Badge>
+                                   )}
+                                 </div>
+                                 <div className="flex items-center gap-1">
+                                   <Clock className="h-3 w-3 text-muted-foreground" />
+                                   <p className="text-xs font-mono text-muted-foreground">
+                                     {formatTime(show.start_time)} - {formatTime(show.end_time)}
+                                   </p>
+                                 </div>
+                               </div>
+                             ) : (
+                               <div className="p-4 rounded-xl bg-gradient-to-br from-muted/10 to-muted/5 border-2 border-dashed border-muted-foreground/20 hover:border-muted-foreground/40 transition-all duration-200">
+                                 <p className="text-xs text-muted-foreground font-medium">No Show</p>
+                               </div>
+                             )}
+                           </td>
+                         );
+                       }).filter(Boolean)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="text-center mt-8">
+          <p className="text-sm text-muted-foreground">
+            Schedule updates automatically • Live shows highlighted in color • Hover for show details
+          </p>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default WeeklyScheduleGrid;
