@@ -12,9 +12,9 @@ const SecureAdmin = () => {
   const { isAdmin } = useInlineEdit();
 
   // Redirect non-admin users
-  if (user && !isAdmin) {
-    return <Navigate to="/" replace />;
-  }
+  // if (user && !isAdmin) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return (
     <ProtectedRoute>
