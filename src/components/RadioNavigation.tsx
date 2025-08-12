@@ -63,14 +63,6 @@ const RadioNavigation = () => {
           >
             About Us
           </Link>
-          {!user && (
-            <Link 
-              to="/auth" 
-              className="font-asap text-[16px] font-medium text-primary"
-            >
-              Sign In
-            </Link>
-          )}
         </nav>
 
         {/* Radio Player Controls */}
