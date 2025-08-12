@@ -15,7 +15,7 @@ import {
   Users, 
   Radio, 
   Settings, 
-  BarChart3, 
+   
   FileText, 
   Calendar,
   Music,
@@ -1261,10 +1261,6 @@ const AdminDashboard = () => {
                 <UserPlus className="h-6 w-6 mb-2" />
                 Add User
               </Button>
-              <Button variant="outline" className="h-20 flex flex-col" onClick={() => setActiveTab('analytics')}>
-                <BarChart3 className="h-6 w-6 mb-2" />
-                View Analytics
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -2203,54 +2199,6 @@ const AdminDashboard = () => {
     </div>
   );
 
-  const renderAnalytics = () => (
-    <div className="space-y-6">
-      <h3 className="text-2xl font-bold">Analytics & Reports</h3>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Today's Listeners</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">1,234</p>
-            <p className="text-sm text-green-600">↗ +12% from yesterday</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Peak Hours</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">08:00</p>
-            <p className="text-sm text-muted-foreground">Morning drive time</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Location</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">NYC</p>
-            <p className="text-sm text-muted-foreground">32% of listeners</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Listening Trends</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 bg-muted rounded-lg flex items-center justify-center">
-            <p className="text-muted-foreground">Analytics chart would go here</p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -2284,10 +2232,6 @@ const AdminDashboard = () => {
               <FileText className="h-4 w-4" />
               Content
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Analytics
-            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Settings
@@ -2299,7 +2243,7 @@ const AdminDashboard = () => {
           <TabsContent value="users">{renderUsers()}</TabsContent>
           <TabsContent value="podcasts">{renderPodcasts()}</TabsContent>
           <TabsContent value="content">{renderContent()}</TabsContent>
-          <TabsContent value="analytics">{renderAnalytics()}</TabsContent>
+          
           <TabsContent value="settings">{renderSettings()}</TabsContent>
         </Tabs>
       </div>
