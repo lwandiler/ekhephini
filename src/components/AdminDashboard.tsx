@@ -79,7 +79,8 @@ const AdminDashboard = () => {
   const [newShowImageFile, setNewShowImageFile] = useState<File | null>(null);
   const [isUploadingShowImage, setIsUploadingShowImage] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'DJ' });
-  const [newPodcast, setNewPodcast] = useState({ name: '', podcast_link: '', description: '', thumbnail: null as File | null });
+  const [newPodcast, setNewPodcast] = useState({ name: '', podcast_link: '', description: '', thumbnail: null as File | null, thumbnail_url: '' });
+  const [podcastImageMode, setPodcastImageMode] = useState<'url' | 'upload'>('url');
   const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
   const [bulkUploadProgress, setBulkUploadProgress] = useState(0);
   const [isProcessingBulk, setIsProcessingBulk] = useState(false);
@@ -468,14 +469,14 @@ const AdminDashboard = () => {
       setIsUploadingThumbnail(true);
       
       try {
-        let thumbnailUrl = '';
+        let thumbnailUrl = (podcastImageMode === 'url') ? (newPodcast.thumbnail_url?.trim() || '') : '';
         
-        // Upload thumbnail if provided
-        if (newPodcast.thumbnail) {
+        // Upload thumbnail if provided and mode is upload
+        if (podcastImageMode === 'upload' && newPodcast.thumbnail) {
           const fileExt = newPodcast.thumbnail.name.split('.').pop();
           const fileName = `${Date.now()}.${fileExt}`;
           
-          const { data: uploadData, error: uploadError } = await supabase.storage
+          const { error: uploadError } = await supabase.storage
             .from('podcast-thumbnails')
             .upload(fileName, newPodcast.thumbnail);
 
@@ -504,8 +505,9 @@ const AdminDashboard = () => {
 
         if (data) {
           setPodcasts([data[0], ...podcasts]);
-          setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null });
+          setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null, thumbnail_url: '' });
           setShowNewPodcastForm(false);
+          setPodcastImageMode('url');
           toast({
             title: "Success",
             description: "Podcast added successfully!"
@@ -549,15 +551,16 @@ const AdminDashboard = () => {
   };
 
   const handleEditPodcast = (podcast: any) => {
-    console.log('Edit button clicked for podcast:', podcast);
     setEditingPodcast(podcast);
     setNewPodcast({
       name: podcast.name,
       podcast_link: podcast.podcast_link,
       description: podcast.description || '',
-      thumbnail: null
+      thumbnail: null,
+      thumbnail_url: podcast.thumbnail_url || ''
     });
     setShowNewPodcastForm(true);
+    setPodcastImageMode(podcast.thumbnail_url ? 'url' : 'upload');
     console.log('Edit form should now be visible');
   };
 
@@ -567,14 +570,14 @@ const AdminDashboard = () => {
     setIsUploadingThumbnail(true);
     
     try {
-      let thumbnailUrl = editingPodcast.thumbnail_url;
+      let thumbnailUrl = editingPodcast.thumbnail_url || '';
       
-      // Upload new thumbnail if provided
-      if (newPodcast.thumbnail) {
+      // Upload new thumbnail if provided and mode is upload
+      if (podcastImageMode === 'upload' && newPodcast.thumbnail) {
         const fileExt = newPodcast.thumbnail.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
         
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('podcast-thumbnails')
           .upload(fileName, newPodcast.thumbnail);
 
@@ -586,6 +589,8 @@ const AdminDashboard = () => {
           .getPublicUrl(fileName);
         
         thumbnailUrl = publicUrl;
+      } else if (podcastImageMode === 'url') {
+        thumbnailUrl = newPodcast.thumbnail_url?.trim() || editingPodcast.thumbnail_url || '';
       }
 
       // Update podcast data
@@ -602,12 +607,13 @@ const AdminDashboard = () => {
 
       if (error) throw error;
 
-      if (data) {
-        setPodcasts(podcasts.map(p => p.id === editingPodcast.id ? data[0] : p));
-        setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null });
-        setEditingPodcast(null);
-        setShowNewPodcastForm(false);
-        toast({
+        if (data) {
+          setPodcasts(podcasts.map(p => p.id === editingPodcast.id ? data[0] : p));
+          setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null, thumbnail_url: '' });
+          setEditingPodcast(null);
+          setShowNewPodcastForm(false);
+          setPodcastImageMode('url');
+          toast({
           title: "Success",
           description: "Podcast updated successfully!"
         });
@@ -1828,17 +1834,41 @@ const AdminDashboard = () => {
               />
             </div>
             <div>
-              <Label htmlFor="podcast-thumbnail">Thumbnail (Optional)</Label>
-              <Input 
-                id="podcast-thumbnail" 
-                type="file"
-                accept="image/*"
-                onChange={(e) => setNewPodcast({...newPodcast, thumbnail: e.target.files?.[0] || null})}
-                className="mt-1"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Upload a thumbnail image for the podcast episode
-              </p>
+              <Label>Thumbnail (Optional)</Label>
+              <div className="flex gap-2 mt-2">
+                <Button type="button" variant={podcastImageMode === 'url' ? 'default' : 'outline'} size="sm" onClick={() => setPodcastImageMode('url')}>Use URL</Button>
+                <Button type="button" variant={podcastImageMode === 'upload' ? 'default' : 'outline'} size="sm" onClick={() => setPodcastImageMode('upload')}>Upload</Button>
+              </div>
+              {podcastImageMode === 'url' ? (
+                <div className="mt-2">
+                  <Input 
+                    id="podcast-thumbnail-url"
+                    type="url"
+                    placeholder="https://example.com/image.jpg"
+                    value={newPodcast.thumbnail_url}
+                    onChange={(e) => setNewPodcast({ ...newPodcast, thumbnail_url: e.target.value })}
+                  />
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <Input 
+                    id="podcast-thumbnail" 
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setNewPodcast({...newPodcast, thumbnail: e.target.files?.[0] || null})}
+                  />
+                </div>
+              )}
+              {(newPodcast.thumbnail_url || newPodcast.thumbnail) && (
+                <div className="mt-3 border rounded overflow-hidden" style={{ aspectRatio: '16 / 9' }}>
+                  <img
+                    src={newPodcast.thumbnail ? URL.createObjectURL(newPodcast.thumbnail) : newPodcast.thumbnail_url}
+                    alt="Podcast thumbnail preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">Use a wide image (16:9), e.g., 1280x720.</p>
             </div>
             <div className="flex gap-2">
               <Button 
@@ -1850,7 +1880,8 @@ const AdminDashboard = () => {
               <Button variant="outline" onClick={() => {
                 setShowNewPodcastForm(false);
                 setEditingPodcast(null);
-                setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null });
+                setNewPodcast({ name: '', podcast_link: '', description: '', thumbnail: null, thumbnail_url: '' });
+                setPodcastImageMode('url');
               }}>
                 Cancel
               </Button>
@@ -1858,7 +1889,7 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       )}
-      
+
       <Card>
         <CardContent className="p-6">
           {podcasts.length === 0 ? (
