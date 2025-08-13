@@ -2,9 +2,9 @@ const RadioContentSections = () => {
   return <div className="w-full bg-white">
       {/* Best Place Section */}
       <section className="py-16 px-4 md:px-8 lg:px-16 xl:px-[100px]">
-        <div className="flex items-start space-x-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           {/* Left Content */}
-          <div className="flex-1 mt-8">
+          <div className="flex-1 mt-4 md:mt-8">
             {/* Play Icon */}
             
 
@@ -33,7 +33,7 @@ const RadioContentSections = () => {
 
           {/* Right Image */}
           <div className="flex-1">
-            <img src="https://api.builder.io/api/v1/image/assets/TEMP/9aefcb01b5008efd9d11167375fdeee3b51a31ba?width=1110" alt="Design Inspiration" className="w-full max-w-[555px] h-auto md:h-[558px] object-cover rounded-[30px]" />
+            <img src="https://api.builder.io/api/v1/image/assets/TEMP/9aefcb01b5008efd9d11167375fdeee3b51a31ba?width=1110" alt="Design Inspiration" loading="lazy" className="w-full h-auto object-cover rounded-[30px]" />
           </div>
         </div>
       </section>
