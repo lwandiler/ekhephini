@@ -8,6 +8,8 @@ export interface ShowWithFormattedTime {
   host?: string;
   time?: string;
   description?: string;
+  day_of_week?: string;
+  image_url?: string | null;
 }
 
 export const showsService = {
