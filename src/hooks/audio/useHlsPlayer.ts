@@ -25,6 +25,16 @@ export function useHlsPlayer({
   const initializeHlsPlayer = useCallback(() => {
     if (!audioRef.current) {
       audioRef.current = new Audio();
+      try {
+        // Attach to DOM to improve autoplay reliability on some browsers
+        if (!document.body.contains(audioRef.current)) {
+          audioRef.current.setAttribute('data-radio-audio', 'true');
+          audioRef.current.style.display = 'none';
+          document.body.appendChild(audioRef.current);
+        }
+      } catch (e) {
+        console.warn('Could not append audio element to DOM:', e);
+      }
     }
 
     const audio = audioRef.current;
@@ -65,7 +75,13 @@ export function useHlsPlayer({
 
     audio.addEventListener('play', () => {
       setIsPlaying(true);
+      setIsLoading(false);
       toast.success(`Now playing: ${station.name}`);
+    });
+
+    audio.addEventListener('playing', () => {
+      // Ensure loading spinner is cleared when playback actually starts
+      setIsLoading(false);
     });
 
     audio.addEventListener('pause', () => {
@@ -364,6 +380,6 @@ export function useHlsPlayer({
     playExternalUrl,
     pause,
     setVolumeLevel,
-    audioElement: audioRef.current
+    getAudioElement: () => audioRef.current
   };
 }

@@ -78,7 +78,7 @@ export function createAudioControls(
   const playCurrentStation = () => {
     // Clear any podcast override when switching to live
     setCurrentPodcast(null);
-    if (!hlsPlayer.audioElement) {
+    if (!hlsPlayer.getAudioElement()) {
       initializeCurrentStation();
     }
     hlsPlayer.play();
@@ -142,7 +142,7 @@ export function createAudioControls(
       // Try to unlock audio context first
       await tryUnlockAllAudioContexts();
       
-      if (!hlsPlayer.audioElement) {
+      if (!hlsPlayer.getAudioElement()) {
         initializeCurrentStation();
         setTimeout(() => hlsPlayer.play(), 500);
       } else {
