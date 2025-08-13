@@ -63,8 +63,8 @@ export function useAudioState() {
       streamUrl: streamUrl || '', // Use empty string if no URL
       description: settings?.stationDescription || defaultStationSettings.stationDescription,
       genre: 'Radio',
-      location: 'Online',
-      fallbackUrl: settings?.recordingStreamUrl || undefined
+      location: 'Online'
+      // Removed fallbackUrl - only use primary URL
     };
 
     console.log("Rebuilt live station from DB settings:", newStation);

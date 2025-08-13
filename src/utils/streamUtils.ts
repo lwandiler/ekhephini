@@ -3,13 +3,13 @@ import { RadioStation } from '@/hooks/audio/types';
 import { toast } from 'sonner';
 
 export function openStreamInNewTab(station: RadioStation) {
-  // Get all potential URLs to attempt
-  const fallbackUrl = station.fallbackUrl;
-  const primaryUrl = station.url;
-  const settingsUrl = station.streamUrl;
+  // Use only the primary URL - no fallback
+  const url = station.streamUrl || station.url;
   
-  // Prioritize URLs: settings URL > fallback URL > primary URL
-  const url = settingsUrl || fallbackUrl || primaryUrl;
+  if (!url) {
+    toast.error("No stream URL available");
+    return;
+  }
   
   console.log(`Opening stream in new tab: ${url}`);
   

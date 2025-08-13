@@ -105,61 +105,8 @@ export function useHowlerPlayer() {
           console.error("Error loading audio:", error);
           setIsLoading(false);
           
-          // Try alternative URL (fallback)
-          const alternativeUrl = stations[currentStation].fallbackUrl;
-          
-          if (alternativeUrl && alternativeUrl !== stationUrl) {
-            console.log("Trying alternative URL:", alternativeUrl);
-            
-            if (sound.current) {
-              sound.current.unload();
-            }
-            
-            sound.current = new Howl({
-              src: [alternativeUrl],
-              html5: true,
-              format: ['mp3'],
-              autoplay: true,
-              preload: true,
-              volume: volume / 100,
-              onplay: () => {
-                console.log("Alternative stream started playing successfully");
-                setIsPlaying(true);
-                setIsLoading(false);
-                setStreamError(null);
-                toast.success(`Now playing: ${stations[currentStation].name} (alternative stream)`);
-              },
-              onloaderror: () => {
-                console.error("Alternative URL also failed");
-                if (retryCount.current < maxRetries) {
-                  retryCount.current += 1;
-                  console.log(`Auto-retry attempt ${retryCount.current}/${maxRetries}`);
-                  
-                  setTimeout(() => {
-                    if (sound.current) {
-                      sound.current.unload();
-                      sound.current = null;
-                    }
-                    
-                    initializeHowlerAudio(
-                      currentStation,
-                      stations,
-                      volume,
-                      setIsPlaying,
-                      setIsLoading,
-                      setStreamError,
-                      retryCount,
-                      maxRetries,
-                      sound
-                    );
-                  }, 2000); // Wait 2 seconds before retry
-                } else {
-                  setIsLoading(false);
-                  setStreamError("Stream failed to load. Try switching to fallback mode.");
-                }
-              }
-            });
-          } else if (retryCount.current < maxRetries) {
+          // No fallback URL - only retry with primary URL
+          if (retryCount.current < maxRetries) {
             retryCount.current += 1;
             console.log(`Retry attempt ${retryCount.current}/${maxRetries}`);
             
@@ -185,8 +132,8 @@ export function useHowlerPlayer() {
             toast.info(`Stream connection issue. Retrying... (${retryCount.current}/${maxRetries})`);
           } else {
             setIsPlaying(false);
-            setStreamError("Stream failed to load. Try switching to fallback mode or open in browser.");
-            toast.error("Unable to connect to stream. Please try the fallback mode.");
+            setStreamError("Stream failed to load.");
+            toast.error("Unable to connect to stream.");
           }
         },
         onplayerror: (id, error) => {
