@@ -2,15 +2,17 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 const RadioNavigation = () => {
   const { togglePlayPause, isPlaying } = useAudioPlayer();
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="w-full h-[111px] bg-white shadow-lg relative z-10">
-      <div className="w-full h-full px-[60px] flex items-center justify-between">
+    <header className="w-full h-16 md:h-[111px] bg-white shadow-lg relative z-20">
+      <div className="w-full h-full px-4 sm:px-6 md:px-10 lg:px-[60px] flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
           <img
@@ -21,7 +23,7 @@ const RadioNavigation = () => {
         </div>
 
         {/* Navigation Menu */}
-        <nav className="flex items-center space-x-[52px]">
+        <nav className="hidden md:flex items-center space-x-6 xl:space-x-[52px]">
           <Link 
             to="/" 
             className="font-asap text-[16px] font-medium text-black"
@@ -65,8 +67,22 @@ const RadioNavigation = () => {
           </Link>
         </nav>
 
+        {/* Mobile Menu Button */}
+        <button
+          type="button"
+          className="md:hidden inline-flex items-center justify-center p-2 rounded-md border bg-white text-black"
+          aria-label="Toggle menu"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+
         {/* Radio Player Controls */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           <button 
             onClick={togglePlayPause}
             className="relative cursor-pointer !bg-white hover:!bg-white hover:!opacity-100"
@@ -74,7 +90,7 @@ const RadioNavigation = () => {
             title={isPlaying ? "Pause" : "Play"}
           >
             {/* Outer circle - play button */}
-            <svg className="w-14 h-[52px]" viewBox="0 0 58 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-12 h-12 md:w-14 md:h-[52px]" viewBox="0 0 58 55" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M46.53 6.98699C42.3594 3.9804 37.3632 2.12027 32.1098 1.61815C26.8565 1.11603 21.5567 1.99208 16.8132 4.14666C12.0697 6.30123 8.07298 9.64786 5.2775 13.8059C2.48202 17.964 1 22.7666 1 27.6676C1 32.5686 2.48202 37.3712 5.2775 41.5293C8.07298 45.6874 12.0697 49.034 16.8132 51.1886C21.5567 53.3432 26.8565 54.2192 32.1098 53.7171C37.3632 53.215 42.3594 51.3549 46.53 48.3483M50.5896 44.7685C55.0066 40.0139 57.4363 33.9452 57.4363 27.6676C57.4363 21.39 55.0066 15.3213 50.5896 10.5667"
                 stroke="black"
@@ -104,7 +120,7 @@ const RadioNavigation = () => {
           </button>
 
           {/* Radio Info */}
-          <div className="text-right">
+          <div className="text-right hidden sm:block">
             <div className="font-asap text-[16px] font-normal leading-normal">
               <span className="text-black font-bold">live</span>
               <br />
@@ -113,6 +129,33 @@ const RadioNavigation = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile dropdown menu */}
+      {menuOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-t shadow-lg">
+          <nav className="px-4 py-4 space-y-3">
+            <Link to="/" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
+              Home
+            </Link>
+            <a
+              href="/#shows-section"
+              className="block font-asap text-[16px] font-medium text-black"
+              onClick={() => setMenuOpen(false)}
+            >
+              Shows
+            </a>
+            <Link to="/schedule" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
+              Schedule
+            </Link>
+            <Link to="/podcasts" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
+              Podcasts
+            </Link>
+            <Link to="/about" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
+              About Us
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };

@@ -4,16 +4,16 @@ const RadioHeroSection = () => {
   const { isPlaying, isLoading, togglePlayPause } = useAudioPlayer();
   
   return (
-    <section className="relative w-full h-[814px] overflow-hidden">
+    <section className="relative w-full min-h-[60vh] md:h-[600px] lg:h-[814px] overflow-hidden">
       {/* Background Image */}
       <img
         src="/lovable-uploads/47de82cb-61f3-4149-8be9-97f88490213c.png"
         alt="Radio Station Background"
-        className="absolute -left-3 top-0 w-[100%] h-[823px] object-cover backdrop-blur-[50px]"
+        className="absolute inset-0 w-full h-full object-cover backdrop-blur-[50px]"
       />
 
-      {/* Blue Gradient Overlay */}
-      {/* <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-r from-transparent via-transparent to-[#004995] opacity-78 backdrop-blur-[50px]"></div> */}
+      {/* Overlay for readability */}
+      <div className="absolute inset-0 bg-black/30 md:bg-black/20"></div>
 
       {/* Logo Overlay */}
       {/* <img
