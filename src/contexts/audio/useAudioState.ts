@@ -46,37 +46,34 @@ export function useAudioState() {
     console.log("DEBUG: extractedUrl =", extractedUrl);
     const streamUrl = settings?.streamUrl;
     
-    if (streamUrl && stations.length > 0) {
-      console.log("Setting stream URL:", streamUrl);
-      
-      // Force cleanup of existing audio before updating
-      if (currentSound.current) {
-        console.log("Cleaning up existing audio instance");
-        currentSound.current.stop();
-        currentSound.current.unload();
-        currentSound.current = null;
-        setIsPlaying(false);
-      }
-      
-      const newStation: RadioStation = {
-        id: 'live',
-        name: settings?.stationName || defaultStationSettings.stationName,
-        url: streamUrl,
-        streamUrl: streamUrl,
-        description: settings?.stationDescription || defaultStationSettings.stationDescription,
-        genre: 'Radio',
-        location: 'Online',
-        fallbackUrl: settings?.recordingStreamUrl || undefined
-      };
-
-      console.log("Rebuilt live station from DB settings:", newStation);
-      setStations([newStation]);
-      setCurrentStationIndex(0);
-      
-      // Reset player state
-      setStreamError(null);
-      setIsLoading(false);
+    // Always create a station entry, even if no URL is available
+    // Force cleanup of existing audio before updating
+    if (currentSound.current) {
+      console.log("Cleaning up existing audio instance");
+      currentSound.current.stop();
+      currentSound.current.unload();
+      currentSound.current = null;
+      setIsPlaying(false);
     }
+    
+    const newStation: RadioStation = {
+      id: 'live',
+      name: settings?.stationName || defaultStationSettings.stationName,
+      url: streamUrl || '', // Use empty string if no URL
+      streamUrl: streamUrl || '', // Use empty string if no URL
+      description: settings?.stationDescription || defaultStationSettings.stationDescription,
+      genre: 'Radio',
+      location: 'Online',
+      fallbackUrl: settings?.recordingStreamUrl || undefined
+    };
+
+    console.log("Rebuilt live station from DB settings:", newStation);
+    setStations([newStation]);
+    setCurrentStationIndex(0);
+    
+    // Reset player state
+    setStreamError(streamUrl ? null : "Stream offline");
+    setIsLoading(false);
   }, [settings?.streamUrl, settings?.stationName, settings?.stationDescription, extractedUrl]);
 
   // Show extraction status

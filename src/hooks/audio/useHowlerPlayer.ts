@@ -19,8 +19,18 @@ export function useHowlerPlayer() {
   ) => {
     setStreamError(null);
     
-    // Get the station URL - try primary first this time
+    // Get the station URL - check if it exists
     const stationUrl = stations[currentStation].url;
+    
+    // If no stream URL is available, don't initialize and stop loading
+    if (!stationUrl) {
+      console.log("No stream URL available, stopping Howler initialization");
+      setIsLoading(false);
+      setStreamError("Stream offline");
+      setIsPlaying(false);
+      return;
+    }
+    
     console.log("Creating new Howl instance for URL:", stationUrl);
     
     try {

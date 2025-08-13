@@ -23,6 +23,17 @@ export function useHlsPlayer({
   const hlsRef = useRef<Hls | null>(null);
 
   const initializeHlsPlayer = useCallback(() => {
+    const streamUrl = station.streamUrl || station.url;
+    
+    // If no stream URL is available, don't initialize and stop loading
+    if (!streamUrl) {
+      console.log('No stream URL available, stopping initialization');
+      setIsLoading(false);
+      setStreamError('Stream offline');
+      setIsPlaying(false);
+      return;
+    }
+    
     if (!audioRef.current) {
       audioRef.current = new Audio();
       try {
@@ -38,7 +49,6 @@ export function useHlsPlayer({
     }
 
     const audio = audioRef.current;
-    const streamUrl = station.streamUrl || station.url;
     
     setIsLoading(true);
     setStreamError(null);
