@@ -83,30 +83,10 @@ export function useHlsPlayer({
     if (Hls.isSupported() && streamUrl.includes('.m3u8')) {
       console.log('Using HLS.js for M3U8 stream:', streamUrl);
 
-      const functionsBase = 'https://innpnyojhyedfrtnaxsi.functions.supabase.co';
-
-      // Custom loader to proxy ALL HLS requests (manifest + segments) via edge function
-      const ProxyLoader = class extends (Hls as any).DefaultConfig.loader {
-        constructor(config: any) {
-          super(config);
-        }
-        load(context: any, config: any, callbacks: any) {
-          try {
-            const originalUrl: string = context.url;
-            const absoluteUrl = context.baseURL ? new URL(originalUrl, context.baseURL).toString() : originalUrl;
-            context.url = `${functionsBase}/stream-proxy?url=${encodeURIComponent(absoluteUrl)}`;
-          } catch (e) {
-            console.warn('ProxyLoader URL rewrite failed, using original URL', e);
-          }
-          return super.load(context, config, callbacks);
-        }
-      };
-
       const hls = new Hls({
         enableWorker: true,
         lowLatencyMode: true,
         backBufferLength: 90,
-        loader: ProxyLoader as any,
       });
       
       hlsRef.current = hls;
