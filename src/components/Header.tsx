@@ -43,7 +43,7 @@ const Header = () => {
           {/* Desktop navigation */}
           <nav className="hidden md:flex items-center space-x-8 text-lg">
             <Link to="/" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Home</Link>
-            <Link to="/shows" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Shows</Link>
+            
             <Link to="/podcasts" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Podcasts</Link>
             <Link to="/catchup" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Catch Up</Link>
             <Link to="/announcements" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Announcements</Link>
@@ -123,7 +123,7 @@ const Header = () => {
         {isMenuOpen && (
           <nav className="md:hidden py-4 flex flex-col space-y-4 text-lg border-t border-gray-200 mt-4">
             <Link to="/" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Home</Link>
-            <Link to="/shows" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Shows</Link>
+            
             <Link to="/podcasts" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Podcasts</Link>
             <Link to="/catchup" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Catch Up</Link>
             <Link to="/announcements" className="text-gray-700 font-medium hover:text-green-600 transition-colors" onClick={toggleMenu}>Announcements</Link>

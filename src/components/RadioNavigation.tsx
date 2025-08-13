@@ -30,23 +30,6 @@ const RadioNavigation = () => {
           >
             Home
           </Link>
-          <div
-            onClick={() => {
-              if (location.pathname === '/') {
-                // Scroll to shows section on home page
-                const showsSection = document.getElementById('shows-section');
-                if (showsSection) {
-                  showsSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              } else {
-                // Navigate to home page and then scroll to shows section
-                window.location.href = '/#shows-section';
-              }
-            }}
-            className="font-asap text-[16px] font-medium text-black cursor-pointer"
-          >
-            Shows
-          </div>
           <Link 
             to="/schedule" 
             className="font-asap text-[16px] font-medium text-black"
@@ -137,13 +120,6 @@ const RadioNavigation = () => {
             <Link to="/" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
               Home
             </Link>
-            <a
-              href="/#shows-section"
-              className="block font-asap text-[16px] font-medium text-black"
-              onClick={() => setMenuOpen(false)}
-            >
-              Shows
-            </a>
             <Link to="/schedule" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
               Schedule
             </Link>
