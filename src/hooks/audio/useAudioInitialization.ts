@@ -45,6 +45,16 @@ export function useAudioInitialization({
 
   // Initialize the audio player based on mode
   const initializeAudioPlayer = useCallback(() => {
+    // Check if stream URL is available first
+    const streamUrl = stations[currentStation]?.streamUrl || stations[currentStation]?.url;
+    if (!streamUrl) {
+      console.log("No stream URL available, skipping initialization");
+      setIsLoading(false);
+      setStreamError("Stream offline");
+      setIsPlaying(false);
+      return;
+    }
+
     if (fallbackMode) {
       console.log("Using HTML5 Audio fallback mode");
       initializeHtmlAudio(

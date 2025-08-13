@@ -26,6 +26,16 @@ export function useAudioControlHandlers(
   const togglePlayPause = useCallback(() => {
     console.log("Toggle play/pause called, current state:", isPlaying);
     
+    // Check if stream URL is available first
+    const streamUrl = stations[currentStation]?.streamUrl || stations[currentStation]?.url;
+    if (!streamUrl) {
+      console.log("No stream URL available, stopping toggle");
+      setIsLoading(false);
+      setStreamError("Stream offline");
+      setIsPlaying(false);
+      return;
+    }
+    
     // If nothing is initialized yet, we can't play anything
     if (!isInitialized.current) {
       console.log("Audio not initialized yet, can't play");
