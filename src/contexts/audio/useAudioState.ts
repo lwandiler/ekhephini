@@ -28,35 +28,8 @@ export function useAudioState() {
   const isExtracting = false;
   const extractionError = null;
 
-  // Force clear all caches on mount
-  useEffect(() => {
-    // Clear all possible cached settings
-    localStorage.removeItem('stationSettings');
-    localStorage.removeItem('radioSettings');
-    localStorage.removeItem('audioPlayerState');
-    
-    // Clear any Howler cache
-    if (currentSound.current) {
-      currentSound.current.unload();
-      currentSound.current = null;
-    }
-    if (nextSound.current) {
-      nextSound.current.unload();
-      nextSound.current = null;
-    }
-    if (previousSound.current) {
-      previousSound.current.unload();
-      previousSound.current = null;
-    }
-    
-    // Force stop any playing audio
-    setIsPlaying(false);
-    setIsLoading(false);
-    setStreamError(null);
-    
-    // Trigger settings refresh
-    document.dispatchEvent(new CustomEvent('settingsUpdated'));
-  }, []);
+  // Note: Do not clear localStorage or broadcast settings updates here.
+  // StationContext manages settings loading and caching; clearing here caused defaults to override saved settings.
 
   // Update the first station with the stream URL from settings and force audio reload
   useEffect(() => {
