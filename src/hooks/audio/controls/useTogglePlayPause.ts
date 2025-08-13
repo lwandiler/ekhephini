@@ -21,6 +21,16 @@ export function useTogglePlayPause() {
     retryCount: React.MutableRefObject<number>,
     maxRetries: number
   ) => {
+    // Check if stream URL is available first
+    const streamUrl = stations[currentStation]?.streamUrl || stations[currentStation]?.url;
+    if (!streamUrl) {
+      console.log("No stream URL available, stopping toggle");
+      setIsLoading(false);
+      setStreamError("Stream offline");
+      setIsPlaying(false);
+      return;
+    }
+    
     // Always try to unlock audio context first
     try {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
@@ -63,7 +73,7 @@ export function useTogglePlayPause() {
           
           // Make sure the source is set
           if (!audioElement.current.src || audioElement.current.src === '') {
-            const stationUrl = stations[currentStation].fallbackUrl || stations[currentStation].url;
+            const stationUrl = stations[currentStation].url;
             console.log(`HTML5 Audio - Setting source to ${stationUrl}`);
             audioElement.current.src = stationUrl;
             audioElement.current.load();
@@ -78,19 +88,7 @@ export function useTogglePlayPause() {
             console.error("Error playing HTML5 Audio:", error);
             setIsLoading(false);
             setStreamError("Browser blocked audio playback. Try the Force Play button.");
-            
-            // Try alternative URL
-            if (stations[currentStation].fallbackUrl && audioElement.current) {
-              console.log("HTML5 Audio - Trying fallback URL as last resort");
-              audioElement.current.src = stations[currentStation].fallbackUrl;
-              audioElement.current.load();
-              audioElement.current.play().catch(err => {
-                console.error("Fallback URL also failed:", err);
-                toast.error("Audio playback blocked. Try clicking the Force Play button.");
-              });
-            } else {
-              toast.error("Audio playback blocked. Try clicking the Force Play button.");
-            }
+            toast.error("Audio playback blocked. Try clicking the Force Play button.");
           });
         }
       }

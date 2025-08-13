@@ -31,6 +31,16 @@ export function useInitialization({
     initializeHtmlAudio: Function,
     initializeHowlerAudio: Function
   ) => {
+    // Check if stream URL is available first
+    const streamUrl = stations[currentStation]?.streamUrl || stations[currentStation]?.url;
+    if (!streamUrl) {
+      console.log("No stream URL available, skipping initialization");
+      setIsLoading(false);
+      setStreamError("Stream offline");
+      setIsPlaying(false);
+      return false;
+    }
+    
     // If not initialized, initialize first
     if (!isInitialized.current) {
       isInitialized.current = true;
