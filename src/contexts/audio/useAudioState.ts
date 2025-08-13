@@ -1,15 +1,23 @@
 
 import { useState, useEffect, useRef, useContext } from 'react';
 import { Howl } from 'howler';
-import { defaultStations } from './defaultStations';
-import { StationContext } from '@/contexts/StationContext';
 import { RadioStation } from '@/hooks/audio/types';
 import { useStreamUrlExtractor } from '@/hooks/useStreamUrlExtractor';
+import { defaultStationSettings } from '@/utils/stationSettingsManager';
+import { StationContext } from '@/contexts/StationContext';
 
 export function useAudioState() {
   const { settings } = useContext(StationContext);
   console.log("DEBUG: Full settings object:", settings);
-  const [stations, setStations] = useState<RadioStation[]>(defaultStations);
+  const [stations, setStations] = useState<RadioStation[]>([{
+    id: 'live',
+    name: defaultStationSettings.stationName,
+    url: defaultStationSettings.streamUrl,
+    streamUrl: defaultStationSettings.streamUrl,
+    description: defaultStationSettings.stationDescription,
+    genre: 'Radio',
+    location: 'Online'
+  }]);
   const [currentStationIndex, setCurrentStationIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,19 +58,20 @@ export function useAudioState() {
         setIsPlaying(false);
       }
       
-      // Update stations with new URL
-      const updatedStations = [...stations];
-      updatedStations[0] = {
-        ...updatedStations[0],
+      const newStation: RadioStation = {
+        id: 'live',
+        name: settings?.stationName || defaultStationSettings.stationName,
         url: streamUrl,
         streamUrl: streamUrl,
-        fallbackUrl: settings?.recordingStreamUrl || undefined,
-        name: settings?.stationName || updatedStations[0].name,
-        description: settings?.stationDescription || updatedStations[0].description
+        description: settings?.stationDescription || defaultStationSettings.stationDescription,
+        genre: 'Radio',
+        location: 'Online',
+        fallbackUrl: settings?.recordingStreamUrl || undefined
       };
-      
-      console.log("Updated first station:", updatedStations[0]);
-      setStations(updatedStations);
+
+      console.log("Rebuilt live station from DB settings:", newStation);
+      setStations([newStation]);
+      setCurrentStationIndex(0);
       
       // Reset player state
       setStreamError(null);

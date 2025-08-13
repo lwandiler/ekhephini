@@ -25,6 +25,7 @@ export const stationService = {
       const { data, error } = await supabase
         .from('station_settings')
         .select('*')
+        .order('updated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
