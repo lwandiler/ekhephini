@@ -10,6 +10,7 @@ interface StationInfoProps {
   streamError: string | null;
   songMetadata?: SongMetadata;
   isLive?: boolean;
+  streamUrl?: string;
 }
 
 const StationInfo: React.FC<StationInfoProps> = ({ 
@@ -17,7 +18,8 @@ const StationInfo: React.FC<StationInfoProps> = ({
   hostName, 
   streamError,
   songMetadata,
-  isLive = false
+  isLive = false,
+  streamUrl
 }) => {
   console.log('StationInfo: Received songMetadata', songMetadata);
   
@@ -54,9 +56,11 @@ const StationInfo: React.FC<StationInfoProps> = ({
           )}
         </div>
         <p className="text-sm text-gray-200 dark:text-gray-300">with {hostName}</p>
-        {streamError && (
+        {!streamUrl ? (
+          <p className="text-xs text-red-300 mt-1 font-medium">Stream Offline</p>
+        ) : streamError ? (
           <p className="text-xs text-red-300 mt-1 font-medium">{streamError}</p>
-        )}
+        ) : null}
         
         {/* Display song metadata if available */}
         {songMetadata && (songMetadata.title || songMetadata.artist) && (

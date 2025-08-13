@@ -116,6 +116,7 @@ const RadioPlayer = ({
               streamError={streamError}
               songMetadata={songMetadata}
               isLive={!!currentShow}
+              streamUrl={settings.streamUrl}
             />
             
             <PlayerControlsWrapper
