@@ -105,17 +105,11 @@ const handlePodcastClick = (podcastName: string, podcastLink: string, thumbnail?
   onClick={() => handlePodcastClick(podcast.name, podcast.podcast_link, podcast.thumbnail_url)}
 >
                   <div className="relative">
-                    {podcast.thumbnail_url ? (
-                      <img
-                        src={podcast.thumbnail_url}
-                        alt={podcast.name}
-                        className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                        <Podcast className="h-16 w-16 text-primary/60" />
-                      </div>
-                    )}
+                    <img
+                      src="/lovable-uploads/EFM_Cover_Image.png"
+                      alt={podcast.name}
+                      className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <Button size="sm" className="w-full bg-primary/90 hover:bg-primary">
