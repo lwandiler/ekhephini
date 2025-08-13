@@ -44,26 +44,37 @@ export const stationService = {
   async updateStationSettings(settings: Partial<StationSettingsResponse>): Promise<StationSettingsResponse> {
     const settingsData = {
       ...settings,
+      id: 1,
       updated_at: new Date().toISOString()
-    };
-    
-    const response = await supabaseApi.patch('/station_settings?id=eq.1', settingsData);
+    } as any;
+
+    // Upsert using Supabase client so the row is created if missing
+    const { data, error } = await supabase
+      .from('station_settings')
+      .upsert(settingsData, { onConflict: 'id' })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating station settings (client upsert):', error);
+      throw error;
+    }
     
     // If recording_stream_url was updated, trigger URL updates for existing recordings
     if (settings.recording_stream_url !== undefined) {
       console.log('Recording stream URL updated, triggering recording URLs update...');
       try {
-        const { data, error } = await supabase.functions.invoke('update-recording-urls');
-        if (error) {
-          console.error('Error updating recording URLs:', error);
+        const { data: funcData, error: funcError } = await supabase.functions.invoke('update-recording-urls');
+        if (funcError) {
+          console.error('Error updating recording URLs:', funcError);
         } else {
-          console.log('Recording URLs update completed:', data);
+          console.log('Recording URLs update completed:', funcData);
         }
-      } catch (error) {
-        console.error('Failed to trigger recording URLs update:', error);
+      } catch (err) {
+        console.error('Failed to trigger recording URLs update:', err);
       }
     }
     
-    return response.data[0];
+    return data as unknown as StationSettingsResponse;
   }
 };
