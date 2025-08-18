@@ -36,6 +36,7 @@ const RadioPlayer = ({
     isLoading,
     volume,
     streamError,
+    currentPodcast,
     togglePlayPause,
     playNextStation,
     playPreviousStation,
@@ -46,7 +47,14 @@ const RadioPlayer = ({
 
   // Add song metadata hook with console logging
   const songMetadata = useSongMetadata(isPlaying, currentStationIndex, stations);
+  
+  // Override song metadata with podcast thumbnail if playing a podcast
+  const displaySongMetadata = currentPodcast?.thumbnailUrl 
+    ? { ...songMetadata, albumCover: currentPodcast.thumbnailUrl }
+    : songMetadata;
+    
   console.log('RadioPlayer: Song metadata received', songMetadata);
+  console.log('RadioPlayer: currentPodcast', currentPodcast);
   console.log('RadioPlayer: isPlaying', isPlaying, 'currentStationIndex', currentStationIndex);
   
   // Set up keyboard controls for volume and playback
@@ -94,9 +102,9 @@ const RadioPlayer = ({
     setVolume(newVolume[0]);
   };
 
-  // Use current show info if available, otherwise fall back to props
-  const displayShowName = currentShow?.title || showName;
-  const displayHostName = currentShow?.host || hostName;
+  // Use podcast name if playing, otherwise current show info, otherwise fall back to props
+  const displayShowName = currentPodcast?.name || currentShow?.title || showName;
+  const displayHostName = currentPodcast ? "Podcast" : (currentShow?.host || hostName);
 
   // Debug for toggling play
   console.log("RadioPlayer: togglePlayPause is", typeof togglePlayPause === 'function' ? 'a function' : 'not a function');
@@ -114,8 +122,8 @@ const RadioPlayer = ({
               showName={displayShowName} 
               hostName={displayHostName}
               streamError={streamError}
-              songMetadata={songMetadata}
-              isLive={!!currentShow}
+              songMetadata={displaySongMetadata}
+              isLive={!!currentShow && !currentPodcast}
               streamUrl={settings.streamUrl}
             />
             
