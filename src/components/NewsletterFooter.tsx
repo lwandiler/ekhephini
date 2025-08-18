@@ -65,7 +65,7 @@ const NewsletterFooter = () => {
   };
 
   return (
-    <section className="w-full bg-[#004995] py-16">
+    <section className="w-full bg-[#004995] pt-14 pb-24">
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Privacy & Legal Link */}
         <div>
