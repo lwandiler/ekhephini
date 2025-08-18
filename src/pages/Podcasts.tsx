@@ -69,8 +69,8 @@ const { playExternalUrl } = useAudioPlayer();
     });
   };
 
-const handlePodcastClick = (podcastName: string, podcastLink: string) => {
-  playExternalUrl(podcastName, podcastLink);
+const handlePodcastClick = (podcastName: string, podcastLink: string, thumbnailUrl?: string | null) => {
+  playExternalUrl(podcastName, podcastLink, thumbnailUrl);
 };
 
   const handleBackToHome = () => {
@@ -161,7 +161,7 @@ const handlePodcastClick = (podcastName: string, podcastLink: string) => {
                 <Card 
                   key={podcast.id} 
                   className="overflow-hidden shadow-xl border-0 bg-gradient-to-br from-card to-muted/30 hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer group"
-onClick={() => handlePodcastClick(podcast.name, podcast.podcast_link)}
+onClick={() => handlePodcastClick(podcast.name, podcast.podcast_link, podcast.thumbnail_url)}
                 >
                   <div className="relative">
                     {podcast.thumbnail_url ? (
