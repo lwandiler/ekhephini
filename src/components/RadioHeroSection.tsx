@@ -1,7 +1,16 @@
 import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 
 const RadioHeroSection = () => {
-  const { isPlaying, isLoading, togglePlayPause } = useAudioPlayer();
+  const { isPlaying, isLoading, togglePlayPause, playCurrentStation } = useAudioPlayer();
+  
+  // Handler to specifically play the live stream (not podcasts)
+  const handleListenLive = () => {
+    if (isPlaying) {
+      togglePlayPause(); // Pause if already playing
+    } else {
+      playCurrentStation(); // Always play the live station, clearing any podcast
+    }
+  };
   
   return (
     <section className="relative w-full min-h-[60vh] md:h-[600px] lg:h-[814px] overflow-hidden">
@@ -35,7 +44,7 @@ const RadioHeroSection = () => {
         {/* Listen Live Button */}
         <div className="flex">
           <button 
-            onClick={togglePlayPause}
+            onClick={handleListenLive}
             disabled={isLoading}
             className="w-[210px] h-[69px] bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-[50px] backdrop-blur-[45px] flex items-center justify-center transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
