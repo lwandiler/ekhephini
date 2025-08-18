@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import RadioNavigation from '@/components/RadioNavigation';
 import NewsletterFooter from '@/components/NewsletterFooter';
 import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
+import RadioPlayer from '@/components/RadioPlayer';
 
 interface PodcastData {
   id: string;
@@ -223,6 +224,9 @@ onClick={() => handlePodcastClick(podcast.name, podcast.podcast_link)}
       
       {/* Newsletter Footer */}
       <NewsletterFooter />
+      
+      {/* Radio Player */}
+      <RadioPlayer />
     </div>
   );
 };
