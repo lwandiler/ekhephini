@@ -3,13 +3,11 @@ import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 const RadioHeroSection = () => {
   const { isPlaying, isLoading, togglePlayPause, playCurrentStation } = useAudioPlayer();
   
-  // Handler to specifically play the live stream (not podcasts)
+  // Handler to specifically play the live stream from database
   const handleListenLive = () => {
-    if (isPlaying) {
-      togglePlayPause(); // Pause if already playing
-    } else {
-      playCurrentStation(); // Always play the live station, clearing any podcast
-    }
+    // Always play the current station which uses the database stream URL
+    // This clears any podcast and forces live stream playback
+    playCurrentStation();
   };
   
   return (
