@@ -20,6 +20,7 @@ import Shows from '@/pages/Shows';
 import Podcasts from '@/pages/Podcasts';
 import Schedule from '@/pages/Schedule';
 import About from '@/pages/About';
+import News from '@/pages/News';
 
 
 import './App.css';
@@ -44,6 +45,7 @@ function App() {
                       <Route path="/shows" element={<Shows />} />
                       <Route path="/schedule" element={<Schedule />} />
                       <Route path="/podcasts" element={<Podcasts />} />
+                      <Route path="/news" element={<News />} />
                       <Route path="/catch-up" element={<CatchUp />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/auth" element={<Auth />} />

@@ -43,6 +43,12 @@ const RadioNavigation = () => {
             Podcasts
           </Link>
           <Link 
+            to="/news" 
+            className="font-asap text-[16px] font-medium text-black"
+          >
+            News
+          </Link>
+          <Link 
             to="/about" 
             className="font-asap text-[16px] font-medium text-black"
           >
@@ -125,6 +131,9 @@ const RadioNavigation = () => {
             </Link>
             <Link to="/podcasts" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
               Podcasts
+            </Link>
+            <Link to="/news" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
+              News
             </Link>
             <Link to="/about" className="block font-asap text-[16px] font-medium text-black" onClick={() => setMenuOpen(false)}>
               About Us
