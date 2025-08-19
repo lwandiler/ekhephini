@@ -31,6 +31,7 @@ const News = () => {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<NewsPost | null>(null);
+  const [selectedPost, setSelectedPost] = useState<NewsPost | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -253,7 +254,21 @@ const News = () => {
                         </CardHeader>
                         <CardContent>
                           <div className="prose max-w-none">
-                            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{post.content}</p>
+                            <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                              {post.content.length > 200 
+                                ? `${post.content.substring(0, 200)}...` 
+                                : post.content
+                              }
+                            </p>
+                            {post.content.length > 200 && (
+                              <Button 
+                                variant="link" 
+                                className="p-0 h-auto text-blue-600 hover:text-blue-800 mt-2"
+                                onClick={() => setSelectedPost(post)}
+                              >
+                                Read more
+                              </Button>
+                            )}
                           </div>
                         </CardContent>
                       </div>
@@ -265,6 +280,42 @@ const News = () => {
           </div>
         </section>
       </main>
+      
+      {/* Read More Modal */}
+      <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">{selectedPost?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {selectedPost?.image_url && (
+              <img 
+                src={selectedPost.image_url} 
+                alt={selectedPost.title}
+                className="w-full h-64 object-cover rounded-lg"
+              />
+            )}
+            {selectedPost?.excerpt && (
+              <p className="text-gray-600 text-lg italic">{selectedPost.excerpt}</p>
+            )}
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                {selectedPost && format(new Date(selectedPost.created_at), 'MMM dd, yyyy')}
+              </div>
+              <div className="flex items-center gap-1">
+                <User className="h-4 w-4" />
+                Station Team
+              </div>
+            </div>
+            <div className="prose max-w-none">
+              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed text-base">
+                {selectedPost?.content}
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       
       <NewsletterFooter />
     </div>
