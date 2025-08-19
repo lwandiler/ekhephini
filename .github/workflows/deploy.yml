@@ -32,4 +32,4 @@ jobs:
       
       - name: Deploy Build to Lightsail using rsync
         run: |
-          rsync -avz --delete ./dist/* ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }}:/var/www/html/
+          rsync -avz --delete ./dist/* ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }}:/var/www/online.ekhephinifm.co.za/public
