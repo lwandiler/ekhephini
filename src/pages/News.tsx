@@ -249,24 +249,6 @@ const News = () => {
                                 )}
                               </div>
                             </div>
-                            {user && (
-                              <div className="flex gap-2 ml-4">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => openEditDialog(post)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDelete(post.id)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            )}
                           </div>
                         </CardHeader>
                         <CardContent>
