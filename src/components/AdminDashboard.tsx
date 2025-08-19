@@ -37,7 +37,8 @@ import {
   Eye,
   Edit,
   Trash2,
-  Plus
+  Plus,
+  Newspaper
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -48,6 +49,7 @@ const AdminDashboard = () => {
   const [shows, setShows] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [podcasts, setPodcasts] = useState<any[]>([]);
+  const [news, setNews] = useState<any[]>([]);
   const [socialLinks, setSocialLinks] = useState<any[]>([]);
   const [settings, setSettings] = useState<any>({
     station_name: '',
@@ -63,6 +65,7 @@ const AdminDashboard = () => {
   const [showNewShowForm, setShowNewShowForm] = useState(false);
   const [showNewUserForm, setShowNewUserForm] = useState(false);
   const [showNewPodcastForm, setShowNewPodcastForm] = useState(false);
+  const [showNewNewsForm, setShowNewNewsForm] = useState(false);
   const [showBulkUploadDialog, setShowBulkUploadDialog] = useState(false);
   const [newShow, setNewShow] = useState({ 
     title: '', 
@@ -78,12 +81,14 @@ const AdminDashboard = () => {
   const [isUploadingShowImage, setIsUploadingShowImage] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'DJ' });
   const [newPodcast, setNewPodcast] = useState({ name: '', podcast_link: '', description: '', thumbnail: null as File | null, thumbnail_url: '' });
+  const [newNews, setNewNews] = useState({ title: '', content: '', excerpt: '', image_url: '', published: false });
   const [podcastImageMode, setPodcastImageMode] = useState<'url' | 'upload'>('url');
   const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
   const [bulkUploadProgress, setBulkUploadProgress] = useState(0);
   const [isProcessingBulk, setIsProcessingBulk] = useState(false);
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [editingPodcast, setEditingPodcast] = useState<any>(null);
+  const [editingNews, setEditingNews] = useState<any>(null);
   const [editingShow, setEditingShow] = useState<any>(null);
   const [showNewSocialLinkForm, setShowNewSocialLinkForm] = useState(false);
   const [newSocialLink, setNewSocialLink] = useState({ platform: '', url: '', display_name: '', icon_name: '' });
@@ -225,6 +230,12 @@ const AdminDashboard = () => {
         .from('podcasts')
         .select('*')
         .order('created_at', { ascending: false });
+
+      // Load news
+      const { data: newsData } = await supabase
+        .from('news')
+        .select('*')
+        .order('created_at', { ascending: false });
       
       // Load station settings
       const { data: settingsData } = await supabase
@@ -254,6 +265,7 @@ const AdminDashboard = () => {
         setShows(showsWithStatus);
       }
       if (podcastsData) setPodcasts(podcastsData);
+      if (newsData) setNews(newsData);
       if (socialLinksData) setSocialLinks(socialLinksData);
       
       // Combine both user types
@@ -458,6 +470,118 @@ const AdminDashboard = () => {
       });
     } finally {
       setIsUpdatingPassword(false);
+    }
+  };
+
+  // News handlers
+  const handleAddNews = async () => {
+    if (newNews.title && newNews.content) {
+      try {
+        const { data, error } = await supabase
+          .from('news')
+          .insert([{
+            title: newNews.title,
+            content: newNews.content,
+            excerpt: newNews.excerpt,
+            image_url: newNews.image_url,
+            published: newNews.published,
+            user_id: (await supabase.auth.getUser()).data.user?.id
+          }])
+          .select();
+
+        if (error) throw error;
+
+        if (data) {
+          setNews([data[0], ...news]);
+          setNewNews({ title: '', content: '', excerpt: '', image_url: '', published: false });
+          setShowNewNewsForm(false);
+          toast({
+            title: "Success",
+            description: "News post added successfully!"
+          });
+        }
+      } catch (error) {
+        console.error('Error adding news:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to add news post."
+        });
+      }
+    }
+  };
+
+  const handleUpdateNews = async () => {
+    if (editingNews && newNews.title && newNews.content) {
+      try {
+        const { data, error } = await supabase
+          .from('news')
+          .update({
+            title: newNews.title,
+            content: newNews.content,
+            excerpt: newNews.excerpt,
+            image_url: newNews.image_url,
+            published: newNews.published
+          })
+          .eq('id', editingNews.id)
+          .select();
+
+        if (error) throw error;
+
+        if (data) {
+          setNews(news.map(item => item.id === editingNews.id ? data[0] : item));
+          setNewNews({ title: '', content: '', excerpt: '', image_url: '', published: false });
+          setEditingNews(null);
+          setShowNewNewsForm(false);
+          toast({
+            title: "Success",
+            description: "News post updated successfully!"
+          });
+        }
+      } catch (error) {
+        console.error('Error updating news:', error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to update news post."
+        });
+      }
+    }
+  };
+
+  const handleEditNews = (newsItem: any) => {
+    setEditingNews(newsItem);
+    setNewNews({
+      title: newsItem.title,
+      content: newsItem.content,
+      excerpt: newsItem.excerpt || '',
+      image_url: newsItem.image_url || '',
+      published: newsItem.published
+    });
+    setShowNewNewsForm(true);
+  };
+
+  const handleDeleteNews = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('news')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setNews(news.filter(item => item.id !== id));
+      toast({
+        title: "Success",
+        description: "News post deleted successfully!"
+      });
+    } catch (error) {
+      console.error('Error deleting news:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete news post."
+      });
     }
   };
 
@@ -1943,6 +2067,141 @@ const AdminDashboard = () => {
     </div>
   );
 
+  const renderNews = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-2xl font-bold">News Management</h3>
+        <Button onClick={() => setShowNewNewsForm(!showNewNewsForm)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add News Post
+        </Button>
+      </div>
+
+      {showNewNewsForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{editingNews ? 'Edit News Post' : 'Add New News Post'}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="news-title">Title</Label>
+              <Input 
+                id="news-title" 
+                value={newNews.title}
+                onChange={(e) => setNewNews({...newNews, title: e.target.value})}
+                placeholder="Enter news title" 
+              />
+            </div>
+            <div>
+              <Label htmlFor="news-excerpt">Excerpt (Optional)</Label>
+              <Input 
+                id="news-excerpt" 
+                value={newNews.excerpt}
+                onChange={(e) => setNewNews({...newNews, excerpt: e.target.value})}
+                placeholder="Brief excerpt or summary"
+              />
+            </div>
+            <div>
+              <Label htmlFor="news-image">Image URL (Optional)</Label>
+              <Input 
+                id="news-image" 
+                type="url"
+                value={newNews.image_url}
+                onChange={(e) => setNewNews({...newNews, image_url: e.target.value})}
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+            <div>
+              <Label htmlFor="news-content">Content</Label>
+              <Textarea 
+                id="news-content" 
+                value={newNews.content}
+                onChange={(e) => setNewNews({...newNews, content: e.target.value})}
+                placeholder="Enter news content..."
+                rows={8}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="news-published"
+                checked={newNews.published}
+                onChange={(e) => setNewNews({...newNews, published: e.target.checked})}
+              />
+              <Label htmlFor="news-published">Publish immediately</Label>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                onClick={editingNews ? handleUpdateNews : handleAddNews}
+                disabled={!newNews.title || !newNews.content}
+              >
+                {editingNews ? 'Update News Post' : 'Add News Post'}
+              </Button>
+              <Button variant="outline" onClick={() => {
+                setShowNewNewsForm(false);
+                setEditingNews(null);
+                setNewNews({ title: '', content: '', excerpt: '', image_url: '', published: false });
+              }}>
+                Cancel
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="p-6">
+          {news.length === 0 ? (
+            <div className="text-center py-8">
+              <Newspaper className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No news posts yet</p>
+              <p className="text-sm text-gray-400">Start by adding your first news post</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {news.map((newsItem) => (
+                <div key={newsItem.id} className="flex items-start justify-between p-4 border rounded-lg">
+                  <div className="flex items-start gap-4 flex-1">
+                    {newsItem.image_url && (
+                      <div className="w-24 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img 
+                          src={newsItem.image_url} 
+                          alt={newsItem.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-lg">{newsItem.title}</p>
+                      {newsItem.excerpt && (
+                        <p className="text-sm text-muted-foreground mb-2">{newsItem.excerpt}</p>
+                      )}
+                      <p className="text-sm text-gray-700 line-clamp-3">{newsItem.content}</p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Created: {new Date(newsItem.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 ml-4">
+                    <Badge variant={newsItem.published ? 'default' : 'secondary'}>
+                      {newsItem.published ? 'Published' : 'Draft'}
+                    </Badge>
+                    <Button variant="outline" size="sm" onClick={() => handleEditNews(newsItem)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDeleteNews(newsItem.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+
 
   const renderSettings = () => (
     <div className="space-y-6">
@@ -2150,7 +2409,7 @@ const AdminDashboard = () => {
 
       <div className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               Dashboard
@@ -2167,6 +2426,10 @@ const AdminDashboard = () => {
               <Music className="h-4 w-4" />
               Podcasts
             </TabsTrigger>
+            <TabsTrigger value="news" className="flex items-center gap-2">
+              <Newspaper className="h-4 w-4" />
+              News
+            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Settings
@@ -2177,7 +2440,7 @@ const AdminDashboard = () => {
           <TabsContent value="shows">{renderShows()}</TabsContent>
           <TabsContent value="users">{renderUsers()}</TabsContent>
           <TabsContent value="podcasts">{renderPodcasts()}</TabsContent>
-          
+          <TabsContent value="news">{renderNews()}</TabsContent>
           
           <TabsContent value="settings">{renderSettings()}</TabsContent>
         </Tabs>
