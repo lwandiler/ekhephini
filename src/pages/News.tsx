@@ -187,7 +187,7 @@ const News = () => {
         {/* News Content Section */}
         <section className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-center items-center mb-8 text-center">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">News & Updates</h2>
                 <p className="text-gray-600">Get the latest stories and announcements</p>
