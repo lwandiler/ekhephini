@@ -82,6 +82,9 @@ const AdminDashboard = () => {
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'DJ' });
   const [newPodcast, setNewPodcast] = useState({ name: '', podcast_link: '', description: '', thumbnail: null as File | null, thumbnail_url: '' });
   const [newNews, setNewNews] = useState({ title: '', content: '', excerpt: '', image_url: '', published: false });
+  const [newsImageMode, setNewsImageMode] = useState<'url' | 'upload'>('url');
+  const [newsImageFile, setNewsImageFile] = useState<File | null>(null);
+  const [isUploadingNewsImage, setIsUploadingNewsImage] = useState(false);
   const [podcastImageMode, setPodcastImageMode] = useState<'url' | 'upload'>('url');
   const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
   const [bulkUploadProgress, setBulkUploadProgress] = useState(0);
@@ -476,14 +479,29 @@ const AdminDashboard = () => {
   // News handlers
   const handleAddNews = async () => {
     if (newNews.title && newNews.content) {
+      setIsUploadingNewsImage(true);
       try {
+        let finalImageUrl = newNews.image_url?.trim() || '';
+        if (newsImageMode === 'upload' && newsImageFile) {
+          const fileExt = newsImageFile.name.split('.').pop();
+          const fileName = `news-${Date.now()}.${fileExt}`;
+          const { error: uploadError } = await supabase.storage
+            .from('show-images')
+            .upload(fileName, newsImageFile);
+          if (uploadError) throw uploadError;
+          const { data: { publicUrl } } = supabase.storage
+            .from('show-images')
+            .getPublicUrl(fileName);
+          finalImageUrl = publicUrl;
+        }
+
         const { data, error } = await supabase
           .from('news')
           .insert([{
             title: newNews.title,
             content: newNews.content,
             excerpt: newNews.excerpt,
-            image_url: newNews.image_url,
+            image_url: finalImageUrl,
             published: newNews.published,
             user_id: (await supabase.auth.getUser()).data.user?.id
           }])
@@ -494,6 +512,8 @@ const AdminDashboard = () => {
         if (data) {
           setNews([data[0], ...news]);
           setNewNews({ title: '', content: '', excerpt: '', image_url: '', published: false });
+          setNewsImageFile(null);
+          setNewsImageMode('url');
           setShowNewNewsForm(false);
           toast({
             title: "Success",
@@ -507,20 +527,37 @@ const AdminDashboard = () => {
           title: "Error",
           description: "Failed to add news post."
         });
+      } finally {
+        setIsUploadingNewsImage(false);
       }
     }
   };
 
   const handleUpdateNews = async () => {
     if (editingNews && newNews.title && newNews.content) {
+      setIsUploadingNewsImage(true);
       try {
+        let finalImageUrl = newNews.image_url?.trim() || '';
+        if (newsImageMode === 'upload' && newsImageFile) {
+          const fileExt = newsImageFile.name.split('.').pop();
+          const fileName = `news-${Date.now()}.${fileExt}`;
+          const { error: uploadError } = await supabase.storage
+            .from('show-images')
+            .upload(fileName, newsImageFile);
+          if (uploadError) throw uploadError;
+          const { data: { publicUrl } } = supabase.storage
+            .from('show-images')
+            .getPublicUrl(fileName);
+          finalImageUrl = publicUrl;
+        }
+
         const { data, error } = await supabase
           .from('news')
           .update({
             title: newNews.title,
             content: newNews.content,
             excerpt: newNews.excerpt,
-            image_url: newNews.image_url,
+            image_url: finalImageUrl,
             published: newNews.published
           })
           .eq('id', editingNews.id)
@@ -531,6 +568,8 @@ const AdminDashboard = () => {
         if (data) {
           setNews(news.map(item => item.id === editingNews.id ? data[0] : item));
           setNewNews({ title: '', content: '', excerpt: '', image_url: '', published: false });
+          setNewsImageFile(null);
+          setNewsImageMode('url');
           setEditingNews(null);
           setShowNewNewsForm(false);
           toast({
@@ -545,6 +584,8 @@ const AdminDashboard = () => {
           title: "Error",
           description: "Failed to update news post."
         });
+      } finally {
+        setIsUploadingNewsImage(false);
       }
     }
   };
@@ -558,6 +599,8 @@ const AdminDashboard = () => {
       image_url: newsItem.image_url || '',
       published: newsItem.published
     });
+    setNewsImageFile(null);
+    setNewsImageMode('url');
     setShowNewNewsForm(true);
   };
 
@@ -2102,14 +2145,41 @@ const AdminDashboard = () => {
               />
             </div>
             <div>
-              <Label htmlFor="news-image">Image URL (Optional)</Label>
-              <Input 
-                id="news-image" 
-                type="url"
-                value={newNews.image_url}
-                onChange={(e) => setNewNews({...newNews, image_url: e.target.value})}
-                placeholder="https://example.com/image.jpg"
-              />
+              <Label>Image (Optional)</Label>
+              <div className="flex gap-2 mt-2">
+                <Button type="button" variant={newsImageMode === 'url' ? 'default' : 'outline'} size="sm" onClick={() => setNewsImageMode('url')}>Use URL</Button>
+                <Button type="button" variant={newsImageMode === 'upload' ? 'default' : 'outline'} size="sm" onClick={() => setNewsImageMode('upload')}>Upload</Button>
+              </div>
+              {newsImageMode === 'url' ? (
+                <div className="mt-2">
+                  <Input 
+                    id="news-image" 
+                    type="url"
+                    value={newNews.image_url}
+                    onChange={(e) => setNewNews({...newNews, image_url: e.target.value})}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <Input 
+                    id="news-image-upload" 
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setNewsImageFile(e.target.files?.[0] || null)}
+                  />
+                </div>
+              )}
+              {(newNews.image_url || newsImageFile) && (
+                <div className="mt-3 border rounded overflow-hidden" style={{ aspectRatio: '16 / 9' }}>
+                  <img
+                    src={newsImageFile ? URL.createObjectURL(newsImageFile) : newNews.image_url}
+                    alt="News image preview"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">Use a wide image (16:9), e.g., 1280x720.</p>
             </div>
             <div>
               <Label htmlFor="news-content">Content</Label>
@@ -2133,14 +2203,16 @@ const AdminDashboard = () => {
             <div className="flex gap-2">
               <Button 
                 onClick={editingNews ? handleUpdateNews : handleAddNews}
-                disabled={!newNews.title || !newNews.content}
+                disabled={isUploadingNewsImage || !newNews.title || !newNews.content}
               >
-                {editingNews ? 'Update News Post' : 'Add News Post'}
+                {editingNews ? (isUploadingNewsImage ? 'Updating...' : 'Update News Post') : (isUploadingNewsImage ? 'Adding...' : 'Add News Post')}
               </Button>
               <Button variant="outline" onClick={() => {
                 setShowNewNewsForm(false);
                 setEditingNews(null);
                 setNewNews({ title: '', content: '', excerpt: '', image_url: '', published: false });
+                setNewsImageFile(null);
+                setNewsImageMode('url');
               }}>
                 Cancel
               </Button>
