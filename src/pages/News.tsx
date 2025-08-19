@@ -204,11 +204,6 @@ const News = () => {
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">No news posts yet</h3>
                     <p className="text-gray-500 mb-4">Check back later for the latest updates and announcements.</p>
-                    {user && (
-                      <Button onClick={openCreateDialog}>
-                        Create the first news post
-                      </Button>
-                    )}
                   </CardContent>
                 </Card>
               ) : (
