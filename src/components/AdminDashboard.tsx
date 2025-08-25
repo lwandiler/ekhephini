@@ -1336,19 +1336,6 @@ const AdminDashboard = () => {
                 <p className="text-sm text-muted-foreground">Host: John Smith</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
-                <Volume2 className="h-4 w-4 mr-2" />
-                Audio
-              </Button>
-              <Button variant="outline" size="sm">
-                <PauseCircle className="h-4 w-4 mr-2" />
-                Pause
-              </Button>
-              <Button variant="destructive" size="sm">
-                End Stream
-              </Button>
-            </div>
           </div>
         </CardContent>
       </Card>
