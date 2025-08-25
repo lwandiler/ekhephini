@@ -1349,28 +1349,87 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {shows.slice(0, 3).map((show) => (
-                <div key={show.id} className="flex items-center justify-between p-3 border rounded">
-                  <div>
-                    <p className="font-medium">{show.title}</p>
-                    <p className="text-sm text-muted-foreground">{show.host} • {show.time_slot}</p>
+              {(() => {
+                // Get current live show first
+                const liveShows = shows.filter(show => show.status === 'Live');
+                // Get upcoming shows for today/soon
+                const upcomingShows = shows.filter(show => show.status === 'Upcoming')
+                  .sort((a, b) => {
+                    // Sort by day of week and time
+                    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    const now = new Date();
+                    const currentDayIndex = now.getDay();
+                    
+                    const aDayIndex = days.indexOf(a.day_of_week);
+                    const bDayIndex = days.indexOf(b.day_of_week);
+                    
+                    // If same day, sort by time
+                    if (aDayIndex === bDayIndex) {
+                      const aTime = a.start_time || '';
+                      const bTime = b.start_time || '';
+                      return aTime.localeCompare(bTime);
+                    }
+                    
+                    // Sort by how soon they are
+                    const aDiff = aDayIndex >= currentDayIndex ? aDayIndex - currentDayIndex : 7 - (currentDayIndex - aDayIndex);
+                    const bDiff = bDayIndex >= currentDayIndex ? bDayIndex - currentDayIndex : 7 - (currentDayIndex - bDayIndex);
+                    
+                    return aDiff - bDiff;
+                  });
+                
+                // Get recently aired shows (shows that have ended today)
+                const now = new Date();
+                const currentDay = now.toLocaleDateString('en-US', { weekday: 'long' });
+                const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+                
+                const recentShows = shows.filter(show => {
+                  if (show.day_of_week === currentDay && show.end_time) {
+                    const [endHour, endMin] = show.end_time.split(':').map(Number);
+                    const endTimeInMinutes = endHour * 60 + endMin;
+                    return currentTimeInMinutes > endTimeInMinutes;
+                  }
+                  return false;
+                }).sort((a, b) => {
+                  // Sort by end time descending (most recently ended first)
+                  const aTime = a.end_time || '';
+                  const bTime = b.end_time || '';
+                  return bTime.localeCompare(aTime);
+                });
+                
+                // Combine and take first 3
+                const displayShows = [...liveShows, ...upcomingShows.slice(0, 2), ...recentShows.slice(0, 1)].slice(0, 3);
+                
+                if (displayShows.length === 0) {
+                  return (
+                    <p className="text-muted-foreground text-center py-4">No shows scheduled for today</p>
+                  );
+                }
+                
+                return displayShows.map((show) => (
+                  <div key={show.id} className="flex items-center justify-between p-3 border rounded">
+                    <div>
+                      <p className="font-medium">{show.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {show.host} • {show.day_of_week} {show.start_time}-{show.end_time}
+                      </p>
+                    </div>
+                    <Badge 
+                      variant={
+                        show.status === 'Live' ? 'destructive' : 
+                        show.status === 'Upcoming' ? 'default' : 
+                        'secondary'
+                      }
+                      className={
+                        show.status === 'Live' ? 'bg-red-500 text-white animate-pulse' :
+                        show.status === 'Upcoming' ? 'bg-green-500 text-white' :
+                        'bg-gray-500 text-white'
+                      }
+                    >
+                      {show.status}
+                    </Badge>
                   </div>
-                  <Badge 
-                    variant={
-                      show.status === 'Live' ? 'destructive' : 
-                      show.status === 'Upcoming' ? 'default' : 
-                      'secondary'
-                    }
-                    className={
-                      show.status === 'Live' ? 'bg-red-500 text-white animate-pulse' :
-                      show.status === 'Upcoming' ? 'bg-green-500 text-white' :
-                      'bg-gray-500 text-white'
-                    }
-                  >
-                    {show.status}
-                  </Badge>
-                </div>
-              ))}
+                ));
+              })()}
             </div>
           </CardContent>
         </Card>
