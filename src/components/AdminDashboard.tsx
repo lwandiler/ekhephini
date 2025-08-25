@@ -1468,7 +1468,7 @@ const AdminDashboard = () => {
                 Bulk Upload
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl bg-white">
+            <DialogContent className="max-w-4xl bg-white">
               <DialogHeader>
                 <DialogTitle>Bulk Upload Shows</DialogTitle>
                 <DialogDescription>
