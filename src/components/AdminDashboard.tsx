@@ -1481,19 +1481,51 @@ const AdminDashboard = () => {
               </DialogHeader>
               
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="file">Excel/CSV File</Label>
-                  <Input
-                    id="file"
-                    type="file"
-                    accept=".csv,.txt,.xlsx,.xls"
-                    onChange={(e) => setBulkUploadFile(e.target.files?.[0] || null)}
-                    className="mt-1"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    CSV format: title, host, day_of_week, start_time, end_time, description, image_url
-                  </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="file">Excel/CSV File</Label>
+                    <p className="text-sm text-gray-500 mt-1">
+                      CSV format: title, host, day_of_week, start_time, end_time, description, image_url
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      // Create template CSV content
+                      const headers = ['title', 'host', 'day_of_week', 'start_time', 'end_time', 'description', 'image_url'];
+                      const sampleRow = ['Morning Drive', 'John Smith', 'Monday', '06:00', '09:00', 'Great morning show with music and news', ''];
+                      const csvContent = [headers.join(','), sampleRow.join(',')].join('\n');
+                      
+                      // Create and download file
+                      const blob = new Blob([csvContent], { type: 'text/csv' });
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'shows_template.csv';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      window.URL.revokeObjectURL(url);
+                      
+                      toast({
+                        title: "Template Downloaded",
+                        description: "Use this template to format your show data correctly."
+                      });
+                    }}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Template
+                  </Button>
                 </div>
+                
+                <Input
+                  id="file"
+                  type="file"
+                  accept=".csv,.txt,.xlsx,.xls"
+                  onChange={(e) => setBulkUploadFile(e.target.files?.[0] || null)}
+                  className="mt-1"
+                />
 
                 {/* Sample CSV format */}
                 <div className="bg-gray-50 p-3 rounded text-sm">
