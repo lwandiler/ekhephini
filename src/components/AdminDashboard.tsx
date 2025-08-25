@@ -38,7 +38,12 @@ import {
   Edit,
   Trash2,
   Plus,
-  Newspaper
+  Newspaper,
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+  Linkedin
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -2427,12 +2432,38 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="platform">Platform</Label>
-                  <Input 
+                  <select 
                     id="platform" 
                     value={newSocialLink.platform}
-                    onChange={(e) => setNewSocialLink({...newSocialLink, platform: e.target.value})}
-                    placeholder="e.g., facebook, twitter, instagram"
-                  />
+                    onChange={(e) => {
+                      const platform = e.target.value;
+                      setNewSocialLink({
+                        ...newSocialLink, 
+                        platform,
+                        display_name: platform === 'custom' ? '' : platform.charAt(0).toUpperCase() + platform.slice(1),
+                        icon_name: platform === 'custom' ? '' : platform
+                      });
+                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm w-full"
+                  >
+                    <option value="">Select a platform</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="x">X (formerly Twitter)</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="custom">Other (Custom)</option>
+                  </select>
+                  {newSocialLink.platform === 'custom' && (
+                    <Input 
+                      className="mt-2"
+                      value={newSocialLink.platform === 'custom' ? newSocialLink.display_name : newSocialLink.platform}
+                      onChange={(e) => setNewSocialLink({...newSocialLink, platform: e.target.value, display_name: e.target.value})}
+                      placeholder="Enter custom platform name"
+                    />
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="social-url">URL</Label>
@@ -2441,7 +2472,7 @@ const AdminDashboard = () => {
                     type="url"
                     value={newSocialLink.url}
                     onChange={(e) => setNewSocialLink({...newSocialLink, url: e.target.value})}
-                    placeholder="https://facebook.com/yourstation"
+                    placeholder={`https://${newSocialLink.platform ? newSocialLink.platform.toLowerCase() : 'platform'}.com/yourstation`}
                   />
                 </div>
                 <div>
@@ -2450,16 +2481,17 @@ const AdminDashboard = () => {
                     id="display-name" 
                     value={newSocialLink.display_name}
                     onChange={(e) => setNewSocialLink({...newSocialLink, display_name: e.target.value})}
-                    placeholder="Facebook Page"
+                    placeholder={`${newSocialLink.platform ? newSocialLink.platform.charAt(0).toUpperCase() + newSocialLink.platform.slice(1) : 'Platform'} Page`}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="icon-name">Icon Name (Optional)</Label>
+                  <Label htmlFor="icon-name">Icon Name (Auto-filled)</Label>
                   <Input 
                     id="icon-name" 
                     value={newSocialLink.icon_name}
                     onChange={(e) => setNewSocialLink({...newSocialLink, icon_name: e.target.value})}
-                    placeholder="Facebook"
+                    placeholder="Auto-filled based on platform"
+                    disabled={newSocialLink.platform !== 'custom'}
                   />
                 </div>
               </div>
@@ -2491,23 +2523,65 @@ const AdminDashboard = () => {
             ) : (
               socialLinks.map((link) => (
                 <div key={link.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                      <Globe className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold capitalize">{link.platform}</p>
-                      <p className="text-sm text-muted-foreground">{link.display_name || link.platform}</p>
-                      <a 
-                        href={link.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:text-blue-800 underline"
-                      >
-                        {link.url}
-                      </a>
-                    </div>
-                  </div>
+                   <div className="flex items-center gap-4">
+                     {(() => {
+                       const platform = link.platform.toLowerCase();
+                       let IconComponent = Globe;
+                       let bgColor = 'from-blue-500 to-purple-600';
+                       
+                       // Platform-specific icons and colors
+                       switch (platform) {
+                         case 'facebook':
+                           IconComponent = Facebook;
+                           bgColor = 'from-blue-600 to-blue-700';
+                           break;
+                         case 'twitter':
+                         case 'x':
+                           IconComponent = Twitter;
+                           bgColor = 'from-blue-400 to-blue-500';
+                           break;
+                         case 'instagram':
+                           IconComponent = Instagram;
+                           bgColor = 'from-pink-500 to-purple-600';
+                           break;
+                         case 'youtube':
+                           IconComponent = Youtube;
+                           bgColor = 'from-red-500 to-red-600';
+                           break;
+                         case 'linkedin':
+                           IconComponent = Linkedin;
+                           bgColor = 'from-blue-700 to-blue-800';
+                           break;
+                         case 'tiktok':
+                           IconComponent = Music;
+                           bgColor = 'from-black to-gray-800';
+                           break;
+                         default:
+                           IconComponent = Globe;
+                           bgColor = 'from-blue-500 to-purple-600';
+                       }
+                       
+                       return (
+                         <>
+                           <div className={`w-10 h-10 bg-gradient-to-r ${bgColor} rounded-lg flex items-center justify-center`}>
+                             <IconComponent className="h-5 w-5 text-white" />
+                           </div>
+                           <div>
+                             <p className="font-semibold capitalize">{link.platform}</p>
+                             <p className="text-sm text-muted-foreground">{link.display_name || link.platform}</p>
+                             <a 
+                               href={link.url} 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               className="text-xs text-blue-600 hover:text-blue-800 underline"
+                             >
+                               {link.url}
+                             </a>
+                           </div>
+                         </>
+                       );
+                     })()}
+                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant={link.is_active ? 'default' : 'secondary'}>
                       {link.is_active ? 'Active' : 'Inactive'}
