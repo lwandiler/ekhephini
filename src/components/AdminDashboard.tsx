@@ -1559,7 +1559,7 @@ const AdminDashboard = () => {
                 <option value="all">All Status</option>
                 <option value="Scheduled">Scheduled</option>
                 <option value="Live">Live</option>
-                <option value="Completed">Completed</option>
+                <option value="Upcoming">Upcoming</option>
               </select>
               
               <select
